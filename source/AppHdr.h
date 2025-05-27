@@ -230,6 +230,13 @@
     #define EOL "\n"
     #define CHARACTER_SET           A_ALTCHARSET
     #define getstr(X,Y)         getConsoleString(X,Y)
+
+#elif defined(PSX)
+    #define NEED_QUEUE
+    #define NEED_PERROR
+    #define NEED_ATOI
+    #define NEED_ATOL
+    #define NO_SYSTEM_TIME
 #else
     #error unsupported compiler
 #endif

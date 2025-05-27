@@ -21,4 +21,18 @@ void usleep( unsigned long time );
 int snprintf( char *str, size_t size, const char *format, ... );
 #endif
 
+#ifdef NEED_PERROR
+void perror(const char *fmt);
+#endif
+
+#ifdef NEED_ATOI
+int atoi(const char *s);
+#endif
+
+#ifdef NEED_ATOL
+long atol(const char *s);
+#endif
+
+int get_random_seed(void);
+
 #endif

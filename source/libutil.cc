@@ -11,10 +11,12 @@
 #include "AppHdr.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <cstring>
 
 void get_input_line( char *const buff, int len )
 {
     buff[0] = '\0';         // just in case
+#ifndef PSX
 
 #if defined(LINUX)
     get_input_line_from_curses( buff, len ); // inplemented in liblinux.cc
@@ -39,6 +41,8 @@ void get_input_line( char *const buff, int len )
         else
             break;
     }
+
+#endif
 }
 
 // The old school way of doing short delays via low level I/O sync.
@@ -90,4 +94,147 @@ int snprintf( char *str, size_t size, const char *format, ... )
 
     return (ret);
 }
+#endif
+
+int get_random_seed()
+{
+#ifdef PSX
+    // TODO(forest): Derive entropy from somewhere
+    return 0;
+#else
+    return time(NULL);
+#endif
+}
+
+#ifdef NEED_PERROR
+void perror(const char *fmt)
+{
+    // TODO(forest): Write debug message directly to screen
+}
+
+/* Helper function to check if a character is whitespace */
+static int is_whitespace(char c)
+{
+    return (c == ' ' || c == '\t' || c == '\n' ||
+            c == '\r' || c == '\f' || c == '\v');
+}
+
+/* Helper function to check if a character is a digit */
+static int is_digit(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+#ifdef NEED_ATOI
+/*
+ * Convert string to integer
+ * Returns the integer value represented by the string
+ * Stops conversion at first non-digit character
+ * Handles leading whitespace and optional sign
+ *
+ * Behavior matches standard atoi():
+ * - Skips leading whitespace
+ * - Handles optional '+' or '-' sign
+ * - Converts digits until non-digit encountered
+ * - Returns 0 if no valid conversion possible
+ * - No overflow checking (matches standard atoi behavior)
+ */
+int atoi(const char *str)
+{
+    int result = 0;
+    int sign = 1;
+    const char *ptr;
+
+    /* Handle null pointer */
+    if (str == 0)
+    {
+        return 0;
+    }
+
+    ptr = str;
+
+    /* Skip leading whitespace */
+    while (is_whitespace(*ptr))
+    {
+        ptr++;
+    }
+
+    /* Handle optional sign */
+    if (*ptr == '-')
+    {
+        sign = -1;
+        ptr++;
+    }
+    else if (*ptr == '+')
+    {
+        ptr++;
+    }
+
+    /* Convert digits */
+    while (is_digit(*ptr))
+    {
+        result = result * 10 + (*ptr - '0');
+        ptr++;
+    }
+
+    return sign * result;
+}
+#endif
+
+#ifdef NEED_ATOL
+/*
+ * Convert string to integer
+ * Returns the integer value represented by the string
+ * Stops conversion at first non-digit character
+ * Handles leading whitespace and optional sign
+ *
+ * Behavior matches standard atoi():
+ * - Skips leading whitespace
+ * - Handles optional '+' or '-' sign
+ * - Converts digits until non-digit encountered
+ * - Returns 0 if no valid conversion possible
+ * - No overflow checking (matches standard atoi behavior)
+ */
+long atol(const char *str)
+{
+    long result = 0;
+    long sign = 1;
+    const char *ptr;
+
+    /* Handle null pointer */
+    if (str == 0)
+    {
+        return 0;
+    }
+
+    ptr = str;
+
+    /* Skip leading whitespace */
+    while (is_whitespace(*ptr))
+    {
+        ptr++;
+    }
+
+    /* Handle optional sign */
+    if (*ptr == '-')
+    {
+        sign = -1;
+        ptr++;
+    }
+    else if (*ptr == '+')
+    {
+        ptr++;
+    }
+
+    /* Convert digits */
+    while (is_digit(*ptr))
+    {
+        result = result * 10 + (*ptr - '0');
+        ptr++;
+    }
+
+    return sign * result;
+}
+#endif
+
 #endif

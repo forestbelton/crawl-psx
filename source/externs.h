@@ -14,9 +14,15 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
+#ifdef NEED_QUEUE
+#include "queue.h"
+#else
 #include <queue>
+#endif
 
+#ifndef NO_SYSTEM_TIME
 #include <time.h>
+#endif
 
 #include "defines.h"
 #include "enum.h"
@@ -278,7 +284,11 @@ struct player
 
   char is_undead;                     // see UNDEAD_STATES in enum.h
 
+#ifdef NEED_QUEUE
+  queue<delay_queue_item, 50> delay_queue;      // pending actions
+#else
   std::queue< delay_queue_item >  delay_queue;  // pending actions
+#endif
 
   FixedVector<unsigned char, 50>  skills;
   FixedVector<unsigned char, 50>  practise_skill;
