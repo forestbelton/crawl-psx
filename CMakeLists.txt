@@ -11,7 +11,7 @@ project(
 	HOMEPAGE_URL "https://github.com/forestbelton/crawl-psx"
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -Ietl-20.41.1/include")
 set(CXXFILES
     source/abl-show.cc
     source/abyss.cc
@@ -77,6 +77,9 @@ set(CXXFILES
     source/wpn-misc.cc
 )
 psn00bsdk_add_executable(crawl GPREL ${CXXFILES})
+
+add_subdirectory(etl-20.41.1)
+target_link_libraries(crawl PRIVATE etl::etl)
 
 psn00bsdk_add_cd_image(
 	iso      # Target name

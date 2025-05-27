@@ -11,5 +11,8 @@
 #define wherey() 0
 #define getch() 0
 #define putch(ch)
+#define textbackground(n)
+#define window(x,y,w,h)
+#define kbhit() 0
 
 #endif

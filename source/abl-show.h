@@ -12,7 +12,7 @@
 #ifndef ABLSHOW_H
 #define ABLSHOW_H
 
-#include <string>
+#include "string-compat.h"
 
 // Structure for representing an ability:
 struct ability_def
@@ -30,7 +30,7 @@ const struct ability_def & get_ability_def( int abil );
 
 const char * get_ability_name_by_index( char index );
 
-const std::string   make_cost_description( const struct ability_def &abil );
+const string make_cost_description( const struct ability_def &abil );
 
 // last updated 12may2000 {dlb}
 /* ***********************************************************************

@@ -36,7 +36,7 @@
 
 #include "AppHdr.h"
 
-#include <string>
+#include "string-compat.h"
 
 // I don't seem to need values.h for VACPP..
 #if !defined(__IBMCPP__) && !defined(MAC)
@@ -48,7 +48,9 @@
   #include <float.h>
 #endif
 
+#ifndef NO_SYSTEM_TIME
 #include <time.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
@@ -67,8 +69,9 @@
 #include <sys/types.h>
 #endif
 
-#ifdef OS9
+#if defined(OS9)
 #include <stat.h>
+#elif defined(PSX)
 #else
 #include <sys/stat.h>
 #endif
@@ -231,7 +234,11 @@ int main( int argc, char *argv[] )
         puts("  -scores [N]      highscore list");
         puts("  -tscores [N]     terse highscore list");
         puts("  -vscores [N]     verbose highscore list");
+#ifdef PSX
+        for(;;);
+#else
         exit(1);
+#endif
     }
 
     // Read the init file
@@ -244,7 +251,11 @@ int main( int argc, char *argv[] )
     {
         printf( " Best Crawlers -" EOL );
         hiscores_print_list( Options.sc_entries, Options.sc_format );
+#ifdef PSX
+        for(;;);
+#else
         exit(0);
+#endif
     }
 
 #ifdef LINUX
@@ -1428,6 +1439,7 @@ static void input(void)
             mpr( "With the way you've been playing, I'm surprised you got this far." );
         }
 
+#ifndef NO_SYSTEM_TIME
         if (you.real_time != -1)
         {
             const time_t curr = you.real_time + (time(NULL) - you.start_time);
@@ -1440,6 +1452,16 @@ static void input(void)
 
             mpr( info );
         }
+#else
+        if (you.num_turns > 0) {
+            char buff[INFO_SIZE];
+
+            snprintf( info, sizeof buff, "Play time: %ld turns",
+                buff, you.num_turns );
+
+            mpr( info );
+        }
+#endif
         break;
 
 
@@ -2602,8 +2624,7 @@ static bool initialise(void)
     init_emx();
 #endif
 
-    srandom(time(NULL));
-    srand(time(NULL));
+    srand(get_random_seed());
     cf_setseed();               // required for stuff::coinflip()
 
     mons_init(mcolour);          // this needs to be way up top {dlb}
@@ -2692,7 +2713,9 @@ static bool initialise(void)
     you.redraw_gold = 1;
     you.wield_change = true;
 
+#ifndef NO_SYSTEM_TIME
     you.start_time = time( NULL );      // start timer on session
+#endif
 
     draw_border();
     new_level();

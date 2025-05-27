@@ -15,9 +15,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
 #include <ctype.h>
 
+#include "string-compat.h"
 #include "externs.h"
 #include "defines.h"
 #include "player.h"
@@ -37,13 +37,13 @@ extern unsigned char mapchar4(unsigned char ldfk);
 extern int character_set;       // unices only
 #endif
 
-static std::string & tolower_string( std::string &str );
+static string & tolower_string( string &str );
 
 const static char *obj_syms = ")([/%.?=!.+\\0}X$";
 const static int   obj_syms_len = 16;
 
 // also used with macros
-std::string & trim_string( std::string &str )
+string & trim_string( string &str )
 {
     // OK,  this is really annoying.  Borland C++ seems to define
     // basic_string::erase to take iterators,  and basic_string::remove
@@ -64,11 +64,11 @@ std::string & trim_string( std::string &str )
 }
 
 // returns -1 if unmatched else returns 0-15
-static short str_to_colour( const std::string &str )
+static short str_to_colour( const string &str )
 {
     int ret;
 
-    const std::string cols[16] =
+    const string cols[16] =
     {
         "black", "blue", "green", "cyan", "red", "magenta", "brown",
         "lightgrey", "darkgrey", "lightblue", "lightgreen", "lightcyan",
@@ -94,7 +94,7 @@ static short str_to_colour( const std::string &str )
 }
 
 // returns -1 if unmatched else returns 0-15
-static short str_to_channel_colour( const std::string &str )
+static short str_to_channel_colour( const string &str )
 {
     int ret = str_to_colour( str );
 
@@ -114,11 +114,11 @@ static short str_to_channel_colour( const std::string &str )
 }
 
 // returns -1 if unmatched else returns 0-15
-static short str_to_channel( const std::string &str )
+static short str_to_channel( const string &str )
 {
     short       ret;
 
-    const std::string cols[ NUM_MESSAGE_CHANNELS ] =
+    const string cols[ NUM_MESSAGE_CHANNELS ] =
     {
         "plain", "prompt", "god", "duration", "danger", "warning", "food",
         "recovery", "talk", "intrinsic_gain", "mutation", "monster_spell",
@@ -135,7 +135,7 @@ static short str_to_channel( const std::string &str )
     return (ret == NUM_MESSAGE_CHANNELS ? -1 : ret);
 }
 
-static int str_to_weapon( const std::string &str )
+static int str_to_weapon( const string &str )
 {
     if (str == "shortsword" || str == "short sword")
         return (WPN_SHORT_SWORD);
@@ -153,7 +153,7 @@ static int str_to_weapon( const std::string &str )
     return (WPN_UNKNOWN);
 }
 
-static unsigned int str_to_fire_types( const std::string &str )
+static unsigned int str_to_fire_types( const string &str )
 {
     if (str == "launcher")
         return (FIRE_LAUNCHER);
@@ -173,12 +173,12 @@ static unsigned int str_to_fire_types( const std::string &str )
     return (FIRE_NONE);
 }
 
-static void str_to_fire_order( const std::string &str,
+static void str_to_fire_order( const string &str,
                                FixedVector< int, NUM_FIRE_TYPES > &list )
 {
     int i;
     size_t pos = 0;
-    std::string item = "";
+    string item = "";
 
     for (i = 0; i < NUM_FIRE_TYPES; i++)
     {
@@ -189,14 +189,14 @@ static void str_to_fire_order( const std::string &str,
 
         list[i] = str_to_fire_types( item );
 
-        if (end == std::string::npos)
+        if (end == string::npos)
             break;
         else
             pos = end + 1;
     }
 }
 
-static char str_to_race( const std::string &str )
+static char str_to_race( const string &str )
 {
     int index = -1;
 
@@ -217,7 +217,7 @@ static char str_to_race( const std::string &str )
     return ((index != -1) ? index_to_letter( index - 1 ) : '\0');
 }
 
-static char str_to_class( const std::string &str )
+static char str_to_class( const string &str )
 {
     int index = -1;
 
@@ -233,11 +233,11 @@ static char str_to_class( const std::string &str )
     return ((index != -1) ? index_to_letter( index ) : '\0');
 }
 
-static std::string & tolower_string( std::string &str )
+static string & tolower_string( string &str )
 {
     if (str.length())
     {
-        for (std::string::iterator cp = str.begin(); cp != str.end(); cp++)
+        for (string::iterator cp = str.begin(); cp != str.end(); cp++)
         {
             *cp = tolower( *cp );
         }
@@ -246,7 +246,7 @@ static std::string & tolower_string( std::string &str )
     return (str);
 }
 
-static bool read_bool( const std::string &field, bool def_value )
+static bool read_bool( const string &field, bool def_value )
 {
     bool ret = def_value;
 
@@ -383,16 +383,16 @@ void read_init_file(void)
 
         line++;
 
-        std::string str = s;
+        string str = s;
         trim_string( str );
 
         // This is to make some efficient comments
         if (s[0] == '#' || s[0] == '\0')
             continue;
 
-        std::string key = "";
-        std::string subkey = "";
-        std::string field = "";
+        string key = "";
+        string subkey = "";
+        string field = "";
 
         int first_equals = str.find('=');
         int first_dot = str.find('.');
@@ -906,10 +906,10 @@ bool parse_args( int argc, char **argv, bool rc_only )
             if (!rc_only)
             {
                 if (o == 2)
-                    Options.race = str_to_race( std::string( next_arg ) );
+                    Options.race = str_to_race( string( next_arg ) );
 
                 if (o == 3)
-                    Options.cls = str_to_class( std::string( next_arg ) );
+                    Options.cls = str_to_class( string( next_arg ) );
             }
             nextUsed = true;
             break;

@@ -3,8 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/source/**",
-                "/opt/psn00bsdk/include/**"
+                "/opt/psn00bsdk/include/**",
+                "${workspaceFolder}/etl-20.41.1/include/**",
+                "${workspaceFolder}/source/**"
             ],
             "defines": [
                 "PSX"

@@ -18,10 +18,10 @@
 
 #include "AppHdr.h"
 #include "describe.h"
+#include "string-compat.h"
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string>
 
 #ifdef DOS
 #include <conio.h>
@@ -56,7 +56,7 @@
 // positive values (itoa always adds - to -ve ones).
 //
 //---------------------------------------------------------------
-static void append_value( std::string & description, int valu, bool plussed )
+static void append_value( string & description, int valu, bool plussed )
 {
     if (valu >= 0 && plussed == 1)
         description += "+";
@@ -77,9 +77,9 @@ static void append_value( std::string & description, int valu, bool plussed )
 // word and such. The character $ is interpreted as a CR.
 //
 //---------------------------------------------------------------
-static void print_description( const std::string &d )
+static void print_description( const string &d )
 {
-    unsigned int  nextLine = std::string::npos;
+    unsigned int  nextLine = string::npos;
     unsigned int  currentPos = 0;
 
 #ifdef DOS
@@ -116,7 +116,7 @@ static void print_description( const std::string &d )
                 continue;
             }
 
-            if (nextLine == std::string::npos)
+            if (nextLine == string::npos)
                 nlSearch = false;       // there are no newlines, don't search again.
         }
 
@@ -157,7 +157,7 @@ static void print_description( const std::string &d )
 // string.
 //
 //---------------------------------------------------------------
-static void randart_descpr( std::string &description, const item_def &item )
+static void randart_descpr( string &description, const item_def &item )
 {
     unsigned int old_length = description.length();
 
@@ -338,7 +338,7 @@ static void randart_descpr( std::string &description, const item_def &item )
 // Describes the random demons you find in Pandemonium.
 //
 //---------------------------------------------------------------
-static std::string describe_demon(void)
+static string describe_demon(void)
 {
     long globby = 0;
 
@@ -349,7 +349,7 @@ static std::string describe_demon(void)
 
     srand( globby );
 
-    std::string description = "A powerful demon, ";
+    string description = "A powerful demon, ";
 
     description += ghost.name;
     description += " has a";
@@ -679,11 +679,13 @@ static std::string describe_demon(void)
 // describe_weapon
 //
 //---------------------------------------------------------------
-static std::string describe_weapon( const item_def &item, char verbose)
+static string describe_weapon( const item_def &item, char verbose)
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(200);
+#endif
 
     description = "";
 
@@ -1261,11 +1263,13 @@ static std::string describe_weapon( const item_def &item, char verbose)
 // describe_ammo
 //
 //---------------------------------------------------------------
-static std::string describe_ammo( const item_def &item )
+static string describe_ammo( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(64);
+#endif
 
     switch (item.sub_type)
     {
@@ -1327,11 +1331,13 @@ static std::string describe_ammo( const item_def &item )
 // describe_armour
 //
 //---------------------------------------------------------------
-static std::string describe_armour( const item_def &item, char verbose )
+static string describe_armour( const item_def &item, char verbose )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(200);
+#endif
 
     if (is_unrandom_artefact( item )
         && strlen(unrandart_descrip(1, item)) != 0)
@@ -1693,11 +1699,13 @@ static std::string describe_armour( const item_def &item, char verbose )
 // describe_stick
 //
 //---------------------------------------------------------------
-static std::string describe_stick( const item_def &item )
+static string describe_stick( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(64);
+#endif
 
     if (get_ident_type( OBJ_WANDS, item.sub_type ) != ID_KNOWN_TYPE)
         description += "A stick. Maybe it's magical. ";
@@ -1811,11 +1819,13 @@ static std::string describe_stick( const item_def &item )
 // describe_food
 //
 //---------------------------------------------------------------
-static std::string describe_food( const item_def &item )
+static string describe_food( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(100);
+#endif
 
     switch (item.sub_type)
     {
@@ -2029,11 +2039,13 @@ static std::string describe_food( const item_def &item )
 // describe_potion
 //
 //---------------------------------------------------------------
-static std::string describe_potion( const item_def &item )
+static string describe_potion( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(64);
+#endif
 
     if (get_ident_type( OBJ_POTIONS, item.sub_type ) != ID_KNOWN_TYPE)
         description += "A small bottle of liquid.";
@@ -2256,11 +2268,13 @@ static std::string describe_potion( const item_def &item )
 // describe_scroll
 //
 //---------------------------------------------------------------
-static std::string describe_scroll( const item_def &item )
+static string describe_scroll( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(64);
+#endif
 
     if (get_ident_type( OBJ_SCROLLS, item.sub_type ) != ID_KNOWN_TYPE)
         description += "A scroll of paper covered in magical writing.";
@@ -2419,11 +2433,13 @@ static std::string describe_scroll( const item_def &item )
 // describe_jewellery
 //
 //---------------------------------------------------------------
-static std::string describe_jewellery( const item_def &item, char verbose)
+static string describe_jewellery( const item_def &item, char verbose)
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(200);
+#endif PSX
 
     if (is_unrandom_artefact( item ) && strlen(unrandart_descrip(1, item)) != 0)
     {
@@ -2764,16 +2780,18 @@ static std::string describe_jewellery( const item_def &item, char verbose)
 // describe_staff
 //
 //---------------------------------------------------------------
-static std::string describe_staff( const item_def &item )
+static string describe_staff( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(200);
+#endif
 
     if (item_ident( item, ISFLAG_KNOW_TYPE ))
     {
         // NB: the leading space is here {dlb}
-        description += "This " + std::string( item_is_staff( item ) ? "staff "
+        description += "This " + string( item_is_staff( item ) ? "staff "
                                                                     : "rod " );
 
         switch (item.sub_type)
@@ -2915,11 +2933,13 @@ static std::string describe_staff( const item_def &item )
 // describe_misc_item
 //
 //---------------------------------------------------------------
-static std::string describe_misc_item( const item_def &item )
+static string describe_misc_item( const item_def &item )
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(100);
+#endif
 
     if (item_ident( item, ISFLAG_KNOW_TYPE ))
     {
@@ -3132,16 +3152,18 @@ bool is_dumpable_artifact( const item_def &item, char verbose)
 // be interpreted as carriage returns.
 //
 //---------------------------------------------------------------
-std::string get_item_description( const item_def &item, char verbose, bool dump )
+string get_item_description( const item_def &item, char verbose, bool dump )
 {
-    std::string description;
+    string description;
+#ifndef PSX
     description.reserve(500);
+#endif
 
     if (!dump)
     {
         char str_pass[ ITEMNAME_SIZE ];
         item_name( item, DESC_INVENTORY_EQUIP, str_pass );
-        description += std::string(str_pass);
+        description += string(str_pass);
     }
 
     description += "$$";
@@ -3280,7 +3302,7 @@ void describe_item( const item_def &item )
 
     clrscr();
 
-    std::string description = get_item_description( item, 1 );
+    string description = get_item_description( item, 1 );
 
     print_description(description);
 
@@ -3303,9 +3325,11 @@ void describe_item( const item_def &item )
 //---------------------------------------------------------------
 void describe_spell(int spelled)
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(500);
+#endif
 
 #ifdef DOS_TERM
     char buffer[3400];
@@ -4418,9 +4442,11 @@ void describe_spell(int spelled)
 //---------------------------------------------------------------
 void describe_monsters(int class_described, unsigned char which_mons)
 {
-    std::string description;
+    string description;
 
+#ifndef PSX
     description.reserve(200);
+#endif
 
 #ifdef DOS_TERM
     char buffer[3400];
@@ -4430,7 +4456,7 @@ void describe_monsters(int class_described, unsigned char which_mons)
 #endif
 
     clrscr();
-    description = std::string( ptr_monam( &(menv[ which_mons ]), DESC_CAP_A ) );
+    description = string( ptr_monam( &(menv[ which_mons ]), DESC_CAP_A ) );
     description += "$$";
 
     switch (class_described)
@@ -6173,11 +6199,11 @@ static void print_god_abil_desc( int abil )
 {
     const ability_def &abil_info = get_ability_def( abil );
 
-    const std::string cost = "(" + make_cost_description( abil_info ) + ")";
+    const string cost = "(" + make_cost_description( abil_info ) + ")";
 
     // Produce a 79 character string with cost right justified:
-    std::string str( abil_info.name );
-    str += std::string( 79 - str.length() - cost.length(), ' ' ) + cost + EOL;
+    string str( abil_info.name );
+    str += string( 79 - str.length() - cost.length(), ' ' ) + cost + EOL;
 
     cprintf( str.c_str() );
 }

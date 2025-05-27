@@ -336,8 +336,8 @@ struct player
   time_t        birth_time;           // start time of game
 
   time_t        start_time;           // start time of session
-#endif
   long          real_time;            // real time played (in seconds)
+#endif
   long          num_turns;            // number of turns taken
 
   int           old_hunger;  // used for hunger delta-meter (see output.cc)

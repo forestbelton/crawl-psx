@@ -15,10 +15,8 @@
 
 #include "AppHdr.h"
 #include "chardump.h"
+#include "string-compat.h"
 
-#ifndef PSX
-#include <string>
-#endif
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>

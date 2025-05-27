@@ -1,0 +1,14 @@
+#ifndef STRING_COMPAT_H
+#define STRING_COMPAT_H
+
+#ifdef PSX
+#include "etl/string.h"
+
+typedef etl::string<255> string;
+#else
+#include <string>
+
+typedef std::string string;
+#endif
+
+#endif

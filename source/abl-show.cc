@@ -237,11 +237,11 @@ const char * get_ability_name_by_index( char index )
 }
 
 
-const std::string make_cost_description( const struct ability_def &abil )
+const string make_cost_description( const struct ability_def &abil )
 /***********************************************************************/
 {
     char         tmp_buff[80];  // avoiding string steams for portability
-    std::string  ret = "";
+    string  ret = "";
 
     if (abil.mp_cost)
     {
@@ -1304,7 +1304,7 @@ char show_abilities( void )
                 // Output costs:
                 gotoxy( 35, wherey() );
 
-                std::string cost_str = make_cost_description( abil );
+                string cost_str = make_cost_description( abil );
 
                 if (cost_str.length() > 24)
                     cost_str = cost_str.substr( 0, 24 );

@@ -12,9 +12,9 @@
 #ifndef INITFILE_H
 #define INITFILE_H
 
-#include <string>
+#include "string-compat.h"
 
-std::string & trim_string( std::string &str );
+string & trim_string( string &str );
 
 // last updated 12may2000 {dlb}
 /* ***********************************************************************

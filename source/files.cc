@@ -72,6 +72,10 @@
 #include "tags.h"
 #include "wpn-misc.h"
 
+#ifdef PSX
+typedef struct {} FILE;
+#endif
+
 void save_level(int level_saved, bool was_a_labyrinth, char where_were_you);
 
 // temp file pairs used for file level cleanup
