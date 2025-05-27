@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/source/**",
                 "/opt/psn00bsdk/include/**"
             ],
             "defines": [

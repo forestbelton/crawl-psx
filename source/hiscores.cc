@@ -1076,10 +1076,15 @@ int hiscores_format_single_long( char *buf, struct scorefile_entry &se,
             }
 #endif
 
+#ifndef NO_SYSTEM_TIME
             make_time_string( se.real_time, tmp, sizeof(tmp) );
 
             snprintf( scratch, INFO_SIZE, "%s game lasted %s (%ld turns).",
                       username, tmp, se.num_turns );
+#else
+            snprintf( scratch, INFO_SIZE, "%s game lasted %ld turns.",
+                      username, se.num_turns );
+#endif
 
             strncat( buf, scratch, HIGHSCORE_SIZE );
             hiscore_newline( buf, line_count );

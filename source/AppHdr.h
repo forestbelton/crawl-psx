@@ -234,12 +234,14 @@
 #elif defined(PSX)
     #define EOL "\n"
 
-    #define NEED_QUEUE
-    #define NEED_PERROR
     #define NEED_ATOI
     #define NEED_ATOL
     #define NEED_ISUPPER
-    
+    #define NEED_ITOA
+    #define NEED_QUEUE
+    #define NEED_PERROR
+    #define NEED_STRLWR
+
     #define NO_SYSTEM_TIME
 
     #include <string.h>

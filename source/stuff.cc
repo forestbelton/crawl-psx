@@ -49,6 +49,7 @@ unsigned long cfseed;
 // unfortunately required for near_stairs(ugh!):
 extern unsigned char (*mapch) (unsigned char);
 
+#ifndef NO_SYSTEM_TIME
 // Crude, but functional.
 char *const make_time_string( time_t abs_time, char *const buff, int buff_size )
 {
@@ -70,6 +71,7 @@ char *const make_time_string( time_t abs_time, char *const buff, int buff_size )
 
     return (buff);
 }
+#endif
 
 void set_redraw_status( unsigned long flags )
 {
@@ -267,7 +269,11 @@ void end(int end_arg)
     deinit_libw32c();
 #endif
 
+#ifdef PSX
+    // TODO(forest)
+#else
     exit(end_arg);
+#endif
 }
 
 void redraw_screen(void)

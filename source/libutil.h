@@ -37,6 +37,14 @@ long atol(const char *s);
 int isupper(int c);
 #endif
 
+#ifdef NEED_ITOA
+char* itoa(int value, char* str, int base);
+#endif
+
+#ifdef NEED_STRLWR
+char *strlwr(char *s);
+#endif
+
 int get_random_seed(void);
 
 #endif

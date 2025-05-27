@@ -243,4 +243,70 @@ int isupper(int c) {
 }
 #endif
 
+#ifdef NEED_ITOA
+char* itoa(int value, char* str, int base) {
+    // Handle invalid base
+    if (base < 2 || base > 36) {
+        str[0] = '\0';
+        return str;
+    }
+    
+    char* ptr = str;
+    char* start = str;
+    int is_negative = 0;
+    
+    // Handle negative numbers (only for base 10)
+    if (value < 0 && base == 10) {
+        is_negative = 1;
+        value = -value;
+        *ptr++ = '-';
+        start = ptr; // Start of digits after the minus sign
+    }
+    
+    // Handle zero case
+    if (value == 0) {
+        *ptr++ = '0';
+        *ptr = '\0';
+        return str;
+    }
+    
+    // Convert integer to string (digits will be in reverse order)
+    while (value > 0) {
+        int digit = value % base;
+        if (digit < 10) {
+            *ptr++ = '0' + digit;
+        } else {
+            *ptr++ = 'A' + (digit - 10);
+        }
+        value /= base;
+    }
+    
+    // Null terminate
+    *ptr = '\0';
+    
+    // Reverse the digits (excluding the minus sign if present)
+    char* end = ptr - 1;
+    while (start < end) {
+        char temp = *start;
+        *start = *end;
+        *end = temp;
+        start++;
+        end--;
+    }
+    
+    return str;
+}
+#endif
+
+#ifdef NEED_STRLWR
+char *strlwr(char *s) {
+    while (*s) {
+        if (isupper(*s)) {
+            *s = *s - 'A' + 'a';
+        }
+        s++;
+    }
+}
+#endif
+
 #endif

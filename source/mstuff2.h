@@ -15,13 +15,12 @@
 #define MSTUFF2_H
 
 
-#include <string>
 #include "externs.h"
 
 
 struct SBeam
 {
-    std::string name;
+    char       *name;
     int         colour;
     int         range;
     int         rangeMax;

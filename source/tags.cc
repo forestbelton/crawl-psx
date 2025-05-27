@@ -69,9 +69,9 @@
 #include <unistd.h>
 #endif
 
-#ifdef OS9
+#if defined(OS9)
 #include <stat.h>
-#else
+#elif !defined(PSX)
 #include <sys/stat.h>
 #endif
 

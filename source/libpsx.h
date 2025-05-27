@@ -7,5 +7,6 @@
 #define textcolor(col)
 #define cprintf(fmt,...)
 #define clrscr()
+#define wherey() 0
 
 #endif

@@ -43,6 +43,7 @@
 #include "stuff.h"
 #include "view.h"
 #include "wpn-misc.h"
+#include <stdlib.h>
 
 static bool ball_of_energy(void);
 static bool ball_of_fixation(void);

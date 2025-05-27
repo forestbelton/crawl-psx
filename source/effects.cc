@@ -38,6 +38,7 @@
 #include "stuff.h"
 #include "view.h"
 #include "wpn-misc.h"
+#include <stdlib.h>
 
 // torment_monsters is called with power 0 because torment is
 // UNRESISTABLE except for being undead or having torment

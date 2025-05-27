@@ -25,9 +25,13 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "AppHdr.h"
+
+#ifndef NO_SYSTEM_TIME
+#include <time.h>
+#endif
+
 #include "abyss.h"
 #include "defines.h"
 #include "enum.h"
@@ -160,7 +164,7 @@ void builder(int level_number, char level_type)
     int i;          // generic loop variable
     int x,y;        // generic map loop variables
 
-    srandom(time(NULL));
+    srand(get_random_seed());
 
     // blank level with DNGN_ROCK_WALL
     make_box(0,0,GXM-1,GYM-1,DNGN_ROCK_WALL,DNGN_ROCK_WALL);

@@ -29,7 +29,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#ifndef NO_SYSTEM_TIME
 #include <time.h>
+#endif
 
 #ifdef DOS
 #include <conio.h>
@@ -48,8 +51,9 @@
 #include <unistd.h>
 #endif
 
-#ifdef OS9
+#if defined(OS9)
 #include <stat.h>
+#elif defined(PSX)
 #else
 #include <sys/stat.h>
 #endif
@@ -847,6 +851,7 @@ void ouch( int dam, int death_source, char death_type, const char *aux )
     se.branch = you.where_are_you;      // no adjustments necessary.
     se.level_type = you.level_type;     // pandemonium, labyrinth, dungeon..
 
+#ifndef NO_SYSTEM_TIME
     se.birth_time = you.birth_time;     // start time of game
     se.death_time = time( NULL );         // end time of game
 
@@ -854,6 +859,9 @@ void ouch( int dam, int death_source, char death_type, const char *aux )
         se.real_time = you.real_time + (se.death_time - you.start_time);
     else
         se.real_time = -1;
+#else
+    se.real_time = -1;
+#endif
 
     se.num_turns = you.num_turns;
 
@@ -885,6 +893,9 @@ void ouch( int dam, int death_source, char death_type, const char *aux )
 
 void end_game( struct scorefile_entry &se )
 {
+#ifdef PSX
+    return;
+#else
     int i;
     char del_file[300];         // massive overkill!
     bool dead = true;
@@ -993,4 +1004,5 @@ void end_game( struct scorefile_entry &se )
     // just to pause, actual value returned does not matter {dlb}
     get_ch();
     end(0);
+#endif
 }

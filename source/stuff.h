@@ -16,7 +16,9 @@
 
 #include "externs.h"
 
+#ifndef NO_SYSTEM_TIME
 char *const make_time_string(time_t abs_time, char *const buff, int buff_size);
+#endif
 
 void set_redraw_status( unsigned long flags );
 
