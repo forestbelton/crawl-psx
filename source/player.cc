@@ -25,7 +25,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifndef PSX
 #include <math.h>
+#endif
 #include <ctype.h>
 
 #include "externs.h"
@@ -3062,7 +3064,7 @@ unsigned long exp_needed(int lev)
         {
             lev -= 4;
             level = 10 + 10 * lev
-                       + 30 * (static_cast<int>(pow( 2.0, lev + 1 )));
+                       + 30 * (1 << (lev + 1));
         }
         else
         {

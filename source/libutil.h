@@ -33,12 +33,20 @@ int atoi(const char *s);
 long atol(const char *s);
 #endif
 
+#ifdef NEED_ISALNUM
+int isalnum(int c);
+#endif
+
 #ifdef NEED_ISUPPER
 int isupper(int c);
 #endif
 
 #ifdef NEED_ITOA
 char* itoa(int value, char* str, int base);
+#endif
+
+#ifdef NEED_STRICMP
+int stricmp(const char *s, const char *t);
 #endif
 
 #ifdef NEED_STRLWR

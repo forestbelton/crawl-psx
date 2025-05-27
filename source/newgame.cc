@@ -52,7 +52,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#ifndef NO_SYSTEM_TIME
 #include <time.h>
+#endif
 
 #ifdef DOS
 #include <conio.h>
@@ -70,8 +72,9 @@
 #include <unistd.h>
 #endif
 
-#ifdef OS9
+#if defined(OS9)
 #include <stat.h>
+#elif defined(PSX)
 #else
 #include <sys/stat.h>
 #endif
@@ -200,6 +203,7 @@ static void pick_random_species_and_class( void )
 
 static bool check_saved_game(void)
 {
+#ifndef PSX
     FILE *handle;
     char char_fil[kFileNameSize];
 
@@ -265,6 +269,7 @@ static bool check_saved_game(void)
         fclose(handle);
         return true;
     }
+#endif
     return false;
 }
 
@@ -1431,7 +1436,9 @@ void init_player(void)
 {
     unsigned char i = 0;        // loop variable
 
+#ifndef NO_SYSTEM_TIME
     you.birth_time = time( NULL );
+#endif
     you.real_time = 0;
     you.num_turns = 0;
 

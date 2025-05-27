@@ -12,7 +12,6 @@
 
 #include "AppHdr.h"
 
-#include <string>
 #include <stdio.h>
 
 #include "externs.h"

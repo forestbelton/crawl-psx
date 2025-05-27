@@ -111,6 +111,7 @@ void perror(const char *fmt)
 {
     // TODO(forest): Write debug message directly to screen
 }
+#endif
 
 /* Helper function to check if a character is whitespace */
 static int is_whitespace(char c)
@@ -123,6 +124,10 @@ static int is_whitespace(char c)
 static int is_digit(char c)
 {
     return (c >= '0' && c <= '9');
+}
+
+static int _tolower(int c) {
+    return isupper(c) ? (c - 'A' + 'a') : c;
 }
 
 #ifdef NEED_ATOI
@@ -237,6 +242,14 @@ long atol(const char *str)
 }
 #endif
 
+#ifdef NEED_ISALNUM
+int isalnum(int c) {
+    return (c >= '0' && c <= '9')
+        || (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z');
+}
+#endif
+
 #ifdef NEED_ISUPPER
 int isupper(int c) {
     return c >= 'A' && c <= 'Z';
@@ -298,15 +311,22 @@ char* itoa(int value, char* str, int base) {
 }
 #endif
 
-#ifdef NEED_STRLWR
-char *strlwr(char *s) {
-    while (*s) {
-        if (isupper(*s)) {
-            *s = *s - 'A' + 'a';
-        }
+#ifdef NEED_STRICMP
+int stricmp(const char *s, const char *t) {
+    int diff = 0;
+    while (*s && *t && _tolower(*s) == _tolower(*t)) {
         s++;
+        t++;
     }
+    return _tolower(*s) - _tolower(*t);
 }
 #endif
 
+#ifdef NEED_STRLWR
+char *strlwr(char *s) {
+    while (*s) {
+        *s = _tolower(*s);
+        s++;
+    }
+}
 #endif

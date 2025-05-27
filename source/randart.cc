@@ -647,6 +647,7 @@ struct unrandart_entry
 
 static struct unrandart_entry unranddata[] = {
 #include "unrand.h"
+#include <stdlib.h>
 };
 
 char *art_n;
@@ -1720,7 +1721,7 @@ bool make_item_randart( item_def &item )
     }
 
     item.flags |= ISFLAG_RANDART;
-    item.special = (random() & RANDART_SEED_MASK);
+    item.special = (rand() & RANDART_SEED_MASK);
 
     return (true);
 }

@@ -236,10 +236,12 @@
 
     #define NEED_ATOI
     #define NEED_ATOL
+    #define NEED_ISALNUM
     #define NEED_ISUPPER
     #define NEED_ITOA
     #define NEED_QUEUE
     #define NEED_PERROR
+    #define NEED_STRICMP
     #define NEED_STRLWR
 
     #define NO_SYSTEM_TIME

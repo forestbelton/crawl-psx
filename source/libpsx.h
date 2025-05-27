@@ -7,6 +7,9 @@
 #define textcolor(col)
 #define cprintf(fmt,...)
 #define clrscr()
+#define wherex() 0
 #define wherey() 0
+#define getch() 0
+#define putch(ch)
 
 #endif

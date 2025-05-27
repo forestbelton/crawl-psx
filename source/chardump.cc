@@ -16,12 +16,14 @@
 #include "AppHdr.h"
 #include "chardump.h"
 
+#ifndef PSX
 #include <string>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__))
+#if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__) || defined(PSX))
 #include <unistd.h>
 #endif
 #include <ctype.h>
@@ -30,8 +32,9 @@
 #include <sys/types.h>
 #endif
 
-#ifdef OS9
+#if defined(OS9)
 #include <stat.h>
+#elif defined(PSX)
 #else
 #include <sys/stat.h>
 #endif
