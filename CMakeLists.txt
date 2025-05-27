@@ -40,6 +40,7 @@ set(CXXFILES
     source/it_use2.cc
     source/it_use3.cc
     source/lev-pand.cc
+    source/libpsx.cc
     source/libutil.cc
     source/macro.cc
     source/maps.cc

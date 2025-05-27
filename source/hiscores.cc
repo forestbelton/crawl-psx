@@ -57,13 +57,20 @@ static struct scorefile_entry hs_list[SCORE_FILE_ENTRIES];
 // highscore printing (always -1 when run from command line).
 static int newest_entry = -1;
 
-static FILE *hs_open(const char *mode);
-static void hs_close(FILE *handle, const char *mode);
-static bool hs_read(FILE *scores, struct scorefile_entry &dest);
+#ifdef PSX
+typedef struct {
+} ScoreFile;
+#else
+typedef FILE ScoreFile;
+#endif
+
+static ScoreFile *hs_open(const char *mode);
+static void hs_close(ScoreFile *handle, const char *mode);
+static bool hs_read(ScoreFile *scores, struct scorefile_entry &dest);
 static void hs_parse_numeric(char *inbuf, struct scorefile_entry &dest);
 static void hs_parse_string(char *inbuf, struct scorefile_entry &dest);
 static void hs_copy(struct scorefile_entry &dest, struct scorefile_entry &src);
-static void hs_write(FILE *scores, struct scorefile_entry &entry);
+static void hs_write(ScoreFile *scores, struct scorefile_entry &entry);
 static void hs_nextstring(char *&inbuf, char *dest);
 static int hs_nextint(char *&inbuf);
 static long hs_nextlong(char *&inbuf);

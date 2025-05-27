@@ -332,9 +332,11 @@ struct player
   // This field is here even in non-WIZARD compiles, since the
   // player might have been playing previously under wiz mode.
   bool          wizard;               // true if player has entered wiz mode.
+#ifndef NO_SYSTEM_TIME
   time_t        birth_time;           // start time of game
 
   time_t        start_time;           // start time of session
+#endif
   long          real_time;            // real time played (in seconds)
   long          num_turns;            // number of turns taken
 
@@ -552,8 +554,10 @@ struct scorefile_entry
     int         piety;              // piety
     int         penance;            // penance
     char        wiz_mode;           // character used wiz mode
+#ifndef NO_SYSTEM_TIME
     time_t      birth_time;         // start time of character
     time_t      death_time;         // end time of character
+#endif
     long        real_time;          // real playing time in seconds
     long        num_turns;          // number of turns taken
     int         num_diff_runes;     // number of rune types in inventory

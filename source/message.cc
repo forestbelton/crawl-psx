@@ -361,7 +361,7 @@ void replay_messages(void)
 
     const int      num_lines = get_number_of_lines();
 
-    if (Store_Message[ NUM_STORED_MESSAGES - 1 ].text.length() == 0)
+    if (strlen(Store_Message[ NUM_STORED_MESSAGES - 1 ].text) == 0)
     {
         full_buffer = false;
         first_message = 0;
@@ -417,9 +417,9 @@ void replay_messages(void)
             textcolor( colour );
 
 #if DEBUG_DIAGNOSTICS
-            cprintf( "%d: %s", line, Store_Message[ line ].text.c_str() );
+            cprintf( "%d: %s", line, Store_Message[ line ].text );
 #else
-            cprintf( Store_Message[ line ].text.c_str() );
+            cprintf( Store_Message[ line ].text );
 #endif
 
             cprintf(EOL);

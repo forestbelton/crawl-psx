@@ -237,6 +237,8 @@
     #define NEED_ATOI
     #define NEED_ATOL
     #define NO_SYSTEM_TIME
+
+    #include "libpsx.h"
 #else
     #error unsupported compiler
 #endif

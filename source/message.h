@@ -12,14 +12,12 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include <string>
-
 #include "externs.h"
 
 struct message_item {
     int                 channel;        // message channel
     int                 param;          // param for channel (god, enchantment)
-    std::string         text;           // text of message
+    const char         *text;           // text of message
 };
 
 
