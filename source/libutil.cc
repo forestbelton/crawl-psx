@@ -237,4 +237,10 @@ long atol(const char *str)
 }
 #endif
 
+#ifdef NEED_ISUPPER
+int isupper(int c) {
+    return c >= 'A' && c <= 'Z';
+}
+#endif
+
 #endif

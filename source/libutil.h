@@ -33,6 +33,10 @@ int atoi(const char *s);
 long atol(const char *s);
 #endif
 
+#ifdef NEED_ISUPPER
+int isupper(int c);
+#endif
+
 int get_random_seed(void);
 
 #endif

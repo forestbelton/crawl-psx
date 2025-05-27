@@ -90,7 +90,8 @@ static bool unlock_file_handle( FILE *handle );
 
 void hiscores_new_entry( struct scorefile_entry &ne )
 {
-    FILE *scores;
+#ifndef PSX
+    ScoreFile *scores;
     int i, total_entries;
     bool inserted = false;
 
@@ -153,11 +154,13 @@ void hiscores_new_entry( struct scorefile_entry &ne )
 
     // close scorefile.
     hs_close(scores, "w");
+#else
+#endif
 }
 
 void hiscores_print_list( int display_count, int format )
 {
-    FILE *scores;
+    ScoreFile *scores;
     int i, total_entries;
     bool use_printf = (Options.sc_entries > 0);
 
@@ -520,6 +523,7 @@ void hiscores_format_single(char *buf, struct scorefile_entry &se)
     return;
 }
 
+#ifndef NO_SYSTEM_TIME
 static bool hiscore_same_day( time_t t1, time_t t2 )
 {
     struct tm *d1  = localtime( &t1 );
@@ -542,6 +546,7 @@ static void hiscore_date_string( time_t time, char buff[INFO_SIZE] )
     snprintf( buff, INFO_SIZE, "%s %d, %d", mons[date->tm_mon],
               date->tm_mday, date->tm_year + 1900 );
 }
+#endif
 
 static void hiscore_newline( char *buf, int &line_count )
 {
@@ -601,12 +606,14 @@ int hiscores_format_single_long( char *buf, struct scorefile_entry &se,
                   is_vowel(race[0]) ? "n" : "", race, get_class_name(se.cls) );
         strncat( buf, scratch, HIGHSCORE_SIZE );
 
+#ifndef NO_SYSTEM_TIME
         if (se.birth_time > 0)
         {
             strncat( buf, " on ", HIGHSCORE_SIZE );
             hiscore_date_string( se.birth_time, scratch );
             strncat( buf, scratch, HIGHSCORE_SIZE );
         }
+#endif
 
         strncat( buf, "." , HIGHSCORE_SIZE );
         hiscore_newline( buf, line_count );
@@ -892,6 +899,7 @@ int hiscores_format_single_long( char *buf, struct scorefile_entry &se,
                 strncat( buf, scratch, HIGHSCORE_SIZE );
             }
 
+#ifndef NO_SYSTEM_TIME
             if (se.death_time > 0
                 && !hiscore_same_day( se.birth_time, se.death_time ))
             {
@@ -899,6 +907,7 @@ int hiscores_format_single_long( char *buf, struct scorefile_entry &se,
                 hiscore_date_string( se.death_time, scratch );
                 strcat( buf, scratch );
             }
+#endif
 
             strcat( buf, "!" );
             hiscore_newline( buf, line_count );
@@ -1036,6 +1045,7 @@ int hiscores_format_single_long( char *buf, struct scorefile_entry &se,
             }
         }
 
+#ifndef NO_SYSTEM_TIME
         if (verbose && se.death_time
             && !hiscore_same_day( se.birth_time, se.death_time ))
         {
@@ -1043,6 +1053,7 @@ int hiscores_format_single_long( char *buf, struct scorefile_entry &se,
             hiscore_date_string( se.death_time, scratch );
             strcat( buf, scratch );
         }
+#endif
 
         strcat( buf, "." );
         hiscore_newline( buf, line_count );
@@ -1163,10 +1174,12 @@ static bool unlock_file_handle( FILE *handle )
 
 
 
-FILE *hs_open( const char *mode )
+ScoreFile *hs_open( const char *mode )
 {
 #ifdef SAVE_DIR_PATH
     FILE *handle = fopen(SAVE_DIR_PATH "scores", mode);
+#elif defined(PSX)
+    ScoreFile *handle = NULL;
 #else
     FILE *handle = fopen("scores", mode);
 #endif
@@ -1186,7 +1199,7 @@ FILE *hs_open( const char *mode )
     return handle;
 }
 
-void hs_close( FILE *handle, const char *mode )
+void hs_close( ScoreFile *handle, const char *mode )
 {
     UNUSED( mode );
 
@@ -1197,8 +1210,11 @@ void hs_close( FILE *handle, const char *mode )
     unlock_file_handle( handle );
 #endif
 
+#ifdef PSX
+#else
     // actually close
     fclose(handle);
+#endif
 
 #ifdef SHARED_FILES_CHMOD_PUBLIC
     if (stricmp(mode, "w") == 0)
@@ -1245,8 +1261,10 @@ static void hs_init( struct scorefile_entry &dest )
     dest.piety = -1;
     dest.penance = -1;
     dest.wiz_mode = 0;
+#ifndef NO_SYSTEM_TIME
     dest.birth_time = 0;
     dest.death_time = 0;
+#endif
     dest.real_time = -1;
     dest.num_turns = -1;
     dest.num_diff_runes = 0;
@@ -1287,16 +1305,21 @@ void hs_copy(struct scorefile_entry &dest, struct scorefile_entry &src)
     dest.piety = src.piety;
     dest.penance = src.penance;
     dest.wiz_mode = src.wiz_mode;
+#ifndef NO_SYSTEM_TIME
     dest.birth_time = src.birth_time;
     dest.death_time = src.death_time;
+#endif
     dest.real_time = src.real_time;
     dest.num_turns = src.num_turns;
     dest.num_diff_runes = src.num_diff_runes;
     dest.num_runes = src.num_runes;
 }
 
-bool hs_read( FILE *scores, struct scorefile_entry &dest )
+bool hs_read( ScoreFile *scores, struct scorefile_entry &dest )
 {
+#ifdef PSX
+    return false;
+#else
     char inbuf[200];
     int c = EOF;
 
@@ -1329,6 +1352,7 @@ bool hs_read( FILE *scores, struct scorefile_entry &dest )
         hs_parse_string(inbuf, dest);
 
     return true;
+#endif
 }
 
 static void hs_nextstring(char *&inbuf, char *dest)
@@ -1370,6 +1394,7 @@ static int val_char( char digit )
     return (digit - '0');
 }
 
+#ifndef NO_SYSTEM_TIME
 static time_t hs_nextdate(char *&inbuf)
 {
     char       buff[20];
@@ -1392,6 +1417,7 @@ static time_t hs_nextdate(char *&inbuf)
 
     return (mktime( &date ));
 }
+#endif
 
 static void hs_parse_numeric(char *inbuf, struct scorefile_entry &se)
 {
@@ -1478,8 +1504,10 @@ static void hs_parse_numeric(char *inbuf, struct scorefile_entry &se)
 
     se.wiz_mode = hs_nextint(inbuf);
 
+#ifndef NO_SYSTEM_TIME
     se.birth_time = hs_nextdate(inbuf);
     se.death_time = hs_nextdate(inbuf);
+#endif
 
     if (se.version == 4 && se.release >= 2)
     {
@@ -1496,8 +1524,10 @@ static void hs_parse_numeric(char *inbuf, struct scorefile_entry &se)
     se.num_runes = hs_nextint(inbuf);
 }
 
-static void hs_write( FILE *scores, struct scorefile_entry &se )
+static void hs_write( ScoreFile *scores, struct scorefile_entry &se )
 {
+#ifdef PSX
+#else
     char buff[80];  // should be more than enough for date stamps
 
     se.version = 4;
@@ -1525,6 +1555,7 @@ static void hs_write( FILE *scores, struct scorefile_entry &se )
 
     fprintf( scores, ":%ld:%ld:%d:%d:\n",
              se.real_time, se.num_turns, se.num_diff_runes, se.num_runes );
+#endif
 }
 // -------------------------------------------------------------------------
 // functions dealing with old-style scorefile entries.
@@ -1611,8 +1642,10 @@ static void hs_parse_string(char *inbuf, struct scorefile_entry &se)
     se.god = -1;
     se.piety = -1;
     se.penance = -1;
+#ifndef NO_SYSTEM_TIME
     se.birth_time = 0;
     se.death_time = 0;
+#endif
     se.real_time = -1;
     se.num_turns = -1;
     se.num_runes = 0;

@@ -232,12 +232,17 @@
     #define getstr(X,Y)         getConsoleString(X,Y)
 
 #elif defined(PSX)
+    #define EOL "\n"
+
     #define NEED_QUEUE
     #define NEED_PERROR
     #define NEED_ATOI
     #define NEED_ATOL
+    #define NEED_ISUPPER
+    
     #define NO_SYSTEM_TIME
 
+    #include <string.h>
     #include "libpsx.h"
 #else
     #error unsupported compiler
