@@ -38,8 +38,9 @@
 #include <map>
 #include <deque>
 
-#include <stdio.h>      // for snprintf
 #include <ctype.h>      // for tolower
+#include <stdio.h>      // for snprintf
+#include <string.h>     // for strlen
 
 #include "externs.h"
 

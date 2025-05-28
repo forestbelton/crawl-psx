@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <cstring>
 
 #include "AppHdr.h"
 #include "externs.h"
@@ -57,20 +58,13 @@ static struct scorefile_entry hs_list[SCORE_FILE_ENTRIES];
 // highscore printing (always -1 when run from command line).
 static int newest_entry = -1;
 
-#ifdef PSX
-typedef struct {
-} ScoreFile;
-#else
-typedef FILE ScoreFile;
-#endif
-
-static ScoreFile *hs_open(const char *mode);
-static void hs_close(ScoreFile *handle, const char *mode);
-static bool hs_read(ScoreFile *scores, struct scorefile_entry &dest);
+static FILE *hs_open(const char *mode);
+static void hs_close(FILE *handle, const char *mode);
+static bool hs_read(FILE *scores, struct scorefile_entry &dest);
 static void hs_parse_numeric(char *inbuf, struct scorefile_entry &dest);
 static void hs_parse_string(char *inbuf, struct scorefile_entry &dest);
 static void hs_copy(struct scorefile_entry &dest, struct scorefile_entry &src);
-static void hs_write(ScoreFile *scores, struct scorefile_entry &entry);
+static void hs_write(FILE *scores, struct scorefile_entry &entry);
 static void hs_nextstring(char *&inbuf, char *dest);
 static int hs_nextint(char *&inbuf);
 static long hs_nextlong(char *&inbuf);
@@ -90,8 +84,7 @@ static bool unlock_file_handle( FILE *handle );
 
 void hiscores_new_entry( struct scorefile_entry &ne )
 {
-#ifndef PSX
-    ScoreFile *scores;
+    FILE *scores;
     int i, total_entries;
     bool inserted = false;
 
@@ -154,13 +147,11 @@ void hiscores_new_entry( struct scorefile_entry &ne )
 
     // close scorefile.
     hs_close(scores, "w");
-#else
-#endif
 }
 
 void hiscores_print_list( int display_count, int format )
 {
-    ScoreFile *scores;
+    FILE *scores;
     int i, total_entries;
     bool use_printf = (Options.sc_entries > 0);
 
@@ -1179,12 +1170,10 @@ static bool unlock_file_handle( FILE *handle )
 
 
 
-ScoreFile *hs_open( const char *mode )
+FILE *hs_open( const char *mode )
 {
 #ifdef SAVE_DIR_PATH
     FILE *handle = fopen(SAVE_DIR_PATH "scores", mode);
-#elif defined(PSX)
-    ScoreFile *handle = NULL;
 #else
     FILE *handle = fopen("scores", mode);
 #endif
@@ -1204,7 +1193,7 @@ ScoreFile *hs_open( const char *mode )
     return handle;
 }
 
-void hs_close( ScoreFile *handle, const char *mode )
+void hs_close( FILE *handle, const char *mode )
 {
     UNUSED( mode );
 
@@ -1215,11 +1204,8 @@ void hs_close( ScoreFile *handle, const char *mode )
     unlock_file_handle( handle );
 #endif
 
-#ifdef PSX
-#else
     // actually close
     fclose(handle);
-#endif
 
 #ifdef SHARED_FILES_CHMOD_PUBLIC
     if (stricmp(mode, "w") == 0)
@@ -1320,11 +1306,8 @@ void hs_copy(struct scorefile_entry &dest, struct scorefile_entry &src)
     dest.num_runes = src.num_runes;
 }
 
-bool hs_read( ScoreFile *scores, struct scorefile_entry &dest )
+bool hs_read( FILE *scores, struct scorefile_entry &dest )
 {
-#ifdef PSX
-    return false;
-#else
     char inbuf[200];
     int c = EOF;
 
@@ -1357,7 +1340,6 @@ bool hs_read( ScoreFile *scores, struct scorefile_entry &dest )
         hs_parse_string(inbuf, dest);
 
     return true;
-#endif
 }
 
 static void hs_nextstring(char *&inbuf, char *dest)
@@ -1529,10 +1511,8 @@ static void hs_parse_numeric(char *inbuf, struct scorefile_entry &se)
     se.num_runes = hs_nextint(inbuf);
 }
 
-static void hs_write( ScoreFile *scores, struct scorefile_entry &se )
+static void hs_write( FILE *scores, struct scorefile_entry &se )
 {
-#ifdef PSX
-#else
     char buff[80];  // should be more than enough for date stamps
 
     se.version = 4;
@@ -1552,15 +1532,16 @@ static void hs_write( ScoreFile *scores, struct scorefile_entry &se )
              se.str, se.intel, se.dex,
              se.god, se.piety, se.penance, se.wiz_mode );
 
+#ifndef NO_SYSTEM_TIME
     make_date_string( se.birth_time, buff );
     fprintf( scores, ":%s", buff );
 
     make_date_string( se.death_time, buff );
     fprintf( scores, ":%s", buff );
+#endif
 
     fprintf( scores, ":%ld:%ld:%d:%d:\n",
              se.real_time, se.num_turns, se.num_diff_runes, se.num_runes );
-#endif
 }
 // -------------------------------------------------------------------------
 // functions dealing with old-style scorefile entries.

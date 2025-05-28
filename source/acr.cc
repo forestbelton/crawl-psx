@@ -2671,10 +2671,8 @@ static bool initialise(void)
     for (i = 0; i < NUM_STATUE_TYPES; i++)
         Visible_Statue[i] = 0;
 
-#ifndef PSX
     // initialize tag system before we try loading anything!
     tag_init();
-#endif
 
     // sets up a new game:
     bool newc = new_game();

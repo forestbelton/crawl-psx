@@ -1,13 +1,22 @@
 #ifndef LIBPSX_H
 #define LIBPSX_H
 
-// File I/O
+// <stdio.h>
+#define EOF -1
 #define fclose(f)
 #define feof(f) 0
+#define fgetc(f) EOF
+#define fgets(s, size, f) NULL
 #define fopen(path, mode) NULL
+#define fprintf(f, fmt, ...)
 #define fread(ptr, size, nmemb, f) 0
 #define fwrite(data, size, count, f) 0
 #define rewind(f)
+
+// <stdlib.h>
+#define getenv(name) NULL
+
+// <unistd.h>
 #define unlink(path) 0
 
 // NCurses

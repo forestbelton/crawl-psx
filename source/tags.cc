@@ -101,10 +101,6 @@ extern FixedArray < unsigned char, MAX_LEVELS, MAX_BRANCHES > feature;
 extern unsigned char your_sign; /* these two are defined in view.cc */
 extern unsigned char your_colour;
 
-// temp file pairs used for file level cleanup
-FixedArray < bool, MAX_LEVELS, MAX_BRANCHES > tmp_file_pairs;
-
-
 // static helpers
 static void tag_construct_you(struct tagHeader &th);
 static void tag_construct_you_items(struct tagHeader &th);

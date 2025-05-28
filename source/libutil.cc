@@ -12,6 +12,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <cstring>
+#ifndef NO_SYSTEM_TIME
+#include <time.h>
+#endif
 
 void get_input_line( char *const buff, int len )
 {
@@ -98,11 +101,11 @@ int snprintf( char *str, size_t size, const char *format, ... )
 
 int get_random_seed()
 {
-#ifdef PSX
+#ifndef NO_SYSTEM_TIME
+    return time(NULL);
+#else
     // TODO(forest): Derive entropy from somewhere
     return 0;
-#else
-    return time(NULL);
 #endif
 }
 
@@ -113,22 +116,18 @@ void perror(const char *fmt)
 }
 #endif
 
-/* Helper function to check if a character is whitespace */
-static int is_whitespace(char c)
-{
+#ifdef NEED_ISSPACE
+int isspace(int c) {
     return (c == ' ' || c == '\t' || c == '\n' ||
             c == '\r' || c == '\f' || c == '\v');
 }
+#endif
 
-/* Helper function to check if a character is a digit */
-static int is_digit(char c)
-{
-    return (c >= '0' && c <= '9');
+#ifdef NEED_ISDIGIT
+int isdigit(char c) {
+    return c >= '0' && c <= '9';
 }
-
-static int _tolower(int c) {
-    return isupper(c) ? (c - 'A' + 'a') : c;
-}
+#endif
 
 #ifdef NEED_ATOI
 /*
@@ -144,40 +143,33 @@ static int _tolower(int c) {
  * - Returns 0 if no valid conversion possible
  * - No overflow checking (matches standard atoi behavior)
  */
-int atoi(const char *str)
-{
+int atoi(const char *str) {
     int result = 0;
     int sign = 1;
     const char *ptr;
 
     /* Handle null pointer */
-    if (str == 0)
-    {
+    if (str == NULL) {
         return 0;
     }
 
     ptr = str;
 
     /* Skip leading whitespace */
-    while (is_whitespace(*ptr))
-    {
+    while (isspace(*ptr)) {
         ptr++;
     }
 
     /* Handle optional sign */
-    if (*ptr == '-')
-    {
+    if (*ptr == '-') {
         sign = -1;
         ptr++;
-    }
-    else if (*ptr == '+')
-    {
+    } else if (*ptr == '+') {
         ptr++;
     }
 
     /* Convert digits */
-    while (is_digit(*ptr))
-    {
+    while (isdigit(*ptr)) {
         result = result * 10 + (*ptr - '0');
         ptr++;
     }
@@ -200,8 +192,7 @@ int atoi(const char *str)
  * - Returns 0 if no valid conversion possible
  * - No overflow checking (matches standard atoi behavior)
  */
-long atol(const char *str)
-{
+long atol(const char *str) {
     long result = 0;
     long sign = 1;
     const char *ptr;
@@ -215,25 +206,21 @@ long atol(const char *str)
     ptr = str;
 
     /* Skip leading whitespace */
-    while (is_whitespace(*ptr))
-    {
+    while (isspace(*ptr)) {
         ptr++;
     }
 
     /* Handle optional sign */
-    if (*ptr == '-')
-    {
+    if (*ptr == '-') {
         sign = -1;
         ptr++;
     }
-    else if (*ptr == '+')
-    {
+    else if (*ptr == '+') {
         ptr++;
     }
 
     /* Convert digits */
-    while (is_digit(*ptr))
-    {
+    while (isdigit(*ptr)) {
         result = result * 10 + (*ptr - '0');
         ptr++;
     }
@@ -314,11 +301,11 @@ char* itoa(int value, char* str, int base) {
 #ifdef NEED_STRICMP
 int stricmp(const char *s, const char *t) {
     int diff = 0;
-    while (*s && *t && _tolower(*s) == _tolower(*t)) {
+    while (*s && *t && tolower(*s) == tolower(*t)) {
         s++;
         t++;
     }
-    return _tolower(*s) - _tolower(*t);
+    return tolower(*s) - tolower(*t);
 }
 #endif
 
@@ -326,9 +313,15 @@ int stricmp(const char *s, const char *t) {
 char *strlwr(char *s) {
     char *t = s;
     while (*s) {
-        *s = _tolower(*s);
+        *s = tolower(*s);
         s++;
     }
     return t;
+}
+#endif
+
+#ifdef NEED_TOLOWER
+int tolower(int c) {
+    return isupper(c) ? (c - 'A' + 'a') : c;
 }
 #endif

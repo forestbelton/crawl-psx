@@ -203,7 +203,6 @@ static void pick_random_species_and_class( void )
 
 static bool check_saved_game(void)
 {
-#ifndef PSX
     FILE *handle;
     char char_fil[kFileNameSize];
 
@@ -269,7 +268,7 @@ static bool check_saved_game(void)
         fclose(handle);
         return true;
     }
-#endif
+
     return false;
 }
 

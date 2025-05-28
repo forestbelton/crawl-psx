@@ -243,6 +243,7 @@
     #define NEED_PERROR
     #define NEED_STRICMP
     #define NEED_STRLWR
+    #define NEED_TOLOWER
 
     #define NO_SYSTEM_TIME
 

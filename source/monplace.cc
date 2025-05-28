@@ -21,6 +21,8 @@
 #include "stuff.h"
 #include "spells4.h"
 
+#include <string.h>
+
 // NEW place_monster -- note that power should be set to:
 // 51 for abyss
 // 52 for pandemonium

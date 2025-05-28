@@ -46,6 +46,8 @@
 #include "stuff.h"
 #include "view.h"
 
+#include <string.h>
+
 enum DEBRIS                 // jmf: add for shatter, dig, and Giants to throw
 {
     DEBRIS_METAL,           //    0

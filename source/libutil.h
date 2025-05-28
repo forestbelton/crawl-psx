@@ -37,6 +37,14 @@ long atol(const char *s);
 int isalnum(int c);
 #endif
 
+#ifdef NEED_ISDIGIT
+int isdigit(int c);
+#endif
+
+#ifdef NEED_ISSPACE
+int isspace(int c);
+#endif
+
 #ifdef NEED_ISUPPER
 int isupper(int c);
 #endif
@@ -51,6 +59,10 @@ int stricmp(const char *s, const char *t);
 
 #ifdef NEED_STRLWR
 char *strlwr(char *s);
+#endif
+
+#ifdef NEED_TOLOWER
+int tolower(int c);
 #endif
 
 int get_random_seed(void);
