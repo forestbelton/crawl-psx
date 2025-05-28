@@ -258,7 +258,6 @@ liblinux.o: liblinux.h defines.h enum.h externs.h
 liblinux.o: FixAry.h FixVec.h
 liblinux.o: debug.h message.h
 libutil.o: AppHdr.h libutil.h
-log.o: log.h
 macro.o: AppHdr.h libutil.h macro.h
 macro.o: externs.h
 macro.o: defines.h enum.h FixAry.h FixVec.h debug.h

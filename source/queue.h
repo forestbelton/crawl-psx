@@ -1,6 +1,13 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#ifndef NEED_QUEUE
+#include <queue>
+
+typedef std::queue queue;
+
+#else
+
 #include <cassert>
 #include <cstddef>
 #include <type_traits>
@@ -120,5 +127,7 @@ public:
         head = tail = 0;
     }
 };
+
+#endif
 
 #endif
