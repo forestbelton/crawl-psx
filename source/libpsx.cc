@@ -6,4 +6,5 @@ void delay(int ms) {
 
 void exit(int code) {
     // TODO(forest)
+    for (;;);
 }

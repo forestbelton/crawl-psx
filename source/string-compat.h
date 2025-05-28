@@ -2,9 +2,11 @@
 #define STRING_COMPAT_H
 
 #ifdef PSX
-#include "etl/string.h"
-
-typedef etl::string<255> string;
+// #include "etl_profile.h"
+// #include "etl/string.h"
+// typedef etl::string<255> string;
+#include "stack-string.h"
+typedef stack_string<255> string;
 #else
 #include <string>
 

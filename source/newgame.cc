@@ -1918,7 +1918,7 @@ void enterPlayerName(bool blankOK)
         {
             textcolor( CYAN );
             if (blankOK && first_time)
-                cprintf(EOL "Press <Enter> to answer this after race and class are chosen."EOL);
+                cprintf(EOL "Press <Enter> to answer this after race and class are chosen." EOL);
 
             first_time = false;
 

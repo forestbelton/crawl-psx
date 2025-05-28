@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include "externs.h"
 
+#ifndef PSX
+
 // last updated 22jan2001 {gdl}
 /* ***********************************************************************
  * called from: files tags
@@ -95,5 +97,7 @@ void tag_missing(int tag, char minorVersion);
  * called from: files
  * *********************************************************************** */
 int tag_read(FILE *fp, char minorVersion);
+
+#endif
 
 #endif // TAGS_H

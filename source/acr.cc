@@ -236,11 +236,7 @@ int main( int argc, char *argv[] )
         puts("  -scores [N]      highscore list");
         puts("  -tscores [N]     terse highscore list");
         puts("  -vscores [N]     verbose highscore list");
-#ifdef PSX
-        for(;;);
-#else
         exit(1);
-#endif
     }
 
     // Read the init file
@@ -253,11 +249,7 @@ int main( int argc, char *argv[] )
     {
         printf( " Best Crawlers -" EOL );
         hiscores_print_list( Options.sc_entries, Options.sc_format );
-#ifdef PSX
-        for(;;);
-#else
         exit(0);
-#endif
     }
 
 #ifdef LINUX
@@ -2679,8 +2671,10 @@ static bool initialise(void)
     for (i = 0; i < NUM_STATUE_TYPES; i++)
         Visible_Statue[i] = 0;
 
+#ifndef PSX
     // initialize tag system before we try loading anything!
     tag_init();
+#endif
 
     // sets up a new game:
     bool newc = new_game();

@@ -17,6 +17,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "externs.h"
 #include "itemname.h"
@@ -647,7 +648,6 @@ struct unrandart_entry
 
 static struct unrandart_entry unranddata[] = {
 #include "unrand.h"
-#include <stdlib.h>
 };
 
 char *art_n;
