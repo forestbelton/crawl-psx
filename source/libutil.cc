@@ -324,9 +324,11 @@ int stricmp(const char *s, const char *t) {
 
 #ifdef NEED_STRLWR
 char *strlwr(char *s) {
+    char *t = s;
     while (*s) {
         *s = _tolower(*s);
         s++;
     }
+    return t;
 }
 #endif

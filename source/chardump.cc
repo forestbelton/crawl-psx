@@ -19,7 +19,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#ifndef PSX
 #include <fcntl.h>
+#endif
 #include <stdlib.h>
 #if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__) || defined(PSX))
 #include <unistd.h>
@@ -66,9 +68,9 @@
 
  // fillstring() is a hack to get around a missing constructor in
  // Borland C++ implementation of the STD basic_string.   Argh!!!
-static std::string fillstring(size_t strlen, char filler)
+static string fillstring(size_t strlen, char filler)
 {
-    std::string s;
+    string s;
 
     for (size_t i=0; i<strlen; i++)
         s += filler;
@@ -87,11 +89,13 @@ static std::string fillstring(size_t strlen, char filler)
  //  macro, which is of uncertain length (well, that and I didn't know how
  //  to do it any better at the time) (LH)
  //---------------------------------------------------------------
-static std::string munge_description(const std::string & inStr)
+static string munge_description(const string & inStr)
 {
-    std::string outStr;
+    string outStr;
 
+#ifndef PSX
     outStr.reserve(inStr.length() + 32);
+#endif
 
     const long kIndent = 3;
     long lineLen = kIndent;
@@ -132,7 +136,7 @@ static std::string munge_description(const std::string & inStr)
         }
         else
         {
-            std::string word;
+            string word;
 
             while (i < (long) inStr.length()
                    && lineLen + (long) word.length() < 79
@@ -163,7 +167,7 @@ static std::string munge_description(const std::string & inStr)
  // dump_stats
  //
  //---------------------------------------------------------------
-static void dump_stats( std::string & text )
+static void dump_stats( string & text )
 {
     char st_prn[20];
 
@@ -184,8 +188,11 @@ static void dump_stats( std::string & text )
     text += ")";
     text += EOL EOL;
 
+#ifndef PSX
     if (you.real_time != -1)
     {
+#endif
+#ifndef NO_SYSTEM_TIME
         const time_t curr = you.real_time + (time(NULL) - you.start_time);
         char buff[200];
 
@@ -193,12 +200,15 @@ static void dump_stats( std::string & text )
 
         text += "Play time: ";
         text += buff;
+#endif
 
         text += "       Number of turns: ";
         itoa( you.num_turns, st_prn, 10 );
         text += st_prn;
         text += EOL EOL;
+#ifndef PSX
     }
+#endif
 
     text += "Experience : ";
     itoa(you.experience_level, st_prn, 10);
@@ -302,7 +312,7 @@ static void dump_stats( std::string & text )
  // dump_location
  //
  //---------------------------------------------------------------
-static void dump_location( std::string & text )
+static void dump_location( string & text )
 {
     if (you.level_type != LEVEL_DUNGEON || you.your_level != -1)
         text += "You are ";
@@ -376,7 +386,7 @@ static void dump_location( std::string & text )
  // dump_religion
  //
  //---------------------------------------------------------------
-static void dump_religion( std::string & text )
+static void dump_religion( string & text )
 {
     if (you.religion != GOD_NO_GOD)
     {
@@ -416,12 +426,12 @@ static void dump_religion( std::string & text )
  // dump_inventory
  //
  //---------------------------------------------------------------
-static void dump_inventory( std::string & text, bool show_prices )
+static void dump_inventory( string & text, bool show_prices )
 {
     int i, j;
     char temp_id[4][50];
 
-    std::string text2;
+    string text2;
 
     for (i = 0; i < 4; i++)
     {
@@ -533,7 +543,7 @@ static void dump_inventory( std::string & text, bool show_prices )
 // dump_skills
 //
 //---------------------------------------------------------------
-static void dump_skills( std::string & text )
+static void dump_skills( string & text )
 {
     char tmp_quant[20];
 
@@ -568,9 +578,9 @@ static void dump_skills( std::string & text )
 // Return string of the i-th spell type, with slash if required
 //
 //---------------------------------------------------------------
-static std::string spell_type_name(int spell_class, bool slash)
+static string spell_type_name(int spell_class, bool slash)
 {
-    std::string ret;
+    string ret;
 
     if (slash)
         ret = "/";
@@ -585,7 +595,7 @@ static std::string spell_type_name(int spell_class, bool slash)
 // dump_spells
 //
 //---------------------------------------------------------------
-static void dump_spells( std::string & text )
+static void dump_spells( string & text )
 {
     char tmp_quant[20];
 
@@ -644,7 +654,7 @@ static void dump_spells( std::string & text )
 
             if (spell != SPELL_NO_SPELL)
             {
-                std::string spell_line = " ";
+                string spell_line = " ";
 
                 char strng[2];
                 strng[0] = letter;
@@ -709,7 +719,7 @@ static void dump_spells( std::string & text )
 // dump_mutations
 //
 //---------------------------------------------------------------
-static void dump_mutations( std::string & text )
+static void dump_mutations( string & text )
 {
     // Can't use how_mutated() here, as it doesn't count demonic powers
     int xz = 0;
@@ -761,10 +771,12 @@ bool dump_char( const char fname[30], bool show_prices )  // $$$ a try block?
 {
     bool succeeded = false;
 
-    std::string text;
+    string text;
 
+#ifndef PSX
     // start with enough room for 100 80 character lines
     text.reserve(100 * 80);
+#endif
 
     text += " Dungeon Crawl version " VERSION " character file.";
     text += EOL;
@@ -869,7 +881,7 @@ bool dump_char( const char fname[30], bool show_prices )  // $$$ a try block?
         size_t begin = 0;
         size_t end = text.find(EOL);
 
-        while (end != std::string::npos)
+        while (end != string::npos)
         {
             end += strlen(EOL);
 

@@ -499,7 +499,7 @@ void wield_effects(int item_wield_2, bool showMsgs)
 // something legit.
 //
 //---------------------------------------------------------------
-bool armour_prompt( const std::string & mesg, int *index )
+bool armour_prompt( const string & mesg, int *index )
 {
     ASSERT(index != NULL);
 

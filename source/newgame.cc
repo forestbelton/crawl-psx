@@ -1438,8 +1438,8 @@ void init_player(void)
 
 #ifndef NO_SYSTEM_TIME
     you.birth_time = time( NULL );
-#endif
     you.real_time = 0;
+#endif
     you.num_turns = 0;
 
 #ifdef WIZARD

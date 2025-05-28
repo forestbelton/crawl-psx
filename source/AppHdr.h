@@ -246,6 +246,8 @@
 
     #define NO_SYSTEM_TIME
 
+    #define FILE void
+
     #include <string.h>
     #include "libpsx.h"
 #else
@@ -323,7 +325,9 @@
 // #define SHUT_LABYRINTH
 
 // Define USE_MACRO if you want to use the macro patch in macro.cc.
+#ifndef PSX
 #define USE_MACROS
+#endif
 
 // Set this to the number of runes that will be required to enter Zot's
 // domain.  You shouldn't set this really high unless you want to

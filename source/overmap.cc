@@ -425,11 +425,7 @@ void seen_staircase( unsigned char which_staircase )
         which_branch = BRANCH_SWAMP;
         break;
     default:
-#ifndef PSX
         exit(-1);               // shouldn't happen
-#else
-        // TODO(forest)
-#endif
     }
 
     stair_level[which_branch] = you.your_level;

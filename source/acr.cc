@@ -53,7 +53,9 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
+#ifndef PSX
 #include <fcntl.h>
+#endif
 #include <stdio.h>
 
 #ifdef DOS

@@ -2439,7 +2439,7 @@ static string describe_jewellery( const item_def &item, char verbose)
 
 #ifndef PSX
     description.reserve(200);
-#endif PSX
+#endif
 
     if (is_unrandom_artefact( item ) && strlen(unrandart_descrip(1, item)) != 0)
     {
@@ -2791,8 +2791,12 @@ static string describe_staff( const item_def &item )
     if (item_ident( item, ISFLAG_KNOW_TYPE ))
     {
         // NB: the leading space is here {dlb}
-        description += "This " + string( item_is_staff( item ) ? "staff "
-                                                                    : "rod " );
+        description += "This ";
+        if (item_is_staff(item)) {
+            description += "staff ";
+        } else {
+            description += "rod ";
+        }
 
         switch (item.sub_type)
         {
@@ -6199,11 +6203,17 @@ static void print_god_abil_desc( int abil )
 {
     const ability_def &abil_info = get_ability_def( abil );
 
-    const string cost = "(" + make_cost_description( abil_info ) + ")";
+    string cost = "(";
+    cost += make_cost_description(abil_info);
+    cost += ")";
+
+    // const string cost = "(" + make_cost_description( abil_info ) + ")";
 
     // Produce a 79 character string with cost right justified:
     string str( abil_info.name );
-    str += string( 79 - str.length() - cost.length(), ' ' ) + cost + EOL;
+    str += string( 79 - str.length() - cost.length(), ' ' );
+    str += cost;
+    str += EOL;
 
     cprintf( str.c_str() );
 }

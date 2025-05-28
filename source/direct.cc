@@ -368,9 +368,11 @@ void look_around(struct dist &moves, bool justLooking, int first_move, int mode)
                         break;
 
                     case '-':
-                        if (mons_find( cx, cy, monsfind_pos, -1, mode ) == 0)
+                        if (mons_find( cx, cy, monsfind_pos, -1, mode ) == 0) {
+#ifdef USE_MACROS
                             flush_input_buffer( FLUSH_ON_FAILURE );
-                        else
+#endif
+                        } else
                         {
                             newcx = monsfind_pos[0];
                             newcy = monsfind_pos[1];
@@ -380,8 +382,11 @@ void look_around(struct dist &moves, bool justLooking, int first_move, int mode)
 
                     case '+':
                     case '=':
-                        if (mons_find( cx, cy, monsfind_pos, 1, mode ) == 0)
+                        if (mons_find( cx, cy, monsfind_pos, 1, mode ) == 0) {
+#ifdef USE_MACROS
                             flush_input_buffer( FLUSH_ON_FAILURE );
+#endif
+                        }
                         else
                         {
                             newcx = monsfind_pos[0];

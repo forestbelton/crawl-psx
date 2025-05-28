@@ -16,11 +16,12 @@
 
 
 #include "externs.h"
+#include "string-compat.h"
 
 
 struct SBeam
 {
-    char       *name;
+    string      name;
     int         colour;
     int         range;
     int         rangeMax;

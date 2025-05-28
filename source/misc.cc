@@ -15,7 +15,7 @@
 #include "misc.h"
 
 #include <string.h>
-#if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__))
+#if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__) || defined(PSX))
 #include <unistd.h>
 #endif
 #include <stdlib.h>

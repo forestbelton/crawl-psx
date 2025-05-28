@@ -333,7 +333,11 @@ void read_init_file(void)
     for (int i = 0; i < NUM_MESSAGE_CHANNELS; i++)
         Options.channels[i] = MSGCOL_DEFAULT;
 
+#ifndef PSX
     FILE *f;
+#else
+    return;
+#endif
     char s[255];
     unsigned int line = 0;
     int j;
@@ -341,6 +345,7 @@ void read_init_file(void)
 
     you.your_name[0] = '\0';
 
+#ifndef PSX
     if (SysEnv.crawl_rc)
     {
         f = fopen(SysEnv.crawl_rc, "r");
@@ -373,13 +378,21 @@ void read_init_file(void)
     {
         f = fopen("init.txt", "r");
     }
+#endif
 
+#ifndef PSX
     if (f == NULL)
         return;
+
 
     while (!feof(f))
     {
         fgets(s, 255, f);
+#else
+    // Not going to run anyways due to NULL check above
+    while (true)
+    {
+#endif
 
         line++;
 
@@ -465,7 +478,7 @@ void read_init_file(void)
                     Options.autopickups |= (1L << j);
                 else
                 {
-                    fprintf( stderr, "Bad object type '%c' for autopickup.\n",
+                    printf( "Bad object type '%c' for autopickup.\n",
                              type );
                 }
             }
@@ -531,7 +544,7 @@ void read_init_file(void)
                 Options.colour[orig_col] = result_col;
             else
             {
-                fprintf( stderr, "Bad colour -- %s=%d or %s=%d\n",
+                printf( "Bad colour -- %s=%d or %s=%d\n",
                          subkey.c_str(), orig_col, field.c_str(), result_col );
             }
         }
@@ -543,9 +556,9 @@ void read_init_file(void)
             if (chnl != -1 && col != -1)
                 Options.channels[chnl] = col;
             else if (chnl == -1)
-                fprintf( stderr, "Bad channel -- %s\n", subkey.c_str() );
+                printf( "Bad channel -- %s\n", subkey.c_str() );
             else if (col == -1)
-                fprintf( stderr, "Bad colour -- %s\n", field.c_str() );
+                printf( "Bad colour -- %s\n", field.c_str() );
         }
         else if (key == "background")
         {
@@ -556,7 +569,7 @@ void read_init_file(void)
             if (col != -1)
                 Options.background = col;
             else
-                fprintf( stderr, "Bad colour -- %s\n", field.c_str() );
+                printf( "Bad colour -- %s\n", field.c_str() );
 
         }
 #ifdef USE_COLOUR_OPTS
@@ -638,7 +651,7 @@ void read_init_file(void)
                 Options.fire_items_start = letter_to_index( field[0] );
             else
             {
-                fprintf( stderr, "Bad fire item start index -- %s\n",
+                printf( "Bad fire item start index -- %s\n",
                          field.c_str() );
             }
         }
@@ -657,7 +670,7 @@ void read_init_file(void)
             if (Options.hp_warning < 0 || Options.hp_warning > 100)
             {
                 Options.hp_warning = 0;
-                fprintf( stderr, "Bad HP warning percentage -- %s\n",
+                printf( "Bad HP warning percentage -- %s\n",
                          field.c_str() );
             }
         }
@@ -667,7 +680,7 @@ void read_init_file(void)
             if (Options.hp_attention < 0 || Options.hp_attention > 100)
             {
                 Options.hp_attention = 0;
-                fprintf( stderr, "Bad HP attention percentage -- %s\n",
+                printf( "Bad HP attention percentage -- %s\n",
                          field.c_str() );
             }
         }
@@ -689,14 +702,14 @@ void read_init_file(void)
             Options.race = str_to_race( field );
 
             if (Options.race == '\0')
-                fprintf( stderr, "Unknown race choice: %s\n", field.c_str() );
+                printf( "Unknown race choice: %s\n", field.c_str() );
         }
         else if (key == "class")
         {
             Options.cls = str_to_class( field );
 
             if (Options.cls == '\0')
-                fprintf( stderr, "Unknown class choice: %s\n", field.c_str() );
+                printf( "Unknown class choice: %s\n", field.c_str() );
         }
         else if (key == "auto_list")
         {
@@ -749,11 +762,14 @@ void read_init_file(void)
         }
     }
 
+#ifndef PSX
     fclose(f);
+#endif
 }                               // end read_init_file()
 
 void get_system_environment(void)
 {
+#ifndef PSX
     // The player's name
     SysEnv.crawl_name = getenv("CRAWL_NAME");
 
@@ -773,6 +789,8 @@ void get_system_environment(void)
 #ifdef MULTIUSER
     // The user's home directory (used to look for ~/.crawlrc file)
     SysEnv.home = getenv("HOME");
+#endif
+
 #endif
 }                               // end get_system_environment()
 

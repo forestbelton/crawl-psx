@@ -2,5 +2,6 @@
 #define ETL_PROFILE_H
 
 #define ETL_NO_STL
+#define ETL_HAS_STRING_TRUNCATION_CHECKS 0
 
 #endif

@@ -17,7 +17,7 @@
 #include "AppHdr.h"
 #include "mstuff2.h"
 
-#include <string>
+#include "string-compat.h"
 #include <string.h>
 #include <stdio.h>
 
