@@ -1,9 +1,3 @@
 {
-    "editor.formatOnSave": false,
-    "files.associations": {
-        "limits": "cpp",
-        "cstdio": "cpp",
-        "typeinfo": "cpp",
-        "atomic": "cpp"
-    }
+    "editor.formatOnSave": false
 }

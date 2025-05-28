@@ -93,9 +93,7 @@ static string munge_description(const string & inStr)
 {
     string outStr;
 
-#ifndef PSX
     outStr.reserve(inStr.length() + 32);
-#endif
 
     const long kIndent = 3;
     long lineLen = kIndent;
@@ -773,10 +771,8 @@ bool dump_char( const char fname[30], bool show_prices )  // $$$ a try block?
 
     string text;
 
-#ifndef PSX
     // start with enough room for 100 80 character lines
     text.reserve(100 * 80);
-#endif
 
     text += " Dungeon Crawl version " VERSION " character file.";
     text += EOL;

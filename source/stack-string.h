@@ -440,6 +440,9 @@ public:
         size_type actual_len = (len == npos || pos + len > size_) ? size_ - pos : len;
         return stack_string(data_ + pos, actual_len);
     }
+
+    void reserve(size_type len) const {
+    }
     
     // Operators
     stack_string& operator+=(const stack_string& other) {

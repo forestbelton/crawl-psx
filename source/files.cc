@@ -313,10 +313,8 @@ void load( unsigned char stair_taken, int load_mode, bool was_a_labyrinth,
     {
         if (tmp_file_pairs[you.your_level][you.where_are_you] == false)
         {
-#ifndef PSX
             // make sure old file is gone
             unlink(cha_fil);
-#endif
 
             // save the information for later deletion -- DML 6/11/99
             tmp_file_pairs[you.your_level][you.where_are_you] = true;
@@ -439,12 +437,8 @@ void load( unsigned char stair_taken, int load_mode, bool was_a_labyrinth,
     strupr(cha_fil);
 #endif
 
-#ifndef PSX
     // Try to open level savefile.
     FILE *levelFile = fopen(cha_fil, "rb");
-#else
-    void *levelFile = NULL;
-#endif
 
     // GENERATE new level when the file can't be opened:
     if (levelFile == NULL)
@@ -465,7 +459,6 @@ void load( unsigned char stair_taken, int load_mode, bool was_a_labyrinth,
     }
     else
     {
-#ifndef PSX
         // BEGIN -- must load the old level : pre-load tasks
 
         // LOAD various tags
@@ -493,7 +486,6 @@ void load( unsigned char stair_taken, int load_mode, bool was_a_labyrinth,
         // POST-LOAD tasks :
         link_items();
         redraw_all();
-#endif
     }
 
     // closes all the gates if you're on the way out
@@ -875,7 +867,6 @@ found_stair:
 
 void save_level(int level_saved, bool was_a_labyrinth, char where_were_you)
 {
-#ifndef PSX
     char cha_fil[kFileNameSize];
 
     make_filename( cha_fil, you.your_name, level_saved, where_were_you,
@@ -914,8 +905,6 @@ void save_level(int level_saved, bool was_a_labyrinth, char where_were_you)
 
 #ifdef SHARED_FILES_CHMOD_PRIVATE
     chmod(cha_fil, SHARED_FILES_CHMOD_PRIVATE);
-#endif
-
 #endif
 }                               // end save_level()
 
@@ -1159,7 +1148,6 @@ void restore_game(void)
 static bool determine_version( FILE *restoreFile,
                                char &majorVersion, char &minorVersion )
 {
-#ifndef PSX
     // read first two bytes.
     char buf[2];
     if (read2(restoreFile, buf, 2) != 2)
@@ -1180,7 +1168,6 @@ static bool determine_version( FILE *restoreFile,
 
     if (majorVersion == 1 || majorVersion == 4)
         return true;
-#endif
 
     return false;   // if its not 1 or 4, no idea!
 }

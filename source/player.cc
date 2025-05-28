@@ -25,9 +25,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#ifndef PSX
-#include <math.h>
-#endif
 #include <ctype.h>
 
 #include "externs.h"

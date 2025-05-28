@@ -19,7 +19,6 @@
 void get_input_line( char *const buff, int len )
 {
     buff[0] = '\0';         // just in case
-#ifndef PSX
 
 #if defined(LINUX)
     get_input_line_from_curses( buff, len ); // inplemented in liblinux.cc
@@ -45,7 +44,6 @@ void get_input_line( char *const buff, int len )
             break;
     }
 
-#endif
 }
 
 // The old school way of doing short delays via low level I/O sync.

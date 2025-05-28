@@ -684,9 +684,7 @@ static string describe_weapon( const item_def &item, char verbose)
 {
     string description;
 
-#ifndef PSX
     description.reserve(200);
-#endif
 
     description = "";
 
@@ -1268,9 +1266,7 @@ static string describe_ammo( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(64);
-#endif
 
     switch (item.sub_type)
     {
@@ -1336,9 +1332,7 @@ static string describe_armour( const item_def &item, char verbose )
 {
     string description;
 
-#ifndef PSX
     description.reserve(200);
-#endif
 
     if (is_unrandom_artefact( item )
         && strlen(unrandart_descrip(1, item)) != 0)
@@ -1704,9 +1698,7 @@ static string describe_stick( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(64);
-#endif
 
     if (get_ident_type( OBJ_WANDS, item.sub_type ) != ID_KNOWN_TYPE)
         description += "A stick. Maybe it's magical. ";
@@ -1824,9 +1816,7 @@ static string describe_food( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(100);
-#endif
 
     switch (item.sub_type)
     {
@@ -2044,9 +2034,7 @@ static string describe_potion( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(64);
-#endif
 
     if (get_ident_type( OBJ_POTIONS, item.sub_type ) != ID_KNOWN_TYPE)
         description += "A small bottle of liquid.";
@@ -2273,9 +2261,7 @@ static string describe_scroll( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(64);
-#endif
 
     if (get_ident_type( OBJ_SCROLLS, item.sub_type ) != ID_KNOWN_TYPE)
         description += "A scroll of paper covered in magical writing.";
@@ -2438,9 +2424,7 @@ static string describe_jewellery( const item_def &item, char verbose)
 {
     string description;
 
-#ifndef PSX
     description.reserve(200);
-#endif
 
     if (is_unrandom_artefact( item ) && strlen(unrandart_descrip(1, item)) != 0)
     {
@@ -2785,9 +2769,7 @@ static string describe_staff( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(200);
-#endif
 
     if (item_ident( item, ISFLAG_KNOW_TYPE ))
     {
@@ -2942,9 +2924,7 @@ static string describe_misc_item( const item_def &item )
 {
     string description;
 
-#ifndef PSX
     description.reserve(100);
-#endif
 
     if (item_ident( item, ISFLAG_KNOW_TYPE ))
     {
@@ -3160,9 +3140,7 @@ bool is_dumpable_artifact( const item_def &item, char verbose)
 string get_item_description( const item_def &item, char verbose, bool dump )
 {
     string description;
-#ifndef PSX
     description.reserve(500);
-#endif
 
     if (!dump)
     {
@@ -3332,9 +3310,7 @@ void describe_spell(int spelled)
 {
     string description;
 
-#ifndef PSX
     description.reserve(500);
-#endif
 
 #ifdef DOS_TERM
     char buffer[3400];
@@ -4449,9 +4425,7 @@ void describe_monsters(int class_described, unsigned char which_mons)
 {
     string description;
 
-#ifndef PSX
     description.reserve(200);
-#endif
 
 #ifdef DOS_TERM
     char buffer[3400];
