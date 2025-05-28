@@ -269,11 +269,7 @@ void end(int end_arg)
     deinit_libw32c();
 #endif
 
-#ifdef PSX
-    // TODO(forest)
-#else
     exit(end_arg);
-#endif
 }
 
 void redraw_screen(void)

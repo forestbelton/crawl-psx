@@ -1,6 +1,8 @@
 #ifndef STRING_COMPAT_H
 #define STRING_COMPAT_H
 
+#include <cstring>
+
 #ifdef PSX
 // #include "etl_profile.h"
 // #include "etl/string.h"

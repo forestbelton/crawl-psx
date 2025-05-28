@@ -18,11 +18,10 @@
 
 #include "AppHdr.h"
 #include "describe.h"
-#include "string-compat.h"
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
+#include "string-compat.h"
 
 #ifdef DOS
 #include <conio.h>

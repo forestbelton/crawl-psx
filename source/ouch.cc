@@ -53,8 +53,7 @@
 
 #if defined(OS9)
 #include <stat.h>
-#elif defined(PSX)
-#else
+#elif !defined(PSX)
 #include <sys/stat.h>
 #endif
 
@@ -893,9 +892,6 @@ void ouch( int dam, int death_source, char death_type, const char *aux )
 
 void end_game( struct scorefile_entry &se )
 {
-#ifdef PSX
-    return;
-#else
     int i;
     char del_file[300];         // massive overkill!
     bool dead = true;
@@ -1004,5 +1000,4 @@ void end_game( struct scorefile_entry &se )
     // just to pause, actual value returned does not matter {dlb}
     get_ch();
     end(0);
-#endif
 }

@@ -46,7 +46,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(OS9)
+#ifdef OS9
 #include <stat.h>
 #elif defined(PSX)
 #else

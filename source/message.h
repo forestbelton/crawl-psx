@@ -12,12 +12,14 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
+#include "string-compat.h"
+
 #include "externs.h"
 
 struct message_item {
     int                 channel;        // message channel
     int                 param;          // param for channel (god, enchantment)
-    const char         *text;           // text of message
+    string              text;           // text of message
 };
 
 

@@ -15,8 +15,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <cstring>
 #include <ctype.h>
+#include "string-compat.h"
 
 #include "externs.h"
 #include "defines.h"

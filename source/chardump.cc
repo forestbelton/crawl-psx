@@ -32,7 +32,7 @@
 #include <sys/types.h>
 #endif
 
-#if defined(OS9)
+#ifdef OS9
 #include <stat.h>
 #elif defined(PSX)
 #else

@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <cstring>
+#include "string-compat.h"
 
 #include "AppHdr.h"
 #include "externs.h"
