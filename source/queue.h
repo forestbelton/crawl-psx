@@ -4,7 +4,7 @@
 #ifndef NEED_QUEUE
 #include <queue>
 
-typedef std::queue queue;
+template<typename T> using queue = std::queue<T>;
 
 #else
 
@@ -13,7 +13,7 @@ typedef std::queue queue;
 #include <type_traits>
 
 template <typename T, size_t Capacity>
-class queue
+class array_queue
 {
 private:
     static_assert(Capacity > 0, "Queue capacity must be greater than 0");
@@ -34,10 +34,10 @@ public:
     using const_reference = const T &;
 
     // Default constructor
-    queue() = default;
+    array_queue() = default;
 
     // Copy constructor
-    queue(const queue &other) : head(other.head), tail(other.tail)
+    array_queue(const array_queue &other) : head(other.head), tail(other.tail)
     {
         for (size_t i = 0; i < (Capacity + 1); ++i)
         {
@@ -49,7 +49,7 @@ public:
     }
 
     // Destructor
-    ~queue() = default;
+    ~array_queue() = default;
 
     // Element access
     reference front()
@@ -127,6 +127,8 @@ public:
         head = tail = 0;
     }
 };
+
+template<typename T> using queue = array_queue<T, 50>;
 
 #endif
 

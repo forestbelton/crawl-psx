@@ -232,6 +232,9 @@
     #define getstr(X,Y)         getConsoleString(X,Y)
 
 #elif defined(PSX)
+    #define PLAIN_TERM
+    #define USE_ASCII_CHARACTERS
+
     #define EOL "\n"
 
     #define NEED_ATOI

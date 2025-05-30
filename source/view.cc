@@ -92,6 +92,8 @@ int get_number_of_lines(void)
     return (get_number_of_lines_from_curses());
 #elif MAC
     return (MAC_NUMBER_OF_LINES);
+#elif defined(PSX)
+    return 240 / 8 - 2;
 #else
     return (25);
 #endif

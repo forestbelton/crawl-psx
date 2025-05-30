@@ -11,7 +11,7 @@ project(
 	HOMEPAGE_URL "https://github.com/forestbelton/crawl-psx"
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -g -ggdb")
 set(CXXFILES
     source/abl-show.cc
     source/abyss.cc

@@ -280,7 +280,7 @@ struct player
 
   char is_undead;                     // see UNDEAD_STATES in enum.h
 
-  queue<delay_queue_item, 50> delay_queue;      // pending actions
+  queue<delay_queue_item> delay_queue;      // pending actions
 
   FixedVector<unsigned char, 50>  skills;
   FixedVector<unsigned char, 50>  practise_skill;

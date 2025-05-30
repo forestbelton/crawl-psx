@@ -1,6 +1,7 @@
 build/
 
 crawl
+crawl.log
 *.o
 
 scores

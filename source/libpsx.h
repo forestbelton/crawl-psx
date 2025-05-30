@@ -21,17 +21,25 @@
 
 // NCurses
 #define _setcursortype(ty)
-#define gotoxy(x,y)
-#define textcolor(col)
-#define cprintf(fmt,...)
+
+void cprintf(const char *format, ...);
+
 #define clrscr()
-#define wherex() 0
-#define wherey() 0
 #define getch() 0
-#define putch(ch)
-#define textbackground(n)
 #define window(x,y,w,h)
 #define kbhit() 0
+
+extern void gotoxy(int x, int y);
+
+extern void putch(unsigned char ch);
+
+extern void textcolor(int col);
+
+extern void textbackground(int col);
+
+extern int wherex();
+
+extern int wherey();
 
 // tags.cc
 #define write2(f, buffer, count) 0
@@ -57,6 +65,11 @@
 
 // actual things we plan to implement
 void delay(int ms);
+
 void exit(int code);
+
+void init_psx(void);
+
+void update_psx(void);
 
 #endif

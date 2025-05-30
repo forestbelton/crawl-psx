@@ -47,6 +47,7 @@
 
 #include "AppHdr.h"
 #include "newgame.h"
+#include "log.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -295,6 +296,8 @@ bool new_game(void)
         strncpy( you.your_name, SysEnv.crawl_name, kNameLen );
         you.your_name[ kNameLen - 1 ] = '\0';
     }
+
+    log("name: %s\n", you.your_name);
 
     openingScreen();
     enterPlayerName(true);

@@ -37,6 +37,7 @@
 #include "AppHdr.h"
 
 #include "string-compat.h"
+#include "log.h"
 
 // I don't seem to need values.h for VACPP..
 #if !defined(__IBMCPP__) && !defined(MAC)
@@ -201,6 +202,8 @@ static void open_door(char move_x, char move_y);
 */
 int main( int argc, char *argv[] )
 {
+    init_psx();
+
 #ifdef USE_ASCII_CHARACTERS
     // Default to the non-ibm set when it makes sense.
     viewwindow = &viewwindow3;
@@ -213,9 +216,12 @@ int main( int argc, char *argv[] )
     mapch2 = &mapchar2;
 #endif
 
+    log_init();
+
     // Load in the system environment variables
     get_system_environment();
 
+#ifndef PSX
     // parse command line args -- look only for initfile & crawl_dir entries
     if (!parse_args(argc, argv, true))
     {
@@ -238,12 +244,15 @@ int main( int argc, char *argv[] )
         puts("  -vscores [N]     verbose highscore list");
         exit(1);
     }
+#endif
 
     // Read the init file
     read_init_file();
 
+#ifndef PSX
     // now parse the args again, looking for everything else.
     parse_args( argc, argv, false );
+#endif
 
     if (Options.sc_entries > 0)
     {
@@ -263,6 +272,17 @@ int main( int argc, char *argv[] )
 #ifdef WIN32CONSOLE
     init_libw32c();
 #endif
+
+#ifdef PSX
+    //init_psx();
+#endif
+
+    strncpy(you.your_name, "case", kNameLen);
+    you.your_name[kNameLen - 1] = 0;
+
+    Options.race = 'a';
+    Options.cls = 'a';
+    Options.weapon = WPN_SHORT_SWORD;
 
 #ifdef USE_MACROS
     // Load macros
@@ -349,6 +369,9 @@ int main( int argc, char *argv[] )
     while (true)
     {
         input();
+#ifdef PSX
+        update_psx();
+#endif
         //      cprintf("x");
     }
 

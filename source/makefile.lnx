@@ -8,6 +8,7 @@ GAME = crawl
 include makefile.obj
 
 OBJECTS += liblinux.o
+OBJECTS += log.o
 
 # CXX = /usr/local/bin/g++
 CXX = g++

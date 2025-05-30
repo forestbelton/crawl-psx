@@ -867,6 +867,12 @@ found_stair:
 
 void save_level(int level_saved, bool was_a_labyrinth, char where_were_you)
 {
+#ifdef PSX
+    // Obviously can't write anything on PSX... maybe a candidate to shove into
+    // the memory card at some point.
+    return;
+#endif
+
     char cha_fil[kFileNameSize];
 
     make_filename( cha_fil, you.your_name, level_saved, where_were_you,
