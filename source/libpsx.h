@@ -1,8 +1,24 @@
 #ifndef LIBPSX_H
 #define LIBPSX_H
 
+// Width of screen in pixels
+#define PSX_SCREEN_WIDTH_PX 640
+
+// Height of screen in pixels
+#define PSX_SCREEN_HEIGHT_PX 240
+
+// Width of screen in characters
+#define PSX_TEXT_COLS (PSX_SCREEN_WIDTH_PX / 8)
+
+// Height of screen in characters
+#define PSX_TEXT_LINES (PSX_SCREEN_HEIGHT_PX / 8 - 2)
+
+//
+// STUBS
+//
+
 // <stdio.h>
-#define EOF -1
+#define EOF (-1)
 #define fclose(f)
 #define feof(f) 0
 #define fgetc(f) EOF
@@ -18,29 +34,6 @@
 
 // <unistd.h>
 #define unlink(path) 0
-
-// NCurses
-#define _setcursortype(ty)
-
-extern void cprintf(const char *format, ...);
-
-extern void clrscr();
-
-#define getch() 0
-#define window(x,y,w,h)
-#define kbhit() 0
-
-extern void gotoxy(int x, int y);
-
-extern void putch(unsigned char ch);
-
-extern void textcolor(int col);
-
-extern void textbackground(int col);
-
-extern int wherex();
-
-extern int wherey();
 
 // tags.cc
 #define write2(f, buffer, count) 0
@@ -64,13 +57,50 @@ extern int wherey();
 #define tag_missing(tag, minorVersion)
 #define tag_read(fp, minorVersion) 0
 
-// actual things we plan to implement
+//
+// psx/curses.cc
+//
+#define _setcursortype(ty)
+#define getch() 0
+#define window(x,y,w,h)
+#define kbhit() 0
+
+extern char psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS + 1];
+
+extern void cprintf(const char *format, ...);
+
+extern void clrscr();
+
+extern void gotoxy(int x, int y);
+
+extern void putch(unsigned char ch);
+
+extern void textcolor(int col);
+
+extern void textbackground(int col);
+
+extern int wherex();
+
+extern int wherey();
+
+//
+// psx/psx.cc
+//
+
+// Initialize the PSX subsystem
+void init_psx();
+
+// Update the PSX subsystem
+void update_psx();
+
+//
+// psx/util.cc
+//
+
+// Wait for a specified amount of milliseconds
 void delay(int ms);
 
+// Halt execution with provided exit code
 void exit(int code);
-
-void init_psx(void);
-
-void update_psx(void);
 
 #endif

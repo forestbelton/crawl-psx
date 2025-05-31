@@ -11,6 +11,8 @@ project(
 	HOMEPAGE_URL "https://github.com/forestbelton/crawl-psx"
 )
 
+include_directories(source)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -g -ggdb")
 set(CXXFILES
     source/abl-show.cc
@@ -40,7 +42,6 @@ set(CXXFILES
     source/it_use2.cc
     source/it_use3.cc
     source/lev-pand.cc
-    source/libpsx.cc
     source/libutil.cc
     source/macro.cc
     source/maps.cc
@@ -58,6 +59,9 @@ set(CXXFILES
     source/output.cc
     source/overmap.cc
     source/player.cc
+	source/psx/curses.cc
+	source/psx/psx.cc
+	source/psx/util.cc
     source/randart.cc
     source/religion.cc
     source/shopping.cc

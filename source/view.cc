@@ -86,14 +86,13 @@ void monster_grid(bool do_updates);
 // head that way. -- bwr
 //
 //---------------------------------------------------------------
-int get_number_of_lines(void)
-{
+int get_number_of_lines() {
 #ifdef LINUX
     return (get_number_of_lines_from_curses());
 #elif MAC
     return (MAC_NUMBER_OF_LINES);
 #elif defined(PSX)
-    return 240 / 8 - 2;
+    return PSX_TEXT_LINES;
 #else
     return (25);
 #endif

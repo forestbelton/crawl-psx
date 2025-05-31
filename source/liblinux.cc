@@ -521,12 +521,12 @@ int cprintf(const char *format,...)
 }
 
 
-int putch(unsigned char chr)
+int putch(unsigned char ch)
 {
-    if (chr == 0)
-        chr = ' ';
+    if (ch == 0)
+        ch = ' ';
 
-    return (addch(chr));
+    return (addch(ch));
 }
 
 

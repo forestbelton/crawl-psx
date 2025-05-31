@@ -18,7 +18,7 @@ int gotoxy(int x, int y);
 int itoa(int value, char *strptr, int radix);
 int kbhit(void);
 int key_to_command(int);
-int putch(unsigned char chr);
+int putch(unsigned char ch);
 int stricmp(const char *str1, const char *str2);
 int translate_keypad(int keyin);
 int wherex(void);
