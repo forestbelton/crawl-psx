@@ -22,9 +22,10 @@
 // NCurses
 #define _setcursortype(ty)
 
-void cprintf(const char *format, ...);
+extern void cprintf(const char *format, ...);
 
-#define clrscr()
+extern void clrscr();
+
 #define getch() 0
 #define window(x,y,w,h)
 #define kbhit() 0

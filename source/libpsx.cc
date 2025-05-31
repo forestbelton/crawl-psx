@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <cstdarg>
+#include <string.h>
 #include <psxgpu.h>
 #include "libpsx.h"
 
@@ -110,7 +111,7 @@ void draw_text(RenderContext *ctx, int x, int y, int z, const char *text) {
 
 /* Main */
 
-#define SCREEN_XRES 320
+#define SCREEN_XRES 640
 #define SCREEN_YRES 240
 
 static int x = 0, y = 0, dx = 1, dy = 1;
@@ -127,7 +128,7 @@ void update_psx() {
 	// Draw some text in front of the square (Z = 0, primitives with higher
 	// Z indices are drawn first).
 	for (int y = 0; y < LINES; y++) {
-		draw_text(&ctx, 8, y * 8 + 8, 0, text_buffer[y]);
+		draw_text(&ctx, 0, y * 8 + 8, 0, text_buffer[y]);
 	}
 
 	flip_buffers(&ctx);
@@ -139,12 +140,7 @@ void init_psx() {
 	ResetGraph(0);
 	FntLoad(960, 0);
 
-	for (auto & row : text_buffer) {
-		for (char & cell : row) {
-			cell = ' ';
-		}
-		row[COLS - 1] = 0;
-	}
+	clrscr();
 
 	setup_context(&ctx, SCREEN_XRES, SCREEN_YRES, 63, 0, 127);
 }
@@ -158,6 +154,13 @@ void exit(int code) {
     for (;;);
 }
 
+void clrscr() {
+	for (auto & row : text_buffer) {
+		memset(&row[0], ' ', sizeof row);
+		row[sizeof row - 1] = 0;
+	}
+}
+
 // UI
 void putch(unsigned char chr) {
 	switch (chr) {
@@ -168,6 +171,8 @@ void putch(unsigned char chr) {
 				cursor_y--;
 			}
 			break;
+		case '\000':
+			chr = ' ';
 		default:
 			text_buffer[cursor_y][cursor_x++] = chr;
 			break;
