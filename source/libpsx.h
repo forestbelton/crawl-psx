@@ -57,31 +57,8 @@ constexpr int PSX_TEXT_LINES = 25;
 #define tag_missing(tag, minorVersion)
 #define tag_read(fp, minorVersion) 0
 
-//
-// psx/curses.cc
-//
-#define _setcursortype(ty)
-#define getch() 0
-#define window(x,y,w,h)
-#define kbhit() 0
 
-extern char psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS + 1];
-
-extern void cprintf(const char *format, ...);
-
-extern void clrscr();
-
-extern void gotoxy(int x, int y);
-
-extern void putch(unsigned char ch);
-
-extern void textcolor(int col);
-
-extern void textbackground(int col);
-
-extern int wherex();
-
-extern int wherey();
+#include "psx/curses.h"
 
 //
 // psx/psx.cc
@@ -102,5 +79,7 @@ void delay(int ms);
 
 // Halt execution with provided exit code
 void exit(int code);
+
+#include "psx/input.h"
 
 #endif

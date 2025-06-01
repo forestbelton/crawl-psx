@@ -59,9 +59,10 @@ set(CXXFILES
     source/output.cc
     source/overmap.cc
     source/player.cc
-	source/psx/curses.cc
-	source/psx/psx.cc
-	source/psx/util.cc
+    source/psx/curses.cc
+    source/psx/input.cc
+    source/psx/psx.cc
+    source/psx/util.cc
     source/randart.cc
     source/religion.cc
     source/shopping.cc
