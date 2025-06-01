@@ -2,16 +2,16 @@
 #define LIBPSX_H
 
 // Width of screen in pixels
-#define PSX_SCREEN_WIDTH_PX 640
+constexpr int PSX_SCREEN_WIDTH_PX = 640;
 
 // Height of screen in pixels
-#define PSX_SCREEN_HEIGHT_PX 240
+constexpr int PSX_SCREEN_HEIGHT_PX = 240;
 
 // Width of screen in characters
-#define PSX_TEXT_COLS (PSX_SCREEN_WIDTH_PX / 8)
+constexpr int PSX_TEXT_COLS = 80;
 
 // Height of screen in characters
-#define PSX_TEXT_LINES (PSX_SCREEN_HEIGHT_PX / 8 - 2)
+constexpr int PSX_TEXT_LINES = 25;
 
 //
 // STUBS

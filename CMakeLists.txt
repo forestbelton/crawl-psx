@@ -13,7 +13,7 @@ project(
 
 include_directories(source)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -g -ggdb")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -g -ggdb -O0")
 set(CXXFILES
     source/abl-show.cc
     source/abyss.cc
@@ -81,6 +81,8 @@ set(CXXFILES
 )
 
 psn00bsdk_add_executable(crawl GPREL ${CXXFILES})
+
+psn00bsdk_target_incbin(crawl PRIVATE font_tim_raw source/psx/img/omelette-thin-hvshadow.tim)
 
 psn00bsdk_add_cd_image(
 	iso      # Target name
