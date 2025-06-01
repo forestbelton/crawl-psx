@@ -4,6 +4,8 @@
 #include <psxgpu.h>
 #include <string.h>
 
+#include "enum.h"
+
 // Length of the ordering table, i.e. the range Z coordinates can have, 0-1 in
 // this case. Larger values will allow for more granularity with depth (useful
 // when drawing a complex 3D scene) at the expense of RAM usage and performance.
@@ -198,15 +200,48 @@ void poll_cb(uint32_t port, const volatile uint8_t *buff, size_t rx_len) {
 	}
 }
 
+uint32_t last_btn;
+
 void read_pad() {
-	gotoxy(0,0);
 	if (!pad_buff_len[0]) {
-		cprintf("No input.");
 		return;
 	}
 
 	const auto pad = (PadResponse *) pad_buff[0];
-	cprintf("I: %04x", pad->btn);
+	const uint32_t btn = ~pad->btn;
+
+	for (int i = 0; i < 32; ++i) {
+		const int mask = (1 << i);
+		int cmd = CMD_NO_CMD;
+
+		if ((btn & mask) && !(last_btn & mask)) {
+			switch (mask) {
+				case PAD_LEFT:
+					cmd = CMD_MOVE_LEFT;
+					break;
+
+				case PAD_UP:
+					cmd = CMD_MOVE_UP;
+					break;
+
+				case PAD_RIGHT:
+					cmd = CMD_MOVE_RIGHT;
+					break;
+
+				case PAD_DOWN:
+					cmd = CMD_MOVE_DOWN;
+					break;
+
+				default:;
+			}
+		}
+
+		if (cmd != CMD_NO_CMD) {
+			set_input_cmd(cmd);
+			break;
+		}
+	}
+	last_btn = btn;
 }
 
 void update_psx() {
@@ -217,9 +252,6 @@ void update_psx() {
 }
 
 void init_psx() {
-    // Initialize PAD input.
-    SPI_Init(&poll_cb);
-
     // Initialize the GPU.
     ResetGraph(0);
 
@@ -261,6 +293,10 @@ void init_psx() {
 
     // Turn on the video output.
     SetDispMask(1);
+
+	// Initialize PAD input.
+	// NB: This MUST happen after all of the above. For some reason.
+	SPI_Init(&poll_cb);
 }
 
 static void flip_buffers(RenderContext *ctx) {

@@ -189,10 +189,10 @@ extern unsigned char your_sign;
 extern unsigned char your_colour;
 
 // Functions in main module
-static void close_door(char move_x, char move_y);
-static void do_berserk_no_combat_penalty(void);
-static bool initialise(void);
-static void input(void);
+static void close_door(char door_x, char door_y);
+static void do_berserk_no_combat_penalty();
+static bool initialise();
+static void input();
 static void move_player(char move_x, char move_y);
 static void open_door(char move_x, char move_y);
 
@@ -202,8 +202,6 @@ static void open_door(char move_x, char move_y);
 */
 int main( int argc, char *argv[] )
 {
-    init_psx();
-
 #ifdef USE_ASCII_CHARACTERS
     // Default to the non-ibm set when it makes sense.
     viewwindow = &viewwindow3;
@@ -274,7 +272,7 @@ int main( int argc, char *argv[] )
 #endif
 
 #ifdef PSX
-    //init_psx();
+    init_psx();
 #endif
 
     strncpy(you.your_name, "case", kNameLen);
@@ -947,9 +945,13 @@ static void input(void)
                 debug_item_scan();
 #endif
 
-              gutch:
+                gutch:
+#ifndef PSX
                 flush_input_buffer( FLUSH_BEFORE_COMMAND );
                 keyin = getch_with_command_macros();
+#else
+                ;
+#endif
             }
 
             mesclr();
@@ -974,6 +976,8 @@ static void input(void)
 
             // Translate keypad codes into command enums
             keyin = key_to_command(keyin);
+#elif defined(PSX)
+            keyin = get_input_cmd();
 #else
             // Old DOS keypad support
             if (keyin == 0)     // ALT also works - see ..\KEYTEST.CPP
@@ -1567,7 +1571,11 @@ static void input(void)
 
     default:
     case CMD_NO_CMD:
+// On PSX we use CMD_NO_CMD for when nothing has been pressed on the controller
+// since the characteristics of the input mechanism differ (non-blocking).
+#ifndef PSX
         mpr("Unknown command.");
+#endif
         break;
 
     }
@@ -2553,8 +2561,8 @@ static void open_door(char move_x, char move_y)
  */
 static void close_door(char door_x, char door_y)
 {
-    struct dist door_move;
-    int dx, dy;             // door x, door y
+    dist door_move{};
+    // door x, door y
 
     door_move.dx = door_x;
     door_move.dy = door_y;
@@ -2574,8 +2582,8 @@ static void close_door(char door_x, char door_y)
     }
 
     // convenience
-    dx = you.x_pos + door_move.dx;
-    dy = you.y_pos + door_move.dy;
+    int dx = you.x_pos + door_move.dx;
+    int dy = you.y_pos + door_move.dy;
 
     if (grd[dx][dy] == DNGN_OPEN_DOOR)
     {

@@ -3,16 +3,31 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "enum.h"
+
 static int cursor_x = 0;
 static int cursor_y = 0;
 
 char psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS + 1];
+int ch;
+
+void set_input_cmd(const int _ch) {
+    ch = _ch;
+}
+
+int get_input_cmd() {
+    const int old_ch =ch;
+    ch = CMD_NO_CMD;
+    return old_ch;
+}
 
 void clrscr() {
     for (auto & row : psx_text_buffer) {
         memset(&row[0], ' ', sizeof row);
         row[sizeof row - 1] = 0;
     }
+    cursor_x = 0;
+    cursor_y = 0;
 }
 
 void putch(unsigned char ch) {

@@ -8,6 +8,10 @@
 
 extern char psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS + 1];
 
+extern void set_input_cmd(int cmd);
+
+extern int get_input_cmd();
+
 extern void cprintf(const char *format, ...);
 
 extern void clrscr();
