@@ -23,3 +23,4 @@ packaged.txt
 *.00a
 
 .venv
+.idea/
