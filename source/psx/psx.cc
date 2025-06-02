@@ -15,8 +15,6 @@
 // crashes due to too many primitives being drawn, increase this value.
 #define BUFFER_LENGTH 8192
 
-#define COLOR(r,g,b) {r,g,b}
-
 typedef struct {
     DISPENV disp_env;
     DRAWENV draw_env;
@@ -31,12 +29,6 @@ typedef struct {
     int active_buffer;
 } RenderContext;
 
-typedef struct {
-    int r;
-    int g;
-    int b;
-} RGB;
-
 static RenderContext ctx;
 
 extern uint32_t font_tim_raw[];
@@ -46,7 +38,7 @@ static uint32_t font_tim_mode;
 
 static void flip_buffers(RenderContext *ctx);
 
-static void draw_buffer_char(int x, int y, char ch);
+static void draw_buffer_char(int x, int y, const psx_text_cell &cell);
 
 template<typename T>
 T *new_primitive(const int z) {
@@ -72,21 +64,23 @@ static void draw_text_buffer() {
     setDrawTPage(tpri, 0, 0, tpage);
 }
 
-static void draw_buffer_char(const int x, const int y, const char ch) {
-    if (ch <= 0x20 || ch > 0x7f) {
+static void draw_buffer_char(const int x, const int y, const psx_text_cell &cell) {
+    if (cell.ch <= 0x20 || cell.ch > 0x7f) {
         return;
     }
 
     const auto sprt = new_primitive<SPRT_8>(0);
 
-    const uint8_t ch_u = ((ch - 0x20) % 16) * 8;
-    const uint8_t ch_v = ((ch - 0x20) / 16) * 8;
+    const uint8_t ch_u = ((cell.ch - 0x20) % 16) * 8;
+    const uint8_t ch_v = ((cell.ch - 0x20) / 16) * 8;
 
     setSprt8(sprt);
     setShadeTex(sprt, 1);
     setXY0(sprt, x * 8, y * 8 + 8);
     setUV0(sprt, ch_u, ch_v);
-    setClut(sprt, font_tim_crect.x, font_tim_crect.y);
+
+	assert(cell.fg >= 0 && cell.fg <= 0xf);
+    setClut(sprt, font_tim_crect.x, font_tim_crect.y + cell.fg);
 }
 
 static volatile uint8_t  pad_buff[2][34];
@@ -96,11 +90,11 @@ static volatile uint32_t pad_config_attempt[2] = { 0, 0 };
 // Just a wrapper around SPI_CreateRequest(). This does not send the command
 // immediately but adds it to the driver's request queue.
 void send_pad_cmd(
-	uint32_t     port,
-	PadCommand   cmd,
-	uint8_t      arg1,
-	uint8_t      arg2,
-	SPI_Callback callback
+	const uint32_t     port,
+	const PadCommand   cmd,
+	const uint8_t      arg1,
+	const uint8_t      arg2,
+	const SPI_Callback callback
 ) {
 	SPI_Request *req = SPI_CreateRequest();
 
@@ -125,7 +119,7 @@ void send_pad_cmd(
 // actually a DualShock in digital mode by checking if it started identifying
 // as CONFIG_MODE after receiving a configuration command. Calls to printf()
 // had to be commented out due to them being too slow.
-void dualshock_init_cb(uint32_t port, const volatile uint8_t *buff, size_t rx_len) {
+void dualshock_init_cb(const uint32_t port, const volatile uint8_t *buff, const size_t rx_len) {
 	PadResponse *pad = (PadResponse *) buff;
 
 	if (
@@ -147,17 +141,17 @@ void dualshock_init_cb(uint32_t port, const volatile uint8_t *buff, size_t rx_le
 	// TODO: find out if passing 0x03 instead of 0x02 in PAD_CMD_SET_ANALOG
 	// locks the analog button, as emulated by DuckStation...
 	// https://gist.github.com/scanlime/5042071
-	send_pad_cmd(port, PAD_CMD_CONFIG_MODE,     0x01, 0x00, 0);
-	send_pad_cmd(port, PAD_CMD_SET_ANALOG,      0x01, 0x02, 0);
-	send_pad_cmd(port, PAD_CMD_INIT_PRESSURE,   0x00, 0x00, 0); // Ignored by DualShock 1
-	send_pad_cmd(port, PAD_CMD_REQUEST_CONFIG,  0x00, 0x01, 0);
-	send_pad_cmd(port, PAD_CMD_RESPONSE_CONFIG, 0xff, 0xff, 0); // Ignored by DualShock 1
-	send_pad_cmd(port, PAD_CMD_CONFIG_MODE,     0x00, 0x00, 0);
+	send_pad_cmd(port, PAD_CMD_CONFIG_MODE,     0x01, 0x00, nullptr);
+	send_pad_cmd(port, PAD_CMD_SET_ANALOG,      0x01, 0x02, nullptr);
+	send_pad_cmd(port, PAD_CMD_INIT_PRESSURE,   0x00, 0x00, nullptr); // Ignored by DualShock 1
+	send_pad_cmd(port, PAD_CMD_REQUEST_CONFIG,  0x00, 0x01, nullptr);
+	send_pad_cmd(port, PAD_CMD_RESPONSE_CONFIG, 0xff, 0xff, nullptr); // Ignored by DualShock 1
+	send_pad_cmd(port, PAD_CMD_CONFIG_MODE,     0x00, 0x00, nullptr);
 }
 
 // This function is called by the pad timer ISR each time a pad is polled and a
 // response (even an invalid/incomplete one) is received.
-void poll_cb(uint32_t port, const volatile uint8_t *buff, size_t rx_len) {
+void poll_cb(const uint32_t port, const volatile uint8_t *buff, const size_t rx_len) {
 	// Copy the response to a persistent buffer so it can be accessed from the
 	// main loop and displayed on screen.
 	pad_buff_len[port] = rx_len;
@@ -189,13 +183,11 @@ void poll_cb(uint32_t port, const volatile uint8_t *buff, size_t rx_len) {
 
 			// The pad only identifies as CONFIG_MODE after at least another
 			// command is sent.
-			send_pad_cmd(port, PAD_CMD_CONFIG_MODE, 0x01, 0x00, 0);
+			send_pad_cmd(port, PAD_CMD_CONFIG_MODE, 0x01, 0x00, nullptr);
 			send_pad_cmd(port, PAD_CMD_READ,        0x00, 0x00, &dualshock_init_cb);
 		}
 
 	} else {
-		//printf("Clearing attempt counter for pad %d\n", port + 1);
-
 		pad_config_attempt[port] = 0;
 	}
 }
@@ -279,9 +271,11 @@ void init_psx() {
     SetDefDispEnv(&ctx.buffers[1].disp_env, 0, h, w, h);
 
     // Set the default background color and enable auto-clearing.
-    constexpr RGB bg_color = COLOR(0x2f, 0x36, 0x40);
-    setRGB0(&ctx.buffers[0].draw_env, bg_color.r, bg_color.g, bg_color.b);
-    setRGB0(&ctx.buffers[1].draw_env, bg_color.r, bg_color.g, bg_color.b);
+    constexpr auto r = 0x2f;
+	constexpr auto g = 0x36;
+	constexpr auto b = 0x40;
+    setRGB0(&ctx.buffers[0].draw_env, r, g, b);
+    setRGB0(&ctx.buffers[1].draw_env, r, g, b);
     ctx.buffers[0].draw_env.isbg = 1;
     ctx.buffers[1].draw_env.isbg = 1;
 

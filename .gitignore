@@ -21,3 +21,5 @@ packaged.txt
 
 *.sav
 *.00a
+
+.venv

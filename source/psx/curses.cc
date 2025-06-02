@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "libpsx.h"
 #include <stdarg.h>
 #include <stdio.h>
@@ -8,29 +10,34 @@
 static int cursor_x = 0;
 static int cursor_y = 0;
 
-char psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS + 1];
-int ch;
+// Input buffer
+static int ch;
+
+static int fg = DEFAULT_FG_COLOR;
+
+psx_text_cell psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS];
 
 void set_input_cmd(const int _ch) {
     ch = _ch;
 }
 
 int get_input_cmd() {
-    const int old_ch =ch;
+    const int old_ch = ch;
     ch = CMD_NO_CMD;
     return old_ch;
 }
 
 void clrscr() {
-    for (auto & row : psx_text_buffer) {
-        memset(&row[0], ' ', sizeof row);
-        row[sizeof row - 1] = 0;
+    for (auto &row: psx_text_buffer) {
+        for (auto &cell: row) {
+            cell = {' ', DEFAULT_FG_COLOR};
+        }
     }
     cursor_x = 0;
     cursor_y = 0;
 }
 
-void putch(unsigned char ch) {
+void putch(char ch) {
     // NB: viewwindow writes a lot of 0s. ncurses writes a space, so we do too
     if (ch == '\000') {
         ch = ' ';
@@ -43,7 +50,7 @@ void putch(unsigned char ch) {
             cursor_y--;
         }
     } else {
-        psx_text_buffer[cursor_y][cursor_x++] = ch;
+        psx_text_buffer[cursor_y][cursor_x++] = {ch, fg};
     }
 
     if (cursor_x == PSX_TEXT_COLS) {
@@ -64,10 +71,13 @@ void gotoxy(const int x, const int y) {
     cursor_y = y;
 }
 
-void textcolor([[maybe_unused]] int col) {
+void textcolor(const int col) {
+    assert(col >= 0 && col <= 0xf);
+    fg = col & 0xf;
 }
 
 void textbackground([[maybe_unused]] int col) {
+    // TODO(forest): Set bg
 }
 
 int wherex() {
@@ -78,8 +88,8 @@ int wherey() {
     return cursor_y;
 }
 
-void cprintf(const char *format,...) {
-    static char buffer[2048];          // One full screen if no control seq...
+void cprintf(const char *format, ...) {
+    static char buffer[2048]; // One full screen if no control seq...
 
     va_list argp;
     va_start(argp, format);

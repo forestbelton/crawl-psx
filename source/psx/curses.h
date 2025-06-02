@@ -6,7 +6,15 @@
 #define window(x,y,w,h)
 #define kbhit() 0
 
-extern char psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS + 1];
+constexpr int DEFAULT_FG_COLOR = 15;
+constexpr int DEFAULT_BG_COLOR = 0;
+
+struct psx_text_cell {
+    char ch;
+    int fg;
+};
+
+extern psx_text_cell psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS];
 
 extern void set_input_cmd(int cmd);
 
@@ -18,7 +26,7 @@ extern void clrscr();
 
 extern void gotoxy(int x, int y);
 
-extern void putch(unsigned char ch);
+extern void putch(char ch);
 
 extern void textcolor(int col);
 
