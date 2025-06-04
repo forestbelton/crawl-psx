@@ -7,16 +7,31 @@
 	},
 	"configurePresets": [
 		{
-			"name":          "default",
-			"displayName":   "Default configuration",
-			"description":   "Use this preset to build the project using PSn00bSDK.",
+			"name":          "psx",
+			"displayName":   "PSX",
+			"description":   "Build the game for PSX using PSn00bSDK.",
 			"generator":     "Ninja",
 			"toolchainFile": "$env{PSN00BSDK_LIBS}/cmake/sdk.cmake",
-			"binaryDir":     "${sourceDir}/build",
+			"binaryDir":     "${sourceDir}/build-psx",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"PSN00BSDK_TC":     "",
-				"PSN00BSDK_TARGET": "mipsel-none-elf"
+				"PSN00BSDK_TARGET": "mipsel-none-elf",
+				"ARCH": "psx"
+			},
+			"warnings": {
+				"dev": false
+			}
+		},
+		{
+			"name":          "linux",
+			"displayName":   "Linux",
+			"description":   "Build the game for Linux.",
+			"generator":     "Ninja",
+			"binaryDir":     "${sourceDir}/build-linux",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+                "ARCH": "linux"
 			},
 			"warnings": {
 				"dev": false

@@ -1,4 +1,5 @@
-build/
+build-linux/
+build-psx/
 
 crawl
 crawl.log

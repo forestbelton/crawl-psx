@@ -1,6 +1,3 @@
-# PSn00bSDK example CMake script
-# (C) 2021 spicyjpeg - MPL licensed
-
 cmake_minimum_required(VERSION 3.21)
 
 project(
@@ -13,7 +10,6 @@ project(
 
 include_directories(source)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -g -ggdb -O0")
 set(CXXFILES
     source/abl-show.cc
     source/abyss.cc
@@ -59,10 +55,6 @@ set(CXXFILES
     source/output.cc
     source/overmap.cc
     source/player.cc
-    source/psx/curses.cc
-    source/psx/input.cc
-    source/psx/psx.cc
-    source/psx/util.cc
     source/randart.cc
     source/religion.cc
     source/shopping.cc
@@ -81,13 +73,37 @@ set(CXXFILES
     source/wpn-misc.cc
 )
 
-psn00bsdk_add_executable(crawl GPREL ${CXXFILES})
+if (ARCH STREQUAL "psx")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DPSX -g -ggdb -O0")
+	set(CXXFILES
+			"${CXXFILES}"
+			source/psx/curses.cc
+			source/psx/input.cc
+			source/psx/psx.cc
+			source/psx/util.cc
+	)
 
-psn00bsdk_target_incbin(crawl PRIVATE font_tim_raw source/psx/img/omelette-thin-hvshadow.tim)
+    psn00bsdk_add_executable(crawl GPREL ${CXXFILES})
 
-psn00bsdk_add_cd_image(
-	iso      # Target name
-	crawl    # Output file name (= crawl.bin + crawl.cue)
-	iso.xml  # Path to config file
-	DEPENDS crawl system.cnf
-)
+    psn00bsdk_target_incbin(crawl PRIVATE font_tim_raw source/psx/img/omelette-thin-hvshadow.tim)
+
+	psn00bsdk_add_cd_image(
+		iso      # Target name
+		crawl    # Output file name (= crawl.bin + crawl.cue)
+		iso.xml  # Path to config file
+		DEPENDS crawl system.cnf
+	)
+elseif (ARCH STREQUAL "linux")
+	set(CXXFILES
+			"${CXXFILES}"
+			source/liblinux.cc
+			source/log.cc
+			source/tags.cc
+	)
+	add_executable(crawl ${CXXFILES})
+	target_compile_definitions(crawl PUBLIC LINUX)
+	target_compile_options(crawl PUBLIC -Wall -Wwrite-strings -Wmissing-declarations -g)
+	target_link_libraries(crawl ncurses)
+else ()
+	message(FATAL_ERROR "unsupported architecture: '${ARCH}'")
+endif ()
