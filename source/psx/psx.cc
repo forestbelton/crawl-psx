@@ -224,6 +224,10 @@ void read_pad() {
 					cmd = CMD_MOVE_DOWN;
 					break;
 
+				case PAD_CROSS:
+					cmd = '\n';
+					break;
+
 				default:;
 			}
 		}

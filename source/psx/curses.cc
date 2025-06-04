@@ -32,6 +32,17 @@ int get_input_cmd() {
     return result;
 }
 
+int getch() {
+    while (ch == CMD_NO_CMD) {
+        update_psx();
+    }
+
+    const int result = ch;
+    ch = CMD_NO_CMD;
+
+    return result;
+}
+
 void clrscr() {
     for (auto &row: psx_text_buffer) {
         for (auto &cell: row) {
@@ -69,11 +80,11 @@ void putch(char ch) {
 }
 
 void gotoxy(const int x, const int y) {
-    if (x < 0 || x > PSX_TEXT_COLS || y < 0 || y > PSX_TEXT_LINES) {
+    if (x < 1 || x > PSX_TEXT_COLS || y < 1 || y > PSX_TEXT_LINES) {
         return;
     }
-    cursor_x = x;
-    cursor_y = y;
+    cursor_x = x - 1;
+    cursor_y = y - 1;
 }
 
 void textcolor(const int col) {
@@ -87,11 +98,11 @@ void textbackground([[maybe_unused]] int col) {
 }
 
 int wherex() {
-    return cursor_x;
+    return cursor_x + 1;
 }
 
 int wherey() {
-    return cursor_y;
+    return cursor_y + 1;
 }
 
 void cprintf(const char *format, ...) {

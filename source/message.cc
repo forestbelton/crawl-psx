@@ -301,7 +301,7 @@ void mesclr( bool force )
     clear_to_end_of_screen();
 #else
 
-    for (int i = startLine; i < numLines; i++) {
+    for (int i = startLine; i <= numLines; i++) {
         gotoxy(1, i);
         cputs("                                                                               ");
     }
@@ -314,9 +314,8 @@ void mesclr( bool force )
     Message_Line = 0;
 }                               // end mseclr()
 
-void more(void)
-{
-    char keypress = 0;
+void more() {
+    int keypress = 0;
 
 #ifdef PLAIN_TERM
     gotoxy( 2, get_number_of_lines() );
@@ -334,18 +333,14 @@ void more(void)
 #endif
     cprintf("--more--");
 
-    do
-    {
+    do {
         keypress = getch();
-    }
-    // TODO(forest): Fix for PSX
-    while (keypress != ' ' && keypress != '\r' && keypress != '\n');
+    } while (keypress != ' ' && keypress != '\r' && keypress != '\n');
 
     mesclr( (Message_Line >= get_number_of_lines() - 18) );
 }                               // end more()
 
-void replay_messages(void)
-{
+void replay_messages() {
     int            win_start_line = 0;
     unsigned char  keyin;
 

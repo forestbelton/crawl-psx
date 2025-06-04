@@ -2,7 +2,6 @@
 #define PSX_CURSES_H
 
 #define _setcursortype(ty)
-#define getch() 0
 #define window(x,y,w,h)
 #define kbhit() 0
 
@@ -17,6 +16,8 @@ struct psx_text_cell {
 extern psx_text_cell psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS];
 
 extern void set_input_cmd(int cmd);
+
+extern int getch();
 
 extern int get_input_cmd();
 
