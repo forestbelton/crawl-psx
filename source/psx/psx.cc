@@ -13,7 +13,7 @@
 
 // Size of the buffer GPU commands and primitives are written to. If the program
 // crashes due to too many primitives being drawn, increase this value.
-#define BUFFER_LENGTH 8192
+#define BUFFER_LENGTH 32768
 
 typedef struct {
     DISPENV disp_env;
@@ -47,7 +47,7 @@ T *new_primitive(const int z) {
 
     addPrim(&buffer->ot[z], prim);
     ctx.next_packet += sizeof(T);
-    assert(ctx.next_packet <= &buffer->buffer[BUFFER_LENGTH]);
+	assert(ctx.next_packet - buffer->buffer < BUFFER_LENGTH);
 
     return reinterpret_cast<T *>(prim);
 }
