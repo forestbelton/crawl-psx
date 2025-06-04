@@ -71,8 +71,8 @@ static void draw_buffer_char(const int x, const int y, const psx_text_cell &cell
 
     const auto sprt = new_primitive<SPRT_8>(0);
 
-    const uint8_t ch_u = ((cell.ch - 0x20) % 16) * 8;
-    const uint8_t ch_v = ((cell.ch - 0x20) / 16) * 8;
+    const uint8_t ch_u = (cell.ch - 0x20) % 16 * 8;
+    const uint8_t ch_v = (cell.ch - 0x20) / 16 * 8;
 
     setSprt8(sprt);
     setShadeTex(sprt, 1);

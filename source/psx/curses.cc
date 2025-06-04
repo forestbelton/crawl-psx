@@ -11,7 +11,7 @@ static int cursor_x = 0;
 static int cursor_y = 0;
 
 // Input buffer
-static int ch;
+static volatile int ch = CMD_NO_CMD;
 
 static int fg = DEFAULT_FG_COLOR;
 
@@ -22,9 +22,14 @@ void set_input_cmd(const int _ch) {
 }
 
 int get_input_cmd() {
-    const int old_ch = ch;
+    while (ch == CMD_NO_CMD) {
+        update_psx();
+    }
+
+    const int result = ch;
     ch = CMD_NO_CMD;
-    return old_ch;
+
+    return result;
 }
 
 void clrscr() {
@@ -77,7 +82,8 @@ void textcolor(const int col) {
 }
 
 void textbackground([[maybe_unused]] int col) {
-    // TODO(forest): Set bg
+    // NB: This isn't ever used except to set the background to its default
+    // color. To save on redundant TILE primitives we skip the implementation.
 }
 
 int wherex() {
@@ -98,5 +104,12 @@ void cprintf(const char *format, ...) {
 
     for (int i = 0; buffer[i] != 0; i++) {
         putch(buffer[i]);
+    }
+}
+
+void cputs(const char *str) {
+    while (*str != 0) {
+        putch(*str);
+        str++;
     }
 }

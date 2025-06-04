@@ -520,6 +520,10 @@ int cprintf(const char *format,...)
     return (i);
 }
 
+void cputs(const char *str) {
+    addstr(str);
+    refresh();
+}
 
 int putch(unsigned char ch)
 {

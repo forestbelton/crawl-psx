@@ -237,7 +237,7 @@ void mpr(const char *inf, int channel, int param)
     info2[78] = 0;
 
     textcolor( colour );
-    cprintf(info2);
+    cputs(info2);
     //
     // reset colour
     textcolor(LIGHTGREY);
@@ -295,22 +295,15 @@ void mesclr( bool force )
 
 #ifdef PLAIN_TERM
     int startLine = 18;
-
-    gotoxy(1, startLine);
+    const int numLines = get_number_of_lines();
 
 #ifdef LINUX
     clear_to_end_of_screen();
 #else
 
-    int numLines = get_number_of_lines() - startLine + 1;
-    for (int i = 0; i < numLines; i++)
-    {
-        cprintf( "                                                                               " );
-
-        if (i < numLines - 1)
-        {
-            cprintf(EOL);
-        }
+    for (int i = startLine; i < numLines; i++) {
+        gotoxy(1, i);
+        cputs("                                                                               ");
     }
 #endif
 #endif
@@ -345,6 +338,7 @@ void more(void)
     {
         keypress = getch();
     }
+    // TODO(forest): Fix for PSX
     while (keypress != ' ' && keypress != '\r' && keypress != '\n');
 
     mesclr( (Message_Line >= get_number_of_lines() - 18) );
@@ -361,7 +355,7 @@ void replay_messages(void)
 
     const int      num_lines = get_number_of_lines();
 
-    if (Store_Message[ NUM_STORED_MESSAGES - 1 ].text.length() == 0)
+    if (Store_Message[ NUM_STORED_MESSAGES - 1 ].text.empty())
     {
         full_buffer = false;
         first_message = 0;
@@ -419,10 +413,10 @@ void replay_messages(void)
 #if DEBUG_DIAGNOSTICS
             cprintf( "%d: %s", line, Store_Message[ line ].text );
 #else
-            cprintf( Store_Message[ line ].text.c_str() );
+            cputs( Store_Message[ line ].text.c_str() );
 #endif
 
-            cprintf(EOL);
+            cputs(EOL);
             textcolor(LIGHTGREY);
         }
 

@@ -22,6 +22,8 @@ extern int get_input_cmd();
 
 extern void cprintf(const char *format, ...);
 
+extern void cputs(const char *str);
+
 extern void clrscr();
 
 extern void gotoxy(int x, int y);

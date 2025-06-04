@@ -950,7 +950,7 @@ static void input(void)
                 flush_input_buffer( FLUSH_BEFORE_COMMAND );
                 keyin = getch_with_command_macros();
 #else
-                ;
+                keyin = get_input_cmd();
 #endif
             }
 
@@ -976,8 +976,6 @@ static void input(void)
 
             // Translate keypad codes into command enums
             keyin = key_to_command(keyin);
-#elif defined(PSX)
-            keyin = get_input_cmd();
 #else
             // Old DOS keypad support
             if (keyin == 0)     // ALT also works - see ..\KEYTEST.CPP
@@ -1571,11 +1569,7 @@ static void input(void)
 
     default:
     case CMD_NO_CMD:
-// On PSX we use CMD_NO_CMD for when nothing has been pressed on the controller
-// since the characteristics of the input mechanism differ (non-blocking).
-#ifndef PSX
         mpr("Unknown command.");
-#endif
         break;
 
     }

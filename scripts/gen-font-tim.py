@@ -103,7 +103,7 @@ def main() -> None:
 
         for y in range(im_height):
             for x in range(im_width):
-                pix0, pix1, pix2, pix3 = [get_clut_index(im.getpixel((x * 4 + i, y))) for i in range(4)]
+                pix0, pix1, pix2, pix3 = [get_clut_index(im.getpixel((x * 4 + i, y))) for i in range(4)] # type: ignore
                 f.write(struct.pack("<H", pix3 << 12 | pix2 << 8 | pix1 << 4 | pix0))
 
 
