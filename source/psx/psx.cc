@@ -4,7 +4,10 @@
 #include <psxgpu.h>
 #include <string.h>
 
+#include "AppHdr.h"
+#include "defines.h"
 #include "enum.h"
+#include "externs.h"
 
 // Length of the ordering table, i.e. the range Z coordinates can have, 0-1 in
 // this case. Larger values will allow for more granularity with depth (useful
@@ -83,124 +86,44 @@ static void draw_buffer_char(const int x, const int y, const psx_text_cell &cell
     setClut(sprt, font_tim_crect.x, font_tim_crect.y + cell.fg);
 }
 
-static volatile uint8_t  pad_buff[2][34];
-static volatile size_t   pad_buff_len[2];
-static volatile uint32_t pad_config_attempt[2] = { 0, 0 };
-
-// Just a wrapper around SPI_CreateRequest(). This does not send the command
-// immediately but adds it to the driver's request queue.
-void send_pad_cmd(
-	const uint32_t     port,
-	const PadCommand   cmd,
-	const uint8_t      arg1,
-	const uint8_t      arg2,
-	const SPI_Callback callback
-) {
-	SPI_Request *req = SPI_CreateRequest();
-
-	req->len              = 9;
-	req->port             = port;
-	req->callback         = callback;
-	req->pad_req.addr     = 0x01;
-	req->pad_req.cmd      = cmd;
-	req->pad_req.tap_mode = 0x00;
-	req->pad_req.motor_r  = arg1;
-	req->pad_req.motor_l  = arg2;
-
-	// The padding bytes must be 0xff when unlocking vibration motors.
-	memset(
-		req->pad_req.dummy,
-		(cmd == PAD_CMD_REQUEST_CONFIG) ? 0xff : 0x00,
-		4
-	);
-}
-
-// This callback determines whether a pad that identified as digital is
-// actually a DualShock in digital mode by checking if it started identifying
-// as CONFIG_MODE after receiving a configuration command. Calls to printf()
-// had to be commented out due to them being too slow.
-void dualshock_init_cb(const uint32_t port, const volatile uint8_t *buff, const size_t rx_len) {
-	PadResponse *pad = (PadResponse *) buff;
-
-	if (
-		(rx_len < 2) ||
-		(pad->prefix != 0x5a) ||
-		(pad->type != PAD_ID_CONFIG_MODE)
-	) {
-		//printf("no, pad is digital-only (len = %d)\n", rx_len);
-
-		pad_config_attempt[port]++;
-		return;
-	}
-
-	//printf("yes, forcing analog mode (len = %d)\n", rx_len);
-
-	// Issue further commands to force analog mode on, unlock rumble (not used
-	// in this example) and enable longer responses containing button pressure
-	// readings.
-	// TODO: find out if passing 0x03 instead of 0x02 in PAD_CMD_SET_ANALOG
-	// locks the analog button, as emulated by DuckStation...
-	// https://gist.github.com/scanlime/5042071
-	send_pad_cmd(port, PAD_CMD_CONFIG_MODE,     0x01, 0x00, nullptr);
-	send_pad_cmd(port, PAD_CMD_SET_ANALOG,      0x01, 0x02, nullptr);
-	send_pad_cmd(port, PAD_CMD_INIT_PRESSURE,   0x00, 0x00, nullptr); // Ignored by DualShock 1
-	send_pad_cmd(port, PAD_CMD_REQUEST_CONFIG,  0x00, 0x01, nullptr);
-	send_pad_cmd(port, PAD_CMD_RESPONSE_CONFIG, 0xff, 0xff, nullptr); // Ignored by DualShock 1
-	send_pad_cmd(port, PAD_CMD_CONFIG_MODE,     0x00, 0x00, nullptr);
-}
-
-// This function is called by the pad timer ISR each time a pad is polled and a
-// response (even an invalid/incomplete one) is received.
-void poll_cb(const uint32_t port, const volatile uint8_t *buff, const size_t rx_len) {
-	// Copy the response to a persistent buffer so it can be accessed from the
-	// main loop and displayed on screen.
-	pad_buff_len[port] = rx_len;
-	if (rx_len)
-		memcpy((void *) pad_buff[port], (void *) buff, rx_len);
-
-	PadResponse *pad = (PadResponse *) buff;
-
-	// If this pad identifies as a digital pad, attempt to put it into analog
-	// mode up to 3 times by entering configuration mode. Once the attempt
-	// counter exceeds the threshold, it will be treated as digital-only. The
-	// attempt counter is reset when the controller is unplugged or stops
-	// returning digital pad responses.
-	// NOTE: according to nocash docs, there is a hardware bug in DualShock
-	// controllers that causes the prefix byte (normally 0x5a) to turn into
-	// 0x00 if the analog button is pressed after config commands have been
-	// used.
-	if (
-		rx_len &&
-		((pad->prefix == 0x5a) || !(pad->prefix)) &&
-		(pad->type == PAD_ID_DIGITAL)
-	) {
-		if (pad_config_attempt[port] < 3) {
-			/*printf(
-				"Detecting if pad %d supports config mode: attempt %d... ",
-				port + 1,
-				pad_config_attempt[port] + 1
-			);*/
-
-			// The pad only identifies as CONFIG_MODE after at least another
-			// command is sent.
-			send_pad_cmd(port, PAD_CMD_CONFIG_MODE, 0x01, 0x00, nullptr);
-			send_pad_cmd(port, PAD_CMD_READ,        0x00, 0x00, &dualshock_init_cb);
-		}
-
-	} else {
-		pad_config_attempt[port] = 0;
-	}
-}
-
 uint32_t last_btn;
 
+constexpr int STAIRS_DOWN[] = {
+	DNGN_STONE_STAIRS_DOWN_I,
+	DNGN_STONE_STAIRS_DOWN_II,
+	DNGN_STONE_STAIRS_DOWN_III,
+	DNGN_ROCK_STAIRS_DOWN,
+};
+
+constexpr int STAIRS_UP[] = {
+	DNGN_STONE_STAIRS_UP_I,
+	DNGN_STONE_STAIRS_UP_II,
+	DNGN_STONE_STAIRS_UP_III,
+	DNGN_ROCK_STAIRS_UP,
+};
+
+int read_contextual_cross_cmd() {
+	if (const auto o = igrd[you.x_pos][you.y_pos]; o != NON_ITEM) {
+		return CMD_PICKUP;
+	}
+	for (const int stair_id : STAIRS_DOWN) {
+		if (grd[you.x_pos][you.y_pos] == stair_id) {
+			return CMD_GO_DOWNSTAIRS;
+		}
+	}
+	for (const int stair_id : STAIRS_DOWN) {
+		if (grd[you.x_pos][you.y_pos] == stair_id) {
+			return CMD_GO_UPSTAIRS;
+		}
+	}
+	return CMD_NO_CMD;
+}
+
 void read_pad() {
-	if (!pad_buff_len[0]) {
+	uint32_t btn;
+	if (!read_pad(btn)) {
 		return;
 	}
-
-	const auto pad = (PadResponse *) pad_buff[0];
-	const uint32_t btn = ~pad->btn;
 
 	for (int i = 0; i < 32; ++i) {
 		const int mask = (1 << i);
@@ -224,8 +147,15 @@ void read_pad() {
 					cmd = CMD_MOVE_DOWN;
 					break;
 
+				case PAD_START:
+					cmd = CMD_DISPLAY_INVENTORY;
+					break;
+
 				case PAD_CROSS:
-					cmd = '\n';
+					cmd = read_contextual_cross_cmd();
+					if (cmd == CMD_NO_CMD) {
+						cmd = '\n';
+					}
 					break;
 
 				default:;

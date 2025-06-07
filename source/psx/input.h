@@ -52,4 +52,8 @@ SPI_Request *SPI_CreateRequest();
  */
 void SPI_SetPollRate(uint32_t value);
 
+void poll_cb(uint32_t port, const volatile uint8_t *buff, size_t rx_len);
+
+int read_pad(uint32_t &btn);
+
 #endif

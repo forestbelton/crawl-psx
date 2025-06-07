@@ -976,7 +976,7 @@ static void input(void)
 
             // Translate keypad codes into command enums
             keyin = key_to_command(keyin);
-#else
+#elif !defined(PSX)
             // Old DOS keypad support
             if (keyin == 0)     // ALT also works - see ..\KEYTEST.CPP
             {
