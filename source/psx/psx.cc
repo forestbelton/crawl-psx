@@ -137,10 +137,14 @@ void read_pad() {
             cmd = CMD_MOVE_DOWN_RIGHT;
         }
         if (cmd != CMD_NO_CMD) {
-            set_input_cmd(cmd);
+            goto end;
         }
-        last_btn = btn;
-        return;
+    }
+
+    if (btn & PAD_CIRCLE && btn & PAD_TRIANGLE
+        && !(last_btn & PAD_CIRCLE && last_btn & PAD_TRIANGLE)) {
+        cmd = CMD_MOVE_NOWHERE;
+        goto end;
     }
 
     for (int i = 0; i < 32 && cmd == CMD_NO_CMD; ++i) {
@@ -179,6 +183,7 @@ void read_pad() {
         }
     }
 
+end:
     if (cmd != CMD_NO_CMD) {
         set_input_cmd(cmd);
     }
