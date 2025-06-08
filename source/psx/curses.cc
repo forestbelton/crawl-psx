@@ -1,24 +1,18 @@
-#include <cassert>
-
 #include "libpsx.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "enum.h"
+
+#include <cassert>
+#include <cstdarg>
 
 static int cursor_x = 0;
 static int cursor_y = 0;
-
-// Input buffer
 static volatile int ch = CMD_NO_CMD;
-
 static int fg = DEFAULT_FG_COLOR;
 
 psx_text_cell psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS];
 
-void set_input_cmd(const int _ch) {
-    ch = _ch;
+void set_input_cmd(const int cmd) {
+    ch = cmd;
 }
 
 int get_input_cmd() {

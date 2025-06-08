@@ -50,7 +50,7 @@ T *new_primitive(const int z) {
 
     addPrim(&buffer->ot[z], prim);
     ctx.next_packet += sizeof(T);
-	assert(ctx.next_packet - buffer->buffer < BUFFER_LENGTH);
+    assert(ctx.next_packet - buffer->buffer < BUFFER_LENGTH);
 
     return reinterpret_cast<T *>(prim);
 }
@@ -82,96 +82,111 @@ static void draw_buffer_char(const int x, const int y, const psx_text_cell &cell
     setXY0(sprt, x * 8, y * 8 + 8);
     setUV0(sprt, ch_u, ch_v);
 
-	assert(cell.fg >= 0 && cell.fg <= 0xf);
+    assert(cell.fg >= 0 && cell.fg <= 0xf);
     setClut(sprt, font_tim_crect.x, font_tim_crect.y + cell.fg);
 }
 
 uint32_t last_btn;
 
 constexpr int STAIRS_DOWN[] = {
-	DNGN_STONE_STAIRS_DOWN_I,
-	DNGN_STONE_STAIRS_DOWN_II,
-	DNGN_STONE_STAIRS_DOWN_III,
-	DNGN_ROCK_STAIRS_DOWN,
+    DNGN_STONE_STAIRS_DOWN_I,
+    DNGN_STONE_STAIRS_DOWN_II,
+    DNGN_STONE_STAIRS_DOWN_III,
+    DNGN_ROCK_STAIRS_DOWN,
 };
 
 constexpr int STAIRS_UP[] = {
-	DNGN_STONE_STAIRS_UP_I,
-	DNGN_STONE_STAIRS_UP_II,
-	DNGN_STONE_STAIRS_UP_III,
-	DNGN_ROCK_STAIRS_UP,
+    DNGN_STONE_STAIRS_UP_I,
+    DNGN_STONE_STAIRS_UP_II,
+    DNGN_STONE_STAIRS_UP_III,
+    DNGN_ROCK_STAIRS_UP,
 };
 
 int read_contextual_cross_cmd() {
-	if (const auto o = igrd[you.x_pos][you.y_pos]; o != NON_ITEM) {
-		return CMD_PICKUP;
-	}
-	for (const int stair_id : STAIRS_DOWN) {
-		if (grd[you.x_pos][you.y_pos] == stair_id) {
-			return CMD_GO_DOWNSTAIRS;
-		}
-	}
-	for (const int stair_id : STAIRS_DOWN) {
-		if (grd[you.x_pos][you.y_pos] == stair_id) {
-			return CMD_GO_UPSTAIRS;
-		}
-	}
-	return CMD_NO_CMD;
+    if (const auto o = igrd[you.x_pos][you.y_pos]; o != NON_ITEM) {
+        return CMD_PICKUP;
+    }
+    for (const int stair_id: STAIRS_DOWN) {
+        if (grd[you.x_pos][you.y_pos] == stair_id) {
+            return CMD_GO_DOWNSTAIRS;
+        }
+    }
+    for (const int stair_id: STAIRS_DOWN) {
+        if (grd[you.x_pos][you.y_pos] == stair_id) {
+            return CMD_GO_UPSTAIRS;
+        }
+    }
+    return CMD_NO_CMD;
 }
 
 void read_pad() {
-	uint32_t btn;
-	if (!read_pad(btn)) {
-		return;
-	}
+    uint32_t btn;
+    if (!read_pad(btn)) {
+        return;
+    }
 
-	for (int i = 0; i < 32; ++i) {
-		const int mask = (1 << i);
-		int cmd = CMD_NO_CMD;
+    int cmd = CMD_NO_CMD;
+    if (btn & PAD_L1) {
+        if (btn & PAD_UP && btn & PAD_LEFT) {
+            cmd = CMD_MOVE_UP_LEFT;
+        } else if (btn & PAD_UP && btn & PAD_RIGHT) {
+            cmd = CMD_MOVE_UP_RIGHT;
+        } else if (btn & PAD_DOWN && btn & PAD_LEFT) {
+            cmd = CMD_MOVE_DOWN_LEFT;
+        } else if (btn & PAD_DOWN && btn & PAD_RIGHT) {
+            cmd = CMD_MOVE_DOWN_RIGHT;
+        }
+        if (cmd != CMD_NO_CMD) {
+            set_input_cmd(cmd);
+        }
+        last_btn = btn;
+        return;
+    }
 
-		if ((btn & mask) && !(last_btn & mask)) {
-			switch (mask) {
-				case PAD_LEFT:
-					cmd = CMD_MOVE_LEFT;
-					break;
+    for (int i = 0; i < 32 && cmd == CMD_NO_CMD; ++i) {
+        const int mask = 1 << i;
+        if (!(btn & mask) || last_btn & mask) {
+            continue;
+        }
+        switch (mask) {
+            case PAD_LEFT:
+                cmd = CMD_MOVE_LEFT;
+                break;
 
-				case PAD_UP:
-					cmd = CMD_MOVE_UP;
-					break;
+            case PAD_UP:
+                cmd = CMD_MOVE_UP;
+                break;
 
-				case PAD_RIGHT:
-					cmd = CMD_MOVE_RIGHT;
-					break;
+            case PAD_RIGHT:
+                cmd = CMD_MOVE_RIGHT;
+                break;
 
-				case PAD_DOWN:
-					cmd = CMD_MOVE_DOWN;
-					break;
+            case PAD_DOWN:
+                cmd = CMD_MOVE_DOWN;
+                break;
 
-				case PAD_START:
-					cmd = CMD_DISPLAY_INVENTORY;
-					break;
+            case PAD_START:
+                cmd = CMD_DISPLAY_INVENTORY;
+                break;
 
-				case PAD_CROSS:
-					cmd = read_contextual_cross_cmd();
-					if (cmd == CMD_NO_CMD) {
-						cmd = '\n';
-					}
-					break;
+            case PAD_CROSS:
+                cmd = read_contextual_cross_cmd();
+                if (cmd == CMD_NO_CMD) {
+                    cmd = '\n';
+                }
+                break;
+            default: ;
+        }
+    }
 
-				default:;
-			}
-		}
-
-		if (cmd != CMD_NO_CMD) {
-			set_input_cmd(cmd);
-			break;
-		}
-	}
-	last_btn = btn;
+    if (cmd != CMD_NO_CMD) {
+        set_input_cmd(cmd);
+    }
+    last_btn = btn;
 }
 
 void update_psx() {
-	read_pad();
+    read_pad();
 
     draw_text_buffer();
     flip_buffers(&ctx);
@@ -206,8 +221,8 @@ void init_psx() {
 
     // Set the default background color and enable auto-clearing.
     constexpr auto r = 0x2f;
-	constexpr auto g = 0x36;
-	constexpr auto b = 0x40;
+    constexpr auto g = 0x36;
+    constexpr auto b = 0x40;
     setRGB0(&ctx.buffers[0].draw_env, r, g, b);
     setRGB0(&ctx.buffers[1].draw_env, r, g, b);
     ctx.buffers[0].draw_env.isbg = 1;
@@ -222,9 +237,9 @@ void init_psx() {
     // Turn on the video output.
     SetDispMask(1);
 
-	// Initialize PAD input.
-	// NB: This MUST happen after all of the above. For some reason.
-	SPI_Init(&poll_cb);
+    // Initialize PAD input.
+    // NB: This MUST happen after all of the above. For some reason.
+    SPI_Init(&poll_cb);
 }
 
 static void flip_buffers(RenderContext *ctx) {

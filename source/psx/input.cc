@@ -1,14 +1,7 @@
-/*
- * PSn00bSDK controller polling example (SPI driver)
- * (C) 2021 spicyjpeg - MPL licensed
- */
-
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
 #include <psxetc.h>
 #include <psxapi.h>
 #include <psxpad.h>
+#include <string.h>
 #include <hwregs_c.h>
 
 #include "psx/input.h"
@@ -32,7 +25,7 @@ static volatile uint32_t pad_config_attempt[2] = {0, 0};
 
 /* Request queue management */
 
-static void _spi_create_poll_req() {
+static void spi_create_poll_req() {
     const auto req = reinterpret_cast<volatile PadRequest *>(_context.tx_buff);
 
     req->addr = 0x01;
@@ -47,7 +40,7 @@ static void _spi_create_poll_req() {
     _context.callback = _default_cb;
 }
 
-static void _spi_next_req() {
+static void spi_next_req() {
     // Copy the contents of the first request in the queue into the TX buffer.
     memcpy(
         const_cast<uint8_t *>(_context.tx_buff),
@@ -70,7 +63,7 @@ static void _spi_next_req() {
 
 /* Interrupt handlers */
 
-static void _spi_poll_irq_handler() {
+static void spi_poll_irq_handler() {
     // Fetch the last response byte, which wasn't followed by a pulse on /ACK,
     // from the RX FIFO.
     if (SIO_STAT(0) & 0x0002)
@@ -81,9 +74,9 @@ static void _spi_poll_irq_handler() {
 
     // If the request queue is empty, create a pad polling request.
     if (_current_req)
-        _spi_next_req();
+        spi_next_req();
     else
-        _spi_create_poll_req();
+        spi_create_poll_req();
 
     // Prepare the SPI port by clearing any pending IRQ, pulling /CS high and
     // enabling the /ACK IRQ. In order to communicate with controllers, /CS has
@@ -102,7 +95,7 @@ static void _spi_poll_irq_handler() {
     SIO_DATA(0) = _context.tx_buff[0];
 }
 
-static void _spi_ack_irq_handler() {
+static void spi_ack_irq_handler() {
     // Wait until /ACK is pulled up by the controller before sending the next
     // byte. According to nocash docs, this has to be done before resetting the
     // IRQ.
@@ -121,14 +114,14 @@ static void _spi_ack_irq_handler() {
         SIO_DATA(0);
     } else if (_context.rx_len <= SPI_BUFF_LEN) {
         // If this is not the first byte, put it in the RX buffer.
-        _context.rx_buff[_context.rx_len - 1] = (uint8_t) SIO_DATA(0);
+        _context.rx_buff[_context.rx_len - 1] = static_cast<uint8_t>(SIO_DATA(0));
     }
 
-    // Send the next byte, or a null byte if there is no more data to send and
+    // Send the next byte, or a null byte if there is no more data to send, and
     // we're just reading a response.
     _context.rx_len++;
     if (_context.rx_len < _context.tx_len)
-        SIO_DATA(0) = (uint32_t) _context.tx_buff[_context.rx_len];
+        SIO_DATA(0) = _context.tx_buff[_context.rx_len];
     else
         SIO_DATA(0) = 0x00;
 }
@@ -167,14 +160,14 @@ void SPI_SetPollRate(const uint32_t value) {
         TIMER_RELOAD(2) = (F_CPU / 8) / value;
 }
 
-void SPI_Init(SPI_Callback callback) {
+void SPI_Init(const SPI_Callback callback) {
     // Disable the BIOS timer handler (which for some stupid reason is enabled
     // by default, even though it does nothing) and set up custom interrupt
     // handlers.
     EnterCriticalSection();
     ChangeClearRCnt(2, 0);
-    InterruptCallback(IRQ_TIMER2, &_spi_poll_irq_handler);
-    InterruptCallback(IRQ_SIO0, &_spi_ack_irq_handler);
+    InterruptCallback(IRQ_TIMER2, &spi_poll_irq_handler);
+    InterruptCallback(IRQ_SIO0, &spi_ack_irq_handler);
     ExitCriticalSection();
 
     SIO_CTRL(0) = 0x0040; // Reset all registers
@@ -291,7 +284,7 @@ int read_pad(uint32_t &btn) {
         return 0;
     }
 
-    const auto pad = reinterpret_cast<volatile PadResponse*>(&pad_buff[0]);
+    const auto pad = reinterpret_cast<volatile PadResponse *>(&pad_buff[0]);
     btn = ~pad->btn;
     return 1;
 }

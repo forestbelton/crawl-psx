@@ -1,7 +1,6 @@
 #ifndef PSX_INPUT_H
 #define PSX_INPUT_H
 
-#include <cstddef>
 #include <psxpad.h>
 
 // Maximum request/response length (34 bytes for pads, 140 for memory cards).
