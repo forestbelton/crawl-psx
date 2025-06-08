@@ -471,4 +471,9 @@ inline void UNUSED(const volatile T &)
 {
 }                               // Note that this generates no code with CodeWarrior or MSVC (if inlining is on).
 
+template<typename T, size_t N>
+constexpr size_t array_size(T (&)[N]) {
+    return N;
+}
+
 #endif

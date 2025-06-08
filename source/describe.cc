@@ -111,7 +111,7 @@ static void print_description( const string &d )
 
             if (nextLine >= currentPos && nextLine < currentPos + lineWidth)
             {
-                cprintf((d.substr(currentPos, nextLine - currentPos)).c_str());
+                cputs(d.substr(currentPos, nextLine - currentPos).c_str());
                 currentPos = nextLine + 1;
                 continue;
             }
@@ -123,7 +123,7 @@ static void print_description( const string &d )
         // no newline -- see if rest of string will fit.
         if (currentPos + lineWidth >= d.length())
         {
-            cprintf((d.substr(currentPos)).c_str());
+            cputs(d.substr(currentPos).c_str());
             return;
         }
 
@@ -131,9 +131,8 @@ static void print_description( const string &d )
         // ok.. try to truncate at space.
         nextLine = d.rfind(' ', currentPos + lineWidth);
 
-        if (nextLine > 0)
-        {
-            cprintf((d.substr(currentPos, nextLine - currentPos)).c_str());
+        if (nextLine > 0) {
+            cputs(d.substr(currentPos, nextLine - currentPos).c_str());
             currentPos = nextLine + 1;
             continue;
         }
@@ -144,7 +143,7 @@ static void print_description( const string &d )
         if (nextLine > d.length())
             nextLine = d.length();
 
-        cprintf((d.substr(currentPos, nextLine - currentPos)).c_str());
+        cputs(d.substr(currentPos, nextLine - currentPos).c_str());
         currentPos = nextLine;
     }
 }
@@ -1012,7 +1011,7 @@ static string describe_weapon( const item_def &item, char verbose)
 
         description += "$Base attack delay: ";
         append_value(description, property( item, PWPN_SPEED ) * 10, false);
-        description += "%%";
+        description += "%";
     }
     description += "$";
 
@@ -2900,7 +2899,7 @@ static string describe_staff( const item_def &item )
         else
         {
             description +=
-                "$$Damage rating: 7 $Accuracy rating: +6 $Attack delay: 120%%";
+                "$$Damage rating: 7 $Accuracy rating: +6 $Attack delay: 120%";
 
             description += "$$It falls into the 'staves' category. ";
         }
@@ -3284,7 +3283,7 @@ void describe_item( const item_def &item )
 
     clrscr();
 
-    string description = get_item_description( item, 1 );
+    const auto description = get_item_description( item, 1 );
 
     print_description(description);
 

@@ -218,7 +218,7 @@ public:
             size_type available = N - size_;
             size_type append_len = (str_len < available) ? str_len : available;
             
-            copy_chars(str, append_len);
+            //copy_chars(str, append_len);
             for (size_type i = 0; i < append_len; ++i) {
                 data_[size_ + i] = str[i];
             }

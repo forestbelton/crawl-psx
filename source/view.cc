@@ -43,7 +43,6 @@
 #include "stuff.h"
 #include "spells4.h"
 
-
 unsigned char your_sign;        // accessed as extern in transfor.cc and acr.cc
 unsigned char your_colour;      // accessed as extern in transfor.cc and acr.cc
 
@@ -1717,9 +1716,20 @@ void losight(FixedArray < unsigned int, 19, 19 > &sh,
         los_octant(o, sh, gr, x_p, y_p);
 }
 
+constexpr const char *BORDER_LABELS[] = {
+    "HP:",
+    "Magic:",
+    "AC:",
+    "EV:",
+    "Str:",
+    "Int:",
+    "Dex:",
+    "Gold:",
+    "Experience:",
+    "Level:",
+};
 
-void draw_border(void)
-{
+void draw_border() {
     textcolor( BORDER_COLOR );
     clrscr();
     redraw_skill( you.your_name, player_title() );
@@ -1728,16 +1738,10 @@ void draw_border(void)
     cprintf( "%s %s", species_name( you.species, you.experience_level ),
                      (you.wizard ? "*WIZARD*" : "" ) );
 
-    gotoxy(40,  3); cprintf("HP:");
-    gotoxy(40,  4); cprintf("Magic:");
-    gotoxy(40,  5); cprintf("AC:");
-    gotoxy(40,  6); cprintf("EV:");
-    gotoxy(40,  7); cprintf("Str:");
-    gotoxy(40,  8); cprintf("Int:");
-    gotoxy(40,  9); cprintf("Dex:");
-    gotoxy(40, 10); cprintf("Gold:");
-    gotoxy(40, 11); cprintf("Experience:");
-    gotoxy(40, 12); cprintf("Level");
+    for (int i = 0; i < array_size(BORDER_LABELS); i++) {
+        gotoxy(40, i + 3);
+        cputs(BORDER_LABELS[i]);
+    }
 }                               // end draw_border()
 
 // show_map() now centers the known map along x or y.  This prevents

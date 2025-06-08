@@ -4,11 +4,8 @@
 #include <cstring>
 
 #ifdef PSX
-// #include "etl_profile.h"
-// #include "etl/string.h"
-// typedef etl::string<255> string;
 #include "stack-string.h"
-typedef stack_string<255> string;
+typedef stack_string<500> string;
 #else
 #include <string>
 

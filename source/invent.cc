@@ -23,6 +23,7 @@
 #include <conio.h>
 #endif
 
+#include "describe.h"
 #include "externs.h"
 
 #include "itemname.h"
@@ -63,6 +64,7 @@ unsigned char invent( int item_class_inv, bool show_price )
     int inv_cursor = 0;
     int item_line = 0;
     unsigned char ki = 0;
+    item_def *selected_item = nullptr;
 
 #ifdef DOS_TERM
     char buffer[4600];
@@ -155,7 +157,7 @@ show_inv:
                 if (lines > num_lines - 3)
                 {
                     gotoxy(1, num_lines);
-                    cprintf("-more-");
+                    cputs("-more-");
 
                     ki = getch();
 
@@ -185,7 +187,7 @@ show_inv:
                 }
 
                 if (lines > 0)
-                    cprintf(EOL " ");
+                    cputs(EOL " ");
 
                 textcolor(BLUE);
 
@@ -210,7 +212,7 @@ show_inv:
                 //case OBJ_GEMSTONES: cprintf("Miscellaneous"); break;
                 }
 
-                cprintf(section_desc);
+                cputs(section_desc);
                 textcolor(LIGHTGREY);
                 lines++;
 
@@ -219,7 +221,7 @@ show_inv:
                     if (lines > num_lines - 2 && inv_count > 0)
                     {
                         gotoxy(1, num_lines);
-                        cprintf("-more-");
+                        cputs("-more-");
                         ki = getch();
 
                         if (ki == ESCAPE)
@@ -251,15 +253,21 @@ show_inv:
                         anything++;
 
                         if (lines > 0)
-                            cprintf(EOL);
+                            cputs(EOL);
 
                         lines++;
 
                         yps = wherey();
 
                         in_name( j, DESC_INVENTORY_EQUIP, st_pass );
-                        // NB: If inv_cursor == item_line, then selected item is you.inv[j]
-                        cputs(inv_cursor == item_line ? "> " : "  ");
+
+                        if (inv_cursor == item_line) {
+                            selected_item = &you.inv[j];
+                            cputs("> ");
+                        } else {
+                            cputs("  ");
+                        }
+
                         cprintf( st_pass );
 
                         inv_count--;
@@ -330,6 +338,9 @@ show_inv:
 
             case PAD_CIRCLE:
                 goto putty;
+
+            case PAD_CROSS:
+                describe_item(*selected_item);
                 break;
 
             default: ;
