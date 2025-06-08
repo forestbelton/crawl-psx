@@ -7,9 +7,14 @@
 static int cursor_x = 0;
 static int cursor_y = 0;
 static volatile int ch = CMD_NO_CMD;
+static volatile uint32_t pad_btn = 0;
 static int fg = DEFAULT_FG_COLOR;
 
 psx_text_cell psx_text_buffer[PSX_TEXT_LINES][PSX_TEXT_COLS];
+
+void set_pad_btn(const uint32_t btn) {
+    pad_btn = btn;
+}
 
 void set_input_cmd(const int cmd) {
     ch = cmd;
@@ -23,6 +28,15 @@ int get_input_cmd() {
     const int result = ch;
     ch = CMD_NO_CMD;
 
+    return result;
+}
+
+uint32_t getpad() {
+    while (pad_btn == 0) {
+        update_psx();
+    }
+    const auto result = pad_btn;
+    pad_btn = 0;
     return result;
 }
 
@@ -47,7 +61,7 @@ void clrscr() {
     cursor_y = 0;
 }
 
-void putch(char ch) {
+void putch(unsigned char ch) {
     // NB: viewwindow writes a lot of 0s. ncurses writes a space, so we do too
     if (ch == '\000') {
         ch = ' ';

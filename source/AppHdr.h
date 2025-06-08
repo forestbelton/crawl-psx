@@ -325,7 +325,7 @@
 // fixed-size allocation of 256 bytes for every string. Until either the
 // string implementation is improved or I get a better understanding of
 // how stored messages are used, keeping this value relatively low.
-#define NUM_STORED_MESSAGES   100
+#define NUM_STORED_MESSAGES   25
 #endif
 
 // if this works out okay, eventually we can change this to USE_OLD_RANDOM

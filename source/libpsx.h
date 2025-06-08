@@ -57,8 +57,20 @@ constexpr int PSX_TEXT_LINES = 25;
 #define tag_missing(tag, minorVersion)
 #define tag_read(fp, minorVersion) 0
 
-
 #include "psx/curses.h"
+
+#define C_SQUARE 0x80
+#define C_TRIANGLE 0x81
+#define C_CIRCLE 0x82
+#define C_CROSS 0x83
+
+#define S_SQUARE "\x80"
+#define S_TRIANGLE "\x81"
+#define S_CIRCLE "\x82"
+#define S_CROSS "\x83"
+
+#define PRINTCHAR_MIN 0x20
+#define PRINTCHAR_MAX 0x83
 
 //
 // psx/psx.cc

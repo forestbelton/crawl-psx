@@ -68,14 +68,16 @@ static void draw_text_buffer() {
 }
 
 static void draw_buffer_char(const int x, const int y, const psx_text_cell &cell) {
-    if (cell.ch <= 0x20 || cell.ch > 0x7f) {
+    // NB: PRINTCHAR_MIN == ' ' so we can skip rendering it too
+    static_assert(PRINTCHAR_MIN == ' ');
+    if (cell.ch <= PRINTCHAR_MIN || cell.ch > PRINTCHAR_MAX) {
         return;
     }
 
     const auto sprt = new_primitive<SPRT_8>(0);
 
-    const uint8_t ch_u = (cell.ch - 0x20) % 16 * 8;
-    const uint8_t ch_v = (cell.ch - 0x20) / 16 * 8;
+    const uint8_t ch_u = (cell.ch - PRINTCHAR_MIN) % 16 * 8;
+    const uint8_t ch_v = (cell.ch - PRINTCHAR_MIN) / 16 * 8;
 
     setSprt8(sprt);
     setShadeTex(sprt, 1);
@@ -123,6 +125,13 @@ void read_pad() {
     uint32_t btn;
     if (!read_pad(btn)) {
         return;
+    }
+
+    for (auto i = 0; i < 32; ++i) {
+        if (const uint32_t mask = 1 << i; btn & mask && !(last_btn & mask)) {
+            set_pad_btn(mask);
+            break;
+        }
     }
 
     int cmd = CMD_NO_CMD;

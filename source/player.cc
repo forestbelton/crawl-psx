@@ -2433,47 +2433,71 @@ int check_stealth(void)
     return (stealth);
 }                               // end check_stealth()
 
-void ability_increase(void)
-{
+void ability_increase() {
+#ifndef PSX
     unsigned char keyin;
+#else
+    uint32_t keyin;
+#endif
 
-    mpr("Your experience leads to an increase in your attributes!",
-        MSGCH_INTRINSIC_GAIN);
+    mpr("Your experience leads to an increase in your attributes!", MSGCH_INTRINSIC_GAIN);
 
     more();
     mesclr();
 
-    mpr("Increase (S)trength, (I)ntelligence, or (D)exterity? ", MSGCH_PROMPT);
+#ifndef PSX
+    constexpr auto q = "Increase (S)trength, (I)ntelligence, or (D)exterity? ";
+#else
+    constexpr auto q = "Increase Strength(" S_SQUARE "), Intelligence(" S_TRIANGLE "), or Dexterity(" S_CIRCLE ")?";
+#endif
+    mpr(q, MSGCH_PROMPT);
 
-  get_key:
-    keyin = getch();
-    if (keyin == 0)
-    {
-        getch();
-        goto get_key;
+    int stat = -1;
+    while (stat == -1) {
+#ifndef PSX
+        keyin = getch();
+        while (keyin == 0) {
+            keyin = getch();
+        }
+#else
+        keyin = getpad();
+#endif
+
+        switch (keyin) {
+#ifndef PSX
+            case 's':
+            case 'S':
+#else
+            case PAD_SQUARE:
+#endif
+                stat = STAT_STRENGTH;
+                break;
+
+#ifndef PSX
+            case 'i':
+            case 'I':
+#else
+            case PAD_TRIANGLE:
+#endif
+                stat = STAT_INTELLIGENCE;
+                break;
+
+#ifndef PSX
+            case 'd':
+            case 'D':
+#else
+            case PAD_CIRCLE:
+#endif
+                stat = STAT_DEXTERITY;
+
+                return;
+
+            default: ;
+        }
     }
 
-    switch (keyin)
-    {
-    case 's':
-    case 'S':
-        modify_stat(STAT_STRENGTH, 1, false);
-        return;
-
-    case 'i':
-    case 'I':
-        modify_stat(STAT_INTELLIGENCE, 1, false);
-        return;
-
-    case 'd':
-    case 'D':
-        modify_stat(STAT_DEXTERITY, 1, false);
-        return;
-    }
-
-    goto get_key;
-/* this is an infinite loop because it is reasonable to assume that you're not going to want to leave it prematurely. */
-}                               // end ability_increase()
+    modify_stat(stat, 1, false);
+}
 
 void display_char_status(void)
 {
