@@ -54,13 +54,14 @@ unsigned char invent( int item_class_inv, bool show_price )
     char lines = 0;
     unsigned char anything = 0;
     char tmp_quant[20] = "";
-    char yps = 0;
     char temp_id[4][50];
 
     const int num_lines = get_number_of_lines();
 
     FixedVector< int, NUM_OBJECT_CLASSES >  inv_class2;
     int inv_count = 0;
+    int inv_cursor = 0;
+    int item_line = 0;
     unsigned char ki = 0;
 
 #ifdef DOS_TERM
@@ -69,6 +70,15 @@ unsigned char invent( int item_class_inv, bool show_price )
     gettext(1, 1, 80, 25, buffer);
     window(1, 1, 80, 25);
 #endif
+
+show_inv:
+    lines = 0;
+    anything = 0;
+    tmp_quant[0] = 0;
+    inv_count = 0;
+    item_line = 0;
+    ki = 0;
+    st_pass[0] = 0;
 
     for (i = 0; i < 4; i++)
     {
@@ -130,9 +140,10 @@ unsigned char invent( int item_class_inv, bool show_price )
             && (inv_class2[OBJ_STAVES] > 0 || inv_class2[OBJ_MISCELLANY] > 0))
         || (item_class_inv == OBJ_SCROLLS && inv_class2[OBJ_BOOKS] > 0))
     {
+        char yps = 0;
         const int cap = carrying_capacity();
 
-        cprintf( "  Inventory: %d.%d aum (%d%% of %d.%d aum maximum)",
+        cprintf( "   Inventory: %d.%d aum (%d%% of %d.%d aum maximum)",
                  you.burden / 10, you.burden % 10,
                  (you.burden * 100) / cap, cap / 10, cap % 10 );
         lines++;
@@ -178,26 +189,28 @@ unsigned char invent( int item_class_inv, bool show_price )
 
                 textcolor(BLUE);
 
-                switch (i)
-                {
-                case OBJ_WEAPONS:    cprintf("Hand Weapons");    break;
-                case OBJ_MISSILES:   cprintf("Missiles");        break;
-                case OBJ_ARMOUR:     cprintf("Armour");          break;
-                case OBJ_WANDS:      cprintf("Magical Devices"); break;
-                case OBJ_FOOD:       cprintf("Comestibles");     break;
-                case OBJ_UNKNOWN_I:  cprintf("Books");           break;
-                case OBJ_SCROLLS:    cprintf("Scrolls");         break;
-                case OBJ_JEWELLERY:  cprintf("Jewellery");       break;
-                case OBJ_POTIONS:    cprintf("Potions");         break;
-                case OBJ_UNKNOWN_II: cprintf("Gems");            break;
-                case OBJ_BOOKS:      cprintf("Books");           break;
-                case OBJ_STAVES:     cprintf("Magical Staves and Rods");  break;
-                case OBJ_ORBS:       cprintf("Orbs of Power");   break;
-                case OBJ_MISCELLANY: cprintf("Miscellaneous");   break;
-                case OBJ_CORPSES:    cprintf("Carrion");         break;
+                const char *section_desc;
+                switch (i) {
+                    case OBJ_WEAPONS:    section_desc = " Hand Weapons";    break;
+                    case OBJ_MISSILES:   section_desc = " Missiles";        break;
+                    case OBJ_ARMOUR:     section_desc = " Armour";          break;
+                    case OBJ_WANDS:      section_desc = " Magical Devices"; break;
+                    case OBJ_FOOD:       section_desc = " Comestibles";     break;
+                    case OBJ_UNKNOWN_I:  section_desc = " Books";           break;
+                    case OBJ_SCROLLS:    section_desc = " Scrolls";         break;
+                    case OBJ_JEWELLERY:  section_desc = " Jewellery";       break;
+                    case OBJ_POTIONS:    section_desc = " Potions";         break;
+                    case OBJ_UNKNOWN_II: section_desc = " Gems";            break;
+                    case OBJ_BOOKS:      section_desc = " Books";           break;
+                    case OBJ_STAVES:     section_desc = " Magical Staves and Rods";  break;
+                    case OBJ_ORBS:       section_desc = " Orbs of Power";   break;
+                    case OBJ_MISCELLANY: section_desc = " Miscellaneous";   break;
+                    case OBJ_CORPSES:    section_desc = " Carrion";         break;
+                    default:             section_desc = "";
                 //case OBJ_GEMSTONES: cprintf("Miscellaneous"); break;
                 }
 
+                cprintf(section_desc);
                 textcolor(LIGHTGREY);
                 lines++;
 
@@ -245,10 +258,12 @@ unsigned char invent( int item_class_inv, bool show_price )
                         yps = wherey();
 
                         in_name( j, DESC_INVENTORY_EQUIP, st_pass );
+                        // NB: If inv_cursor == item_line, then selected item is you.inv[j]
+                        cputs(inv_cursor == item_line ? "> " : "  ");
                         cprintf( st_pass );
 
                         inv_count--;
-
+                        item_line++;
 
                         if (show_price)
                         {
@@ -287,6 +302,7 @@ unsigned char invent( int item_class_inv, bool show_price )
 
     if (anything > 0)
     {
+#ifndef PSX
         ki = getch();
 
         if (isalpha(ki) || ki == '?' || ki == '*')
@@ -299,6 +315,27 @@ unsigned char invent( int item_class_inv, bool show_price )
 
         if (ki == 0)
             ki = getch();
+#else
+        const auto btn = getpad();
+        set_input_cmd(CMD_NO_CMD);
+
+        switch (btn) {
+            case PAD_UP:
+                inv_cursor = MAXIMUM(inv_cursor - 1, 0);
+                break;
+
+            case PAD_DOWN:
+                inv_cursor = MINIMUM(inv_cursor + 1, anything - 1);
+                break;
+
+            case PAD_CIRCLE:
+                goto putty;
+                break;
+
+            default: ;
+        }
+        goto show_inv;
+#endif
     }
 
   putty:
