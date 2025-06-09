@@ -131,9 +131,9 @@
 #include "view.h"
 #include "wpn-misc.h"
 
-struct crawl_environment env;
-struct player you;
-struct system_environment SysEnv;
+crawl_environment env;
+player you;
+system_environment SysEnv;
 
 char info[ INFO_SIZE ];         // messaging queue extern'd everywhere {dlb}
 
@@ -195,6 +195,8 @@ static bool initialise();
 static void input();
 static void move_player(char move_x, char move_y);
 static void open_door(char move_x, char move_y);
+static void start_menu();
+static void start_item_equipment();
 
 /*
    It all starts here. Some initialisations are run first, then straight to
@@ -867,9 +869,7 @@ static bool check_stop_running( void )
    This function handles the player's input. It's called from main(), from
    inside an endless loop.
  */
-static void input(void)
-{
-
+static void input() {
     bool its_quiet;             //jmf: for silence messages
     FixedVector < int, 2 > plox;
     char move_x = 0;
@@ -1026,8 +1026,7 @@ static void input(void)
 
 
 
-    switch (keyin)
-    {
+    switch (keyin) {
     case CONTROL('Y'):
     case CMD_OPEN_DOOR_UP_RIGHT:
         open_door(-1, -1); move_x = 0; move_y = 0; break;
@@ -1562,6 +1561,10 @@ static void input(void)
     case 'V':
     case CMD_GET_VERSION:
         version();
+        break;
+
+    case CMD_OPEN_START_MENU:
+        start_menu();
         break;
 
     case 128:   // Can't use this char -- it's the special value 128
@@ -3091,3 +3094,261 @@ static void move_player(char move_x, char move_y)
         do_berserk_no_combat_penalty();
     }
 }                               // end move_player()
+
+enum {
+    START_ITEM_STATUS,
+    START_ITEM_INVENTORY,
+    START_ITEM_EQUIPMENT,
+    START_ITEM_SKILLS,
+    START_ITEM_OVERVIEW,
+    START_ITEM_MUTATIONS,
+    START_ITEM_RELIGION,
+    START_ITEM_KNOWN_OBJECTS,
+    START_ITEM_QUIT,
+} START_ITEMS;
+
+static constexpr const char *START_ITEM_DESCRIPTIONS[] = {
+    "Status",
+    "Inventory",
+    "Equipment",
+    "Skills",
+    "Overview",
+    "Mutations",
+    "Religion",
+    "Known Objects",
+    "Quit Game",
+};
+
+void start_menu() {
+    int cursor_y = 0;
+    auto done = false;
+
+    while (!done) {
+        clrscr();
+        gotoxy(2, 1);
+        textcolor(LIGHTGREY);
+        cputs("What would you like to do?");
+
+        for (int i = 0; i < array_size(START_ITEM_DESCRIPTIONS); ++i) {
+            gotoxy(1, 3 + i);
+            cputs(cursor_y == i ? "> " : "  ");
+            cputs(START_ITEM_DESCRIPTIONS[i]);
+        }
+
+        textcolor(LIGHTCYAN);
+        cputs(EOL EOL "  " S_CIRCLE " - Back");
+        textcolor(LIGHTGRAY);
+
+        switch (getpad()) {
+            case PAD_UP:
+                cursor_y = MAXIMUM(cursor_y - 1, 0);
+                break;
+
+            case PAD_DOWN:
+                cursor_y = MINIMUM(cursor_y + 1, array_size(START_ITEM_DESCRIPTIONS) - 1);
+                break;
+
+            case PAD_CROSS:
+                switch (cursor_y) {
+                    case START_ITEM_STATUS:
+                        // TODO(forest): This prints to mpr
+                        // display_char_status();
+                        // TODO(forest): Show experience check
+                        break;
+
+                    case START_ITEM_INVENTORY:
+                        get_invent(-1);
+                        break;
+
+                    case START_ITEM_EQUIPMENT:
+                        start_item_equipment();
+                        break;
+
+                    case START_ITEM_SKILLS:
+                        show_skills();
+                        break;
+
+                    case START_ITEM_OVERVIEW:
+                        display_overmap();
+                        break;
+
+                    case START_ITEM_MUTATIONS:
+                        display_mutations();
+                        break;
+
+                    case START_ITEM_RELIGION:
+                        describe_god(you.religion, true);
+                        break;
+
+                    case START_ITEM_KNOWN_OBJECTS:
+                        check_item_knowledge();
+                        break;
+
+                    case START_ITEM_QUIT:
+                        // TODO(forest): Implement quit
+                        for (;;) {}
+                        break;
+
+                    default: ;
+                }
+                break;
+
+            case PAD_CIRCLE:
+                done = true;
+                break;
+
+            default: ;
+        }
+    }
+
+    redraw_screen();
+}
+
+// NB: list_weapons(), list_armour(), and list_jewellery() do not compose well,
+// so we combine them into one subroutine here for unified display.
+void start_item_equipment() {
+    clrscr();
+    gotoxy(2, 1);
+    cputs("Equipment" EOL EOL);
+
+    textcolor(BLUE);
+    cputs("  Weapons" EOL);
+    textcolor(LIGHTGRAY);
+
+    const int weapon_id = you.equip[EQ_WEAPON];
+    cputs("  Current   : ");
+    if (weapon_id != -1) {
+        char str_pass[ITEMNAME_SIZE];
+        in_name(weapon_id, DESC_INVENTORY_EQUIP, str_pass);
+        cputs(str_pass);
+    } else {
+        const auto hand_name = you.attribute[ATTR_TRANSFORMATION] == TRAN_BLADE_HANDS
+                                   ? "    blade hands"
+                                   : "    empty hands";
+        cputs(hand_name);
+    }
+
+    // Print out the swap slots
+    for (int i = 0; i <= 1; i++) {
+        // We'll avoid repeating the current weapon for these slots,
+        // in order to keep things clean.
+        if (weapon_id == i) {
+            continue;
+        }
+
+        cputs(EOL "  ");
+        cputs(i == 0 ? "Primary   : " : "Secondary : ");
+        if (is_valid_item(you.inv[i])) {
+            char str_pass[ITEMNAME_SIZE];
+            in_name(i, DESC_INVENTORY_EQUIP, str_pass);
+            cputs(str_pass);
+        } else {
+            cputs("    none");
+        }
+    }
+
+    // Now we print out the current default fire weapon
+    cputs(EOL "  Firing    : ");
+
+    if (const int item = get_fire_item_index(); item != ENDOFPACK) {
+        char str_pass[ITEMNAME_SIZE];
+        in_name(item, DESC_INVENTORY_EQUIP, str_pass);
+        cputs(str_pass);
+    } else {
+        cputs("    nothing");
+    }
+
+    textcolor(BLUE);
+    cputs(EOL EOL "  Armour" EOL);
+    textcolor(LIGHTGRAY);
+    for (int i = EQ_CLOAK; i <= EQ_BODY_ARMOUR; i++) {
+        int armour_id = you.equip[i];
+
+        const char *armour_slot_name;
+        switch (i) {
+            case EQ_CLOAK:
+                armour_slot_name = "Cloak  ";
+                break;
+
+            case EQ_HELMET:
+                armour_slot_name = "Helmet ";
+                break;
+
+            case EQ_GLOVES:
+                armour_slot_name = "Gloves ";
+                break;
+
+            case EQ_SHIELD:
+                armour_slot_name = "Shield ";
+                break;
+
+            case EQ_BODY_ARMOUR:
+                armour_slot_name = "Armour ";
+                break;
+
+            case EQ_BOOTS:
+                armour_slot_name = you.species == SP_CENTAUR || you.species == SP_NAGA
+                                       ? "Barding"
+                                       : "Boots  ";
+                break;
+
+            default:
+                armour_slot_name = "unknown";
+                break;
+        }
+        cprintf("  %s : ", armour_slot_name);
+
+        if (armour_id != -1) {
+            char str_pass[ITEMNAME_SIZE];
+            in_name(armour_id, DESC_INVENTORY, str_pass);
+            cputs(str_pass);
+        } else {
+            cputs("    none");
+        }
+        cputs(EOL);
+    }
+
+    textcolor(BLUE);
+    cputs(EOL "  Jewellery" EOL);
+    textcolor(LIGHTGRAY);
+
+    for (int i = EQ_LEFT_RING; i <= EQ_AMULET; i++) {
+        const int jewellery_id = you.equip[i];
+
+        const char *jewellery_slot_name;
+        switch (i) {
+            case EQ_LEFT_RING:
+                jewellery_slot_name = "Left ring ";
+                break;
+            case EQ_RIGHT_RING:
+                jewellery_slot_name = "Right ring";
+                break;
+            case EQ_AMULET:
+                jewellery_slot_name = "Amulet    ";
+                break;
+
+            default:
+                jewellery_slot_name = "unknown   ";
+                break;
+        }
+        cprintf("  %s : ", jewellery_slot_name);
+
+        if (jewellery_id != -1) {
+            char str_pass[ITEMNAME_SIZE];
+            in_name(jewellery_id, DESC_INVENTORY, str_pass);
+            cputs(str_pass);
+        }
+        else {
+            cputs("    none");
+        }
+        cputs(EOL);
+    }
+
+    textcolor(LIGHTCYAN);
+    cputs(EOL "  " S_CIRCLE " - Back");
+
+    auto btn = getpad();
+    while (btn != PAD_CIRCLE) {
+        btn = getpad();
+    }
+}

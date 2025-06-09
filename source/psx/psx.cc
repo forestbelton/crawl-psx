@@ -179,7 +179,7 @@ void read_pad() {
                 break;
 
             case PAD_START:
-                cmd = CMD_DISPLAY_INVENTORY;
+                cmd = CMD_OPEN_START_MENU;
                 break;
 
             case PAD_CROSS:

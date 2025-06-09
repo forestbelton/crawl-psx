@@ -26,6 +26,7 @@ int get_input_cmd() {
     }
 
     const int result = ch;
+    pad_btn = 0;
     ch = CMD_NO_CMD;
 
     return result;
@@ -37,6 +38,7 @@ uint32_t getpad() {
     }
     const auto result = pad_btn;
     pad_btn = 0;
+    ch = CMD_NO_CMD;
     return result;
 }
 
@@ -46,6 +48,7 @@ int getch() {
     }
 
     const int result = ch;
+    pad_btn = 0;
     ch = CMD_NO_CMD;
 
     return result;
