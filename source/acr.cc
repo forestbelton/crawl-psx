@@ -3113,7 +3113,7 @@ static constexpr const char *START_ITEM_DESCRIPTIONS[] = {
     "Equipment",
     "Skills",
     "Overview",
-    "Mutations",
+    "Abilities & Mutations",
     "Religion",
     "Known Objects",
     "Quit Game",

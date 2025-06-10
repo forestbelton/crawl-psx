@@ -1786,13 +1786,15 @@ JOB_PALADIN:
 
 ************************************************************* */
 
-void show_skills(void)
-{
+void show_skills() {
     int i;
-    int x;
     char lcount;
+    int skill_index;
+    int skill_x = 0;
+    int cursor_y = 0;
 
     const int num_lines = get_number_of_lines();
+    constexpr auto skill_y0 = 5;
 
 #ifdef DOS_TERM
     window(1, 1, 80, 25);
@@ -1804,6 +1806,7 @@ void show_skills(void)
     clrscr();
 
   reprint_stuff:
+    skill_index = 0;
     lcount = 'a';
 
     gotoxy(1, 1);
@@ -1813,21 +1816,21 @@ void show_skills(void)
     cprintf( "You have %d points of unallocated experience (cost lvl %d; total %d)." EOL EOL,
              you.exp_available, you.skill_cost_level, you.total_skill_points );
 #else
-    cprintf(" You have %d points of unallocated experience." EOL EOL,
+    cputs(" Skills" EOL EOL);
+    cprintf("  You have %d points of unallocated experience." EOL EOL,
             you.exp_available );
 #endif
 
-    char scrln = 3, scrcol = 1;
+    char scrln = skill_y0, scrcol = 1;
 
     // Don't want the help line to appear too far down a big window.
-    int bottom_line = ((num_lines > 30) ? 30 : num_lines);
+    const int bottom_line = ((num_lines > 30) ? 30 : num_lines) - 1;
 
-    for (x = 0; x < NUM_SKILLS; x++)
-    {
+    for (int x = 0; x < NUM_SKILLS; x++) {
         /* spells in second column */
         if ((x == SK_SPELLCASTING && scrcol != 40) || scrln > bottom_line - 3)
         {
-            scrln = 3;
+            scrln = skill_y0;
             scrcol = 40;
         }
 
@@ -1860,6 +1863,13 @@ void show_skills(void)
                     lcount++;
             }
 #else
+
+            if (cursor_y == skill_index) {
+                cputs("> ");
+                skill_x = x;
+            } else {
+                cputs("  ");
+            }
             putch(lcount);
             if (lcount == 'z')
                 lcount = 'A';
@@ -1889,6 +1899,7 @@ void show_skills(void)
                            (((needed - prev_needed) * spec_abil) / 100) );
             }
 
+            skill_index++;
             scrln++;
         }
 
@@ -1902,9 +1913,45 @@ void show_skills(void)
 
     // if any more skills added, must adapt letters to go into caps
     gotoxy(1, bottom_line);
-    textcolor(LIGHTGREY);
+#ifdef PSX
+    textcolor(LIGHTCYAN);
+    cputs("  " S_CROSS " - Practise skill" EOL);
+    cputs("  " S_CIRCLE " - Back");
+#else
+    textcolor(LIGHTGRAY);
     cprintf("Press the letter of a skill to choose whether you want to practise it.");
+#endif
 
+#ifdef PSX
+    auto should_reprint = true;
+    switch (getpad()) {
+        case PAD_UP:
+            cursor_y = MAXIMUM(cursor_y - 1, 0);
+            break;
+
+        case PAD_DOWN:
+            cursor_y = MINIMUM(cursor_y + 1, skill_index - 1);
+            break;
+
+        // Toggle skill practice
+        case PAD_CROSS:
+            // NB: Should never happen...
+            if (you.skills[skill_x] == 0) {
+                break;
+            }
+            you.practise_skill[skill_x] = (you.practise_skill[skill_x]) ? 0 : 1;
+            break;
+
+        case PAD_CIRCLE:
+            should_reprint = false;
+            break;
+
+        default: ;
+    }
+    if (should_reprint) {
+        goto reprint_stuff;
+    }
+#else
     char get_thing;
 
     get_thing = getch();
@@ -1938,11 +1985,11 @@ void show_skills(void)
             goto reprint_stuff;
         }
     }
+#endif
 
 #ifdef DOS_TERM
     puttext(1, 1, 80, 25, buffer);
 #endif
-    return;
 }
 
 

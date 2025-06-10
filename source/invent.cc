@@ -145,10 +145,10 @@ show_inv:
         char yps = 0;
         const int cap = carrying_capacity();
 
-        cprintf( "   Inventory: %d.%d aum (%d%% of %d.%d aum maximum)",
+        cprintf( " Inventory: %d.%d aum (%d%% of %d.%d aum maximum)" EOL,
                  you.burden / 10, you.burden % 10,
                  (you.burden * 100) / cap, cap / 10, cap % 10 );
-        lines++;
+        lines += 2;
 
         for (i = 0; i < 15; i++)
         {

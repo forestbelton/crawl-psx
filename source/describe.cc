@@ -3286,9 +3286,15 @@ void describe_item( const item_def &item )
     const auto description = get_item_description( item, 1 );
 
     print_description(description);
-
+#ifdef PSX
+    auto btn = getpad();
+    while (btn != PAD_CIRCLE) {
+        btn = getpad();
+    }
+#else
     if (getch() == 0)
         getch();
+#endif
 
 #ifdef DOS_TERM
     puttext(25, 1, 80, 25, buffer);

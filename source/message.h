@@ -53,6 +53,7 @@ void more(void);
  * *********************************************************************** */
 void mpr(const char *inf, int channel = MSGCH_PLAIN, int param = 0);
 
+void mprf(int channel, int param, const char *fmt, ...);
 
 // last updated 12may2000 {dlb}
 /* ***********************************************************************

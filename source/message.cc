@@ -265,6 +265,24 @@ void mpr(const char *inf, int channel, int param)
     }
 }                               // end mpr()
 
+void mprf(const int channel, const int param, const char *fmt, ...) {
+    char inf[100];
+
+    va_list args;
+    va_start(args, fmt);
+
+    // NB: Apparently a bug with `vsnprintf` in PSn00BSDK that will cause
+    // memory corruption if the buffer isn't large enough. Just going to
+    // pretend it doesn't exist for now and fix if it becomes an issue.
+    //
+    // https://github.com/Lameguy64/PSn00bSDK/issues/84
+    vsnprintf(&inf[0], sizeof inf - 1, fmt, args);
+    va_end(args);
+
+    inf[sizeof inf - 1] = 0;
+    mpr(inf, channel, param);
+}
+
 bool any_messages(void)
 {
     return (Message_Line > 0);
