@@ -915,8 +915,64 @@ void down_stairs( bool remove_stairs, int old_level )
         mpr( "You sense a powerful magical force warping space.", MSGCH_WARN );
 }                               // end down_stairs()
 
-void new_level(void)
-{
+constexpr const char *BRANCH_NAMES[] = {
+    " of the Dungeon           ",
+    " of Dis                   ",
+    " of Gehenna               ",
+    "- the Vestibule of Hell            ",
+    " of Cocytus                   ",
+    " of Tartarus                ",
+    " of the Inferno               ",
+    " of the Pit              ",
+    nullptr,
+    nullptr,
+    " of the Orcish Mines          ",
+    " of the Hive                  ",
+    " of the Lair                  ",
+    " of the Slime Pits            ",
+    " of the Vaults                ",
+    " of the Crypt                 ",
+    " of the Hall of Blades        ",
+    " of the Realm of Zot          ",
+    " of the Temple                ",
+    " of the Snake Pit             ",
+    " of the Elven Halls           ",
+    " of the Tomb                  ",
+    " of the Swamp                 ",
+};
+
+typedef struct {
+    int floor_colour;
+    int rock_colour;
+} env_colour;
+
+constexpr env_colour BRANCH_COLOURS[] = {
+    {LIGHTGRAY, BROWN},
+    {CYAN, CYAN},
+    {DARKGRAY, RED},
+    {LIGHTGRAY, LIGHTGRAY},
+    {LIGHTBLUE, LIGHTCYAN},
+    {DARKGRAY, DARKGRAY},
+    {LIGHTRED, RED},
+    {RED, DARKGRAY},
+    {},
+    {},
+    {BROWN, BROWN},
+    {YELLOW, BROWN},
+    {GREEN, BROWN},
+    {GREEN, LIGHTGREEN},
+    {LIGHTGRAY, BROWN},
+    {LIGHTGRAY, LIGHTGRAY},
+    {LIGHTGRAY, LIGHTGRAY},
+    {},
+    {LIGHTGRAY, LIGHTGRAY},
+    {LIGHTGREEN, YELLOW},
+    {DARKGRAY, LIGHTGRAY},
+    {YELLOW, LIGHTGRAY},
+    {BROWN, BROWN},
+};
+
+void new_level() {
     int curr_subdungeon_level = you.your_level + 1;
 
     textcolor(LIGHTGREY);
@@ -942,9 +998,8 @@ void new_level(void)
     env.floor_colour = LIGHTGREY;
     env.rock_colour  = BROWN;
 
-    if (you.level_type == LEVEL_PANDEMONIUM)
-    {
-        cprintf("- Pandemonium            ");
+    if (you.level_type == LEVEL_PANDEMONIUM) {
+        cputs("- Pandemonium            ");
 
         env.floor_colour = (mcolour[env.mons_alloc[9]] == BLACK)
                                     ? LIGHTGREY : mcolour[env.mons_alloc[9]];
@@ -952,161 +1007,56 @@ void new_level(void)
         env.rock_colour = (mcolour[env.mons_alloc[8]] == BLACK)
                                     ? LIGHTGREY : mcolour[env.mons_alloc[8]];
     }
-    else if (you.level_type == LEVEL_ABYSS)
-    {
-        cprintf("- The Abyss               ");
+    else if (you.level_type == LEVEL_ABYSS) {
+        cputs("- The Abyss               ");
 
         env.floor_colour = (mcolour[env.mons_alloc[9]] == BLACK)
                                     ? LIGHTGREY : mcolour[env.mons_alloc[9]];
 
         env.rock_colour = (mcolour[env.mons_alloc[8]] == BLACK)
                                     ? LIGHTGREY : mcolour[env.mons_alloc[8]];
-    }
-    else if (you.level_type == LEVEL_LABYRINTH)
-    {
-        cprintf("- a Labyrinth           ");
-    }
-    else
-    {
+    } else if (you.level_type == LEVEL_LABYRINTH) {
+        cputs("- a Labyrinth           ");
+    } else {
         // level_type == LEVEL_DUNGEON
-        if (!player_in_branch( BRANCH_VESTIBULE_OF_HELL ))
-            cprintf( "%d", curr_subdungeon_level );
+        if (!player_in_branch(BRANCH_VESTIBULE_OF_HELL)) {
+            cprintf("%d", curr_subdungeon_level);
+        }
 
-        switch (you.where_are_you)
-        {
-        case BRANCH_MAIN_DUNGEON:
-            cprintf(" of the Dungeon           ");
-            break;
-        case BRANCH_DIS:
-            env.floor_colour = CYAN;
-            env.rock_colour = CYAN;
-            cprintf(" of Dis                   ");
-            break;
-        case BRANCH_GEHENNA:
-            env.floor_colour = DARKGREY;
-            env.rock_colour = RED;
-            cprintf(" of Gehenna               ");
-            break;
-        case BRANCH_VESTIBULE_OF_HELL:
-            env.floor_colour = LIGHTGREY;
-            env.rock_colour = LIGHTGREY;
-            cprintf("- the Vestibule of Hell            ");
-            break;
-        case BRANCH_COCYTUS:
-            env.floor_colour = LIGHTBLUE;
-            env.rock_colour = LIGHTCYAN;
-            cprintf(" of Cocytus                   ");
-            break;
-        case BRANCH_TARTARUS:
-            env.floor_colour = DARKGREY;
-            env.rock_colour = DARKGREY;
-            cprintf(" of Tartarus                ");
-            break;
-        case BRANCH_INFERNO:
-            env.floor_colour = LIGHTRED;
-            env.rock_colour = RED;
-            cprintf(" of the Inferno               ");
-            break;
-        case BRANCH_THE_PIT:
-            env.floor_colour = RED;
-            env.rock_colour = DARKGREY;
-            cprintf(" of the Pit              ");
-            break;
-        case BRANCH_ORCISH_MINES:
-            env.floor_colour = BROWN;
-            env.rock_colour = BROWN;
-            cprintf(" of the Orcish Mines          ");
-            break;
-        case BRANCH_HIVE:
-            env.floor_colour = YELLOW;
-            env.rock_colour = BROWN;
-            cprintf(" of the Hive                  ");
-            break;
-        case BRANCH_LAIR:
-            env.floor_colour = GREEN;
-            env.rock_colour = BROWN;
-            cprintf(" of the Lair                  ");
-            break;
-        case BRANCH_SLIME_PITS:
-            env.floor_colour = GREEN;
-            env.rock_colour = LIGHTGREEN;
-            cprintf(" of the Slime Pits            ");
-            break;
-        case BRANCH_VAULTS:
-            env.floor_colour = LIGHTGREY;
-            env.rock_colour = BROWN;
-            cprintf(" of the Vaults                ");
-            break;
-        case BRANCH_CRYPT:
-            env.floor_colour = LIGHTGREY;
-            env.rock_colour = LIGHTGREY;
-            cprintf(" of the Crypt                 ");
-            break;
-        case BRANCH_HALL_OF_BLADES:
-            env.floor_colour = LIGHTGREY;
-            env.rock_colour = LIGHTGREY;
-            cprintf(" of the Hall of Blades        ");
-            break;
+        if (you.where_are_you != BRANCH_HALL_OF_ZOT) {
+            env.floor_colour = BRANCH_COLOURS[you.where_are_you].floor_colour;
+            env.rock_colour = BRANCH_COLOURS[you.where_are_you].rock_colour;
+        } else {
+            int floor_colour = LIGHTGRAY;
+            int rock_colour = LIGHTGRAY;
 
-        case BRANCH_HALL_OF_ZOT:
-            if (you.your_level - you.branch_stairs[7] <= 1)
-            {
-                env.floor_colour = LIGHTGREY;
-                env.rock_colour = LIGHTGREY;
-            }
-            else
-            {
-                switch (you.your_level - you.branch_stairs[7])
-                {
+            switch (you.your_level - you.branch_stairs[7]) {
                 case 2:
-                    env.rock_colour = LIGHTGREY;
-                    env.floor_colour = BLUE;
+                    rock_colour = LIGHTGREY;
+                    floor_colour = BLUE;
                     break;
                 case 3:
-                    env.rock_colour = BLUE;
-                    env.floor_colour = LIGHTBLUE;
+                    rock_colour = BLUE;
+                    floor_colour = LIGHTBLUE;
                     break;
                 case 4:
-                    env.rock_colour = LIGHTBLUE;
-                    env.floor_colour = MAGENTA;
+                    rock_colour = LIGHTBLUE;
+                    floor_colour = MAGENTA;
                     break;
                 case 5:
-                    env.rock_colour = MAGENTA;
-                    env.floor_colour = LIGHTMAGENTA;
+                    rock_colour = MAGENTA;
+                    floor_colour = LIGHTMAGENTA;
                     break;
-                }
+                default: ;
             }
-            cprintf(" of the Realm of Zot          ");
-            break;
 
-        case BRANCH_ECUMENICAL_TEMPLE:
-            env.floor_colour = LIGHTGREY;
-            env.rock_colour = LIGHTGREY;
-            cprintf(" of the Temple                ");
-            break;
-        case BRANCH_SNAKE_PIT:
-            env.floor_colour = LIGHTGREEN;
-            env.rock_colour = YELLOW;
-            cprintf(" of the Snake Pit             ");
-            break;
-        case BRANCH_ELVEN_HALLS:
-            env.floor_colour = DARKGREY;
-            env.rock_colour = LIGHTGREY;
-            cprintf(" of the Elven Halls           ");
-            break;
-        case BRANCH_TOMB:
-            env.floor_colour = YELLOW;
-            env.rock_colour = LIGHTGREY;
-            cprintf(" of the Tomb                  ");
-            break;
-        case BRANCH_SWAMP:
-            env.floor_colour = BROWN;
-            env.rock_colour = BROWN;
-            cprintf(" of the Swamp                 ");
-            break;
+            env.floor_colour = floor_colour;
+            env.rock_colour = rock_colour;
         }
-    }                           // end else
-}                               // end new_level()
+
+        cputs(BRANCH_NAMES[you.where_are_you]);
+    }
+}
 
 static void dart_trap( bool trap_known, int trapped, struct bolt &pbolt,
                        bool poison )
