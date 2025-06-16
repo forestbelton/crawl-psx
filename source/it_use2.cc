@@ -286,8 +286,7 @@ bool potion_effect( char pot_eff, int pow )
     return (effect);
 }                               // end potion_effect()
 
-void unwield_item(char unw)
-{
+void unwield_item(const int unw) {
     you.special_wield = SPWLD_NONE;
     you.wield_change = true;
 

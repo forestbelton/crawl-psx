@@ -799,7 +799,7 @@ bool items_stack(const item_def &item1, const item_def &item2) {
 
         // Thanks to mummy cursing, we can have potions of decay
         // that don't look alike... so we don't stack potions
-        // if either isn't identified and they look different.  -- bwr
+        // if either isn't identified, and they look different.  -- bwr
         if (item1.base_type == OBJ_POTIONS
             && item1.special != item2.special
             && (item_not_ident(item1, ISFLAG_KNOW_TYPE)
@@ -1007,7 +1007,7 @@ bool move_top_item(const int src_x, const int src_y, const int dest_x, const int
  * @brief Drop player gold onto the ground.
  * @param amount The amount of gold to drop
  */
-static void drop_gold(unsigned int amount) {
+static void drop_gold(int amount) {
     if (you.gold == 0) {
         mpr("You don't have any money.");
         return;
@@ -1033,7 +1033,7 @@ static void drop_gold(unsigned int amount) {
     }
 
     mitm[i].base_type = OBJ_GOLD;
-    mitm[i].quantity = amount;
+    mitm[i].quantity = static_cast<short>(amount);
     mitm[i].flags = 0;
 
     move_item_to_grid(&i, you.x_pos, you.y_pos);
@@ -1058,7 +1058,7 @@ void drop() {
     } else if (item_dropped == PROMPT_GOT_SPECIAL) {
         // drop gold
         if (quant_drop < 0 || quant_drop > you.gold) {
-            quant_drop = you.gold;
+            quant_drop = static_cast<int>(you.gold);
         }
 
         drop_gold(quant_drop);
@@ -1237,8 +1237,8 @@ void update_corpses(const double elapsedTime) {
         }
     }
 
-    int fountain_checks = (int)(elapsedTime / 1000.0);
-    if (random2(1000) < (int)(elapsedTime) % 1000)
+    int fountain_checks = static_cast<int>(elapsedTime / 1000.0);
+    if (random2(1000) < static_cast<int>(elapsedTime) % 1000)
         fountain_checks += 1;
 
     // Dry fountains may start flowing again
@@ -1407,7 +1407,7 @@ static void update_enchantments(monsters *mon, const int levels) {
 }
 
 void update_level(const double elapsedTime) {
-    int turns = (int) (elapsedTime / 10.0);
+    int turns = static_cast<int>(elapsedTime / 10.0);
 
 #if DEBUG_DIAGNOSTICS
     int mons_total = 0;
@@ -1458,8 +1458,8 @@ void update_level(const double elapsedTime) {
             continue;
 
 
-        const int range = (turns * mon->speed) / 10;
-        const int moves = (range > 50) ? 50 : range;
+        const int range = turns * static_cast<int>(mon->speed) / 10;
+        const int moves = range > 50 ? 50 : range;
 
         // const bool short_time = (range >= 5 + random2(10));
         const bool long_time  = (range >= (500 + roll_dice( 2, 500 )));
@@ -1765,7 +1765,7 @@ void handle_time(long time_delta) {
         added_contamination++;
 
     // randarts are usually about 20x worse than running around invisible
-    // or hasted.. this seems OK.
+    // or hasted. this seems OK.
     added_contamination += random2(1 + scan_randarts(RAP_MUTAGENIC));
 
     // we take off about .5 points per turn
@@ -1796,8 +1796,8 @@ void handle_time(long time_delta) {
                 boom.isTracer = false;
                 strcpy(boom.beam_name, "magical storm");
 
-                boom.ench_power = (you.magic_contamination * 5);
-                boom.ex_size = (you.magic_contamination / 15);
+                boom.ench_power = you.magic_contamination * 5;
+                boom.ex_size = static_cast<char>(you.magic_contamination / 15);
                 if (boom.ex_size > 9)
                     boom.ex_size = 9;
 
@@ -1895,13 +1895,11 @@ void handle_time(long time_delta) {
             forget_map(5 + random2(you.mutation[MUT_LOST] * 10));
     }
 
-    // Update all of the corpses and food chunks on the floor
+    // Update all the corpses and food chunks on the floor
     update_corpses(time_delta);
 
-    // Update all of the corpses and food chunks in the player's
+    // Update all the corpses and food chunks in the player's
     // inventory {should be moved elsewhere - dlb}
-
-
     for (i = 0; i < ENDOFPACK; i++) {
         if (you.inv[i].quantity < 1)
             continue;
@@ -2038,7 +2036,6 @@ int autopickup_on = 1;
 
 static void autopickup() {
     //David Loewenstern 6/99
-    int result, o, next;
     bool did_pickup = false;
 
     if (autopickup_on == 0 || Options.autopickups == 0L)
@@ -2053,30 +2050,19 @@ static void autopickup() {
     if (player_is_levitating() && !wearing_amulet(AMU_CONTROLLED_FLIGHT))
         return;
 
-    o = igrd[you.x_pos][you.y_pos];
-
-    while (o != NON_ITEM)
-    {
-        next = mitm[o].link;
-
-        if (Options.autopickups & (1L << mitm[o].base_type))
-        {
-            result = move_item_to_player( o, mitm[o].quantity);
-
-            if (result == 0)
-            {
+    int o = igrd[you.x_pos][you.y_pos];
+    while (o != NON_ITEM) {
+        const int next = mitm[o].link;
+        if (Options.autopickups & (1L << mitm[o].base_type)) {
+            if (const int result = move_item_to_player(o, mitm[o].quantity); result == 0) {
                 mpr("You can't carry any more.");
                 break;
-            }
-            else if (result == -1)
-            {
+            } else if (result == -1) {
                 mpr("Your pack is full.");
                 break;
             }
-
             did_pickup = true;
         }
-
         o = next;
     }
 
@@ -2109,7 +2095,7 @@ int inv_count() {
 //   which might be animated by monsters (butchering takes a few turns).
 //   This code provides a quicker way to get rid of a corpse, but
 //   the player has to be able to lift it first... something that was
-//   a valid preventative method before (although this allow the player
+//   a valid preventative method before (although this allows the player
 //   to get rid of the mass on the next action).
 //
 // - artefacts can be destroyed
