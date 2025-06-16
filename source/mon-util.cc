@@ -1032,7 +1032,7 @@ const char *ptr_monam( struct monsters *mon, char desc )
 
         item_def  item;
         get_mimic_item( mon, item );
-        item_name( item, desc, mimic_name_buff );
+        item_name( item, static_cast<DESCRIPTION_LEVEL>(desc), mimic_name_buff );
 
         return (mimic_name_buff);
     }
@@ -1113,7 +1113,7 @@ const char *monam( int mons_num, int mons, bool vis, char desc, int mons_wpn )
         {
             item_def item = mitm[mons_wpn];
             unset_ident_flags( item, ISFLAG_KNOW_CURSE | ISFLAG_KNOW_PLUSES );
-            item_name( item, desc, gmo_n );
+            item_name(item, static_cast<DESCRIPTION_LEVEL>(desc), gmo_n);
         }
         break;
 

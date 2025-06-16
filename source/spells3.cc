@@ -374,7 +374,7 @@ void simulacrum(int power)
     const int chunk = you.equip[EQ_WEAPON];
 
     if (chunk != -1
-        && is_valid_item( you.inv[ chunk ] )
+        && you.inv[ chunk ].valid()
         && (you.inv[ chunk ].base_type == OBJ_CORPSES
             || (you.inv[ chunk ].base_type == OBJ_FOOD
                 && you.inv[ chunk ].sub_type == FOOD_CHUNK)))
@@ -518,7 +518,7 @@ bool allow_control_teleport( bool silent )
             ret = false;
             for (int i = 0; i < ENDOFPACK; i++)
             {
-                if (is_valid_item( you.inv[i] )
+                if (you.inv[i].valid()
                     && you.inv[i].base_type == OBJ_MISCELLANY
                     && you.inv[i].sub_type == MISC_RUNE_OF_ZOT
                     && you.inv[i].plus == BRANCH_TOMB)

@@ -19,31 +19,18 @@
 
 void item_colour( item_def &item );
 
-// last updated 12may2000 {dlb}
-/* ***********************************************************************
- * called from: files
- * *********************************************************************** */
-void builder(int level_number, char level_type);
+/**
+ * @brief Build a new level.
+ * @param level_number The depth of the level
+ * @param level_type The type of the level
+ */
+void builder(int level_number, LEVEL_TYPES level_type);
 
-
-// last updated 12may2000 {dlb}
-/* ***********************************************************************
- * called from: abyss - debug - dungeon - effects - religion - spells4
- * *********************************************************************** */
 int items( int allow_uniques, int force_class, int force_type,
            bool dont_place, int item_level, int item_race );
 
-// last updated 13mar2001 {gdl}
-/* ***********************************************************************
- * called from: dungeon monplace
- * *********************************************************************** */
 void give_item(int mid, int level_number);
 
-
-// last updated 13mar2001 {gdl}
-/* ***********************************************************************
- * called from: dungeon monplace
- * *********************************************************************** */
 void define_zombie(int mid, int ztype, int cs, int power);
 
 #endif

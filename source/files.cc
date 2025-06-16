@@ -747,7 +747,7 @@ found_stair:
                         for (minvc = 0; minvc < NUM_MONSTER_SLOTS; minvc++)
                         {
 
-                            if (!is_valid_item(foll_item[fmenv][minvc]))
+                            if (!foll_item[fmenv][minvc].valid())
                             {
                                 menv[following].inv[minvc] = NON_ITEM;
                                 continue;

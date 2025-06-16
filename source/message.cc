@@ -265,7 +265,7 @@ void mpr(const char *inf, int channel, int param)
     }
 }                               // end mpr()
 
-void mprf(const int channel, const int param, const char *fmt, ...) {
+void mprf2(const int channel, const int param, const char *fmt, ...) {
     char inf[100];
 
     va_list args;

@@ -43,7 +43,19 @@ bool lose_stat(unsigned char which_stat, unsigned char stat_loss,
 /* ***********************************************************************
  * called from: item_use - spell - spells
  * *********************************************************************** */
-void random_uselessness(unsigned char ru, unsigned char sc_read_2);
+enum random_useless_effect {
+ RU_DUST_GLOW,
+ RU_SCROLL_REASSEMBLE,
+ RU_WEAPON_GLOW,
+ RU_DISTANT_ROAR,
+ RU_SMELL,
+ RU_INESCAPABLE_DOOM,
+ RU_BODY_HURTS,
+ RU_SUMMON_BUTTERFLIES,
+ RU_NOISE,
+};
+
+void random_uselessness(random_useless_effect ru, unsigned char sc_read_2);
 
 
 // last updated 12may2000 {dlb}

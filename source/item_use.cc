@@ -122,8 +122,7 @@ void wield_weapon(bool auto_wield)
 
     // Prompt if not using the auto swap command,
     // or if the swap slot is empty.
-    if (!auto_wield || !is_valid_item( you.inv[item_slot] ))
-    {
+    if (!auto_wield || !you.inv[item_slot].valid()) {
         item_slot = prompt_invent_item( "Wield which item (- for none)?",
                                         OBJ_WEAPONS, true, true, true, '-' );
 
@@ -554,8 +553,7 @@ bool do_wear_armour( int item, bool quiet )
 {
     char wh_equip = 0;
 
-    if (!is_valid_item( you.inv[item] ))
-    {
+    if (!you.inv[item].valid()) {
         if (!quiet)
            mpr("You don't have any such object.");
 
@@ -984,7 +982,7 @@ static int try_finding_throwing_weapon( int sub_type )
     for (i = Options.fire_items_start; i < ENDOFPACK; i++)
     {
         // skip invalid objects, wielded object
-        if (!is_valid_item( you.inv[i] ) || you.equip[EQ_WEAPON] == i)
+        if (!you.inv[i].valid() || you.equip[EQ_WEAPON] == i)
             continue;
 
         // consider melee weapons that can also be thrown
@@ -1006,7 +1004,7 @@ static int try_finding_missile( int sub_type )
     for (i = Options.fire_items_start; i < ENDOFPACK; i++)
     {
         // skip invalid objects
-        if (!is_valid_item( you.inv[i] ))
+        if (!you.inv[i].valid())
             continue;
 
         // consider melee weapons that can also be thrown
@@ -2792,7 +2790,7 @@ void read_scroll(void)
     {
         if (you.conf)
         {
-            random_uselessness(random2(9), item_slot);
+            random_uselessness(static_cast<random_useless_effect>(random2(9)), item_slot);
             return;
         }
 
@@ -2812,7 +2810,7 @@ void read_scroll(void)
         break;
 
     case SCR_RANDOM_USELESSNESS:
-        random_uselessness(random2(9), item_slot);
+        random_uselessness(static_cast<random_useless_effect>(random2(9)), item_slot);
         id_the_scroll = false;
         break;
 

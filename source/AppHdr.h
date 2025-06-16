@@ -476,4 +476,10 @@ constexpr size_t array_size(T (&)[N]) {
     return N;
 }
 
+#ifndef PSX
+typedef int input_key_t;
+#else
+typedef uint32_t input_key_t;
+#endif
+
 #endif

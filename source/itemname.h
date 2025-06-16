@@ -22,13 +22,7 @@ bool is_vowel( const char chr );
 char get_ident_type(char cla, char ty);
 
 
-/* ***********************************************************************
- * called from: acr - chardump - direct - effects - fight - invent -
- *              it_use2 - item_use - items - monstuff - mstuff2 - ouch -
- *              shopping - spells1 - spells2 - spells3
- * *********************************************************************** */
-char item_name( const item_def &item, char descrip, char buff[ITEMNAME_SIZE],
-                bool terse = false );
+const char *item_name(const item_def &item, DESCRIPTION_LEVEL descrip, char buff[ITEMNAME_SIZE], bool terse = false);
 
 
 /* ***********************************************************************

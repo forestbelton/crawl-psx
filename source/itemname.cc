@@ -350,45 +350,48 @@ bool item_is_staff( const item_def &item )
 
 // it_name() and in_name() are now somewhat obsolete now that itemname
 // takes item_def, so consider them depricated.
-void it_name( int itn, char des, char buff[ ITEMNAME_SIZE ], bool terse )
-{
-    item_name( mitm[itn], des, buff, terse );
-}                               // end it_name()
 
+// Get the description of a monster/grid item
+void it_name(const int itn, char des, char buff[ITEMNAME_SIZE], const bool terse) {
+    item_name(mitm[itn], static_cast<DESCRIPTION_LEVEL>(des), buff, terse);
+}
 
-void in_name( int inn, char des, char buff[ ITEMNAME_SIZE ], bool terse )
-{
-    item_name( you.inv[inn], des, buff, terse );
-}                               // end in_name()
+// Get description of an inventory item
+void in_name(const int inn, char des, char buff[ITEMNAME_SIZE], const bool terse) {
+    item_name(you.inv[inn], static_cast<DESCRIPTION_LEVEL>(des), buff, terse);
+}
 
 // quant_name is usful since it prints out a different number of items
 // than the item actually contains.
-void quant_name( const item_def &item, int quant, char des,
-                 char buff[ ITEMNAME_SIZE ], bool terse )
-{
+void quant_name(const item_def &item, const int quant, char des,
+                char buff[ITEMNAME_SIZE], const bool terse) {
     // item_name now requires a "real" item, so we'll mangle a tmp
     item_def tmp = item;
     tmp.quantity = quant;
 
-    item_name( tmp, des, buff, terse );
-}                               // end quant_name()
+    item_name(tmp, static_cast<DESCRIPTION_LEVEL>(des), buff, terse);
+}
 
-char item_name( const item_def &item, char descrip, char buff[ ITEMNAME_SIZE ],
-                bool terse )
-{
+/**
+ * @brief Get the description of an item
+ * @param item Item to describe
+ * @param descrip Level of description to use
+ * @param buff Buffer to place the description
+ * @param terse Whether description should be terse
+ */
+const char *item_name(const item_def &item, DESCRIPTION_LEVEL descrip, char buff[ITEMNAME_SIZE], const bool terse) {
     const int item_clas = item.base_type;
     const int item_typ = item.sub_type;
     const int it_quant = item.quantity;
 
     char tmp_quant[20];
-    char itm_name[  ITEMNAME_SIZE  ] = "";
+    char itm_name[ITEMNAME_SIZE] = "";
 
-    item_name_2( item, itm_name, terse );
+    item_name_2(item, itm_name, terse);
 
-    buff[0] = '\0';
+    buff[0] = 0;
 
-    if (descrip == DESC_INVENTORY_EQUIP || descrip == DESC_INVENTORY)
-    {
+    if (descrip == DESC_INVENTORY_EQUIP || descrip == DESC_INVENTORY) {
         if (item.x == -1 && item.y == -1) // actually in inventory
             snprintf( buff,  ITEMNAME_SIZE, (terse) ? "%c) " : "%c - ",
                       index_to_letter( item.link ) );
@@ -404,8 +407,7 @@ char item_name( const item_def &item, char descrip, char buff[ ITEMNAME_SIZE ],
             && ((item_clas == OBJ_MISCELLANY
                     && item_typ == MISC_HORN_OF_GERYON)
                 || (is_fixed_artefact( item )
-                || (is_random_artefact( item ))))))
-    {
+                || (is_random_artefact( item )))))) {
         // artefacts always get "the" unless we just want the plain name
         switch (descrip)
         {
@@ -552,9 +554,8 @@ char item_name( const item_def &item, char descrip, char buff[ ITEMNAME_SIZE ],
         }
     }
 
-    return (1);
-}                               // end item_name()
-
+    return buff;
+}
 
 // Note that "terse" is only currently used for the "in hand" listing on
 // the game screen.

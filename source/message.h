@@ -53,7 +53,9 @@ void more(void);
  * *********************************************************************** */
 void mpr(const char *inf, int channel = MSGCH_PLAIN, int param = 0);
 
-void mprf(int channel, int param, const char *fmt, ...);
+#define mprf(fmt, ...) mprf2(MSGCH_PLAIN, 0, fmt, __VA_ARGS__)
+
+void mprf2(int channel, int param, const char *fmt, ...);
 
 // last updated 12may2000 {dlb}
 /* ***********************************************************************

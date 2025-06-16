@@ -691,7 +691,7 @@ void ouch( int dam, int death_source, char death_type, const char *aux )
     {
         for (d = 0; d < ENDOFPACK; d++)
         {
-            if (is_valid_item( you.inv[d] ))
+            if (you.inv[d].valid())
             {
                 points += item_value( you.inv[d], temp_id, true );
 

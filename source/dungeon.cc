@@ -24,7 +24,6 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "AppHdr.h"
 
@@ -49,39 +48,48 @@
 #include "stuff.h"
 #include "wpn-misc.h"
 
-struct spec_t {
+typedef struct spec_t {
     bool created;
     bool hooked_up;
     int x1;
     int y1;
     int x2;
     int y2;
-};
+} spec_room;
 
-typedef struct spec_t spec_room;
+static bool find_in_area(int x0, int y0, int x1, int y1, unsigned char feature);
 
-// DUNGEON BUILDERS
-static bool find_in_area(int sx, int sy, int ex, int ey, unsigned char feature);
 static bool make_box(int room_x1, int room_y1, int room_x2, int room_y2,
     unsigned char floor=0, unsigned char wall=0, unsigned char avoid=0);
 static void replace_area(int sx, int sy, int ex, int ey, unsigned char replace,
     unsigned char feature);
-static int builder_by_type(int level_number, char level_type);
-static int builder_by_branch(int level_number);
-static int builder_normal(int level_number, char level_type, spec_room &s);
-static int builder_basic(int level_number);
-static void builder_extras(int level_number, int level_type);
-static void builder_items(int level_number, char level_type, int items_wanted);
-static void builder_monsters(int level_number, char level_type, int mon_wanted);
+
+enum generate_state_t {
+    GENERATE_QUIT = -1, // Immediately quit
+    GENERATE_CONTINUE = 0, // Keep generating
+    GENERATE_SKIP = 1, // Skip further generation
+};
+
+static generate_state_t builder_by_type(int level_number, LEVEL_TYPES level_type);
+
+static generate_state_t builder_by_branch(int level_number);
+
+static generate_state_t builder_normal(int level_number, LEVEL_TYPES level_type, spec_room &sr);
+
+static generate_state_t builder_basic(int level_number);
+
+static void builder_extras(int level_number, LEVEL_TYPES level_type);
+static void builder_items(int level_number, LEVEL_TYPES level_type, int items_wanted);
+static void builder_monsters(int level_number, LEVEL_TYPES level_type, int mon_wanted);
 static void place_specific_stair(unsigned char stair);
 static void place_branch_entrances(int dlevel, char level_type);
 static bool place_specific_trap(unsigned char spec_x, unsigned char spec_y,
     unsigned char spec_type);
 static void place_traps( int level_number );
-static void prepare_swamp(void);
+static void prepare_swamp();
 static void prepare_water( int level_number );
-static void check_doors(void);
-static void hide_doors(void);
+static void check_doors();
+static void hide_doors();
 static void make_trail(int xs, int xr, int ys, int yr,int corrlength, int intersect_chance,
     int no_corr, unsigned char begin, unsigned char end=0);
 static bool make_room(int sx,int sy,int ex,int ey,int max_doors, int doorlevel);
@@ -99,14 +107,14 @@ static void build_lake(unsigned char lake_type); //mv
 #endif // USE_RIVERS
 
 static void spotty_level(bool seeded, int iterations, bool boxy);
-static void bigger_room(void);
+static void bigger_room();
 static void plan_main(int level_number, char force_plan);
-static char plan_1(void);
-static char plan_2(void);
-static char plan_3(void);
+static char plan_1();
+static char plan_2();
+static char plan_3();
 static char plan_4(char forbid_x1, char forbid_y1, char forbid_x2,
                    char forbid_y2, unsigned char force_wall);
-static char plan_5(void);
+static char plan_5();
 static char plan_6(int level_number);
 static bool octa_room(spec_room &sr, int oblique_max, unsigned char type_floor);
 static void labyrinth_level(int level_number);
@@ -147,20 +155,10 @@ static int vault_grid( int level_number, int vx, int vy, int altar_count,
                        int force_vault, int &num_runes );
 
 // ALTAR FUNCTIONS
-static int pick_an_altar(void);
-static void place_altar(void);
+static int pick_an_altar();
+static void place_altar();
 
-
-/*
- **************************************************
- *                                                *
- *             BEGIN PUBLIC FUNCTIONS             *
- *                                                *
- **************************************************
-*/
-
-void builder(int level_number, char level_type)
-{
+void builder(const int level_number, const LEVEL_TYPES level_type) {
     int i;          // generic loop variable
     int x,y;        // generic map loop variables
 
@@ -170,8 +168,9 @@ void builder(int level_number, char level_type)
     make_box(0,0,GXM-1,GYM-1,DNGN_ROCK_WALL,DNGN_ROCK_WALL);
 
     // delete all traps
-    for (i = 0; i < MAX_TRAPS; i++)
-        env.trap[i].type = TRAP_UNASSIGNED;
+    for (auto &trap : env.trap) {
+        trap.type = TRAP_UNASSIGNED;
+    }
 
     // initialize all items
     for (i = 0; i < MAX_ITEMS; i++)
@@ -192,37 +191,32 @@ void builder(int level_number, char level_type)
     }
 
     // reset all shops
-    for (unsigned char shcount = 0; shcount < 5; shcount++)
-    {
-        env.shop[shcount].type = SHOP_UNASSIGNED;
+    for (auto &shop : env.shop) {
+        shop.type = SHOP_UNASSIGNED;
     }
 
-    int skip_build;
-
-    skip_build = builder_by_type(level_number, level_type);
-    if (skip_build < 0)
+    auto skip_build = builder_by_type(level_number, level_type);
+    if (skip_build == GENERATE_QUIT) {
         return;
+    }
 
-    if (skip_build == 0)
-    {
+    if (skip_build == GENERATE_CONTINUE) {
         skip_build = builder_by_branch(level_number);
-
-        if (skip_build < 0)
+        if (skip_build == GENERATE_QUIT) {
             return;
+        }
     }
 
     spec_room sr = { false, false, 0, 0, 0, 0 };
 
-    if (skip_build == 0)
-    {
+    if (skip_build == GENERATE_CONTINUE) {
         // do 'normal' building.  Well, except for the swamp.
         if (!player_in_branch( BRANCH_SWAMP ))
             skip_build = builder_normal(level_number, level_type, sr);
 
-        if (skip_build == 0)
-        {
+        if (skip_build == GENERATE_CONTINUE) {
             skip_build = builder_basic(level_number);
-            if (skip_build == 0)
+            if (skip_build == GENERATE_CONTINUE)
                 builder_extras(level_number, level_type);
         }
     }
@@ -2441,7 +2435,7 @@ int items( int allow_uniques,       // not just true-false,
     // this function is to create valid items.  Still, we're adding
     // this safety for fear that a report of Trog giving a non-existant
     // item might symbolize something more serious. -- bwr
-    return (is_valid_item( mitm[p] ) ? p : NON_ITEM);
+    return mitm[p].valid() ? p : NON_ITEM;
 }                               // end items()
 
 
@@ -3483,31 +3477,34 @@ static void prepare_water( int level_number )
     }
 }                               // end prepare_water()
 
-static bool find_in_area(int sx, int sy, int ex, int ey, unsigned char feature)
-{
-    int x,y;
-
-    if (feature != 0)
-    {
-        for(x = sx; x <= ex; x++)
-        {
-            for(y = sy; y <= ey; y++)
-            {
-                if (grd[x][y] == feature)
-                    return (true);
-            }
+// Check the rectangle (x0,y0) x (x1,y1) for a feature, returning true if it was found.
+static bool find_in_area(const int x0, const int y0, const int x1, const int y1, const unsigned char feature) {
+    if (feature == 0) {
+        return false;
+    }
+    auto has_feature = false;
+    for (auto x = x0; x <= x1 && !has_feature; x++) {
+        for (auto y = y0; y <= y1 && !has_feature; y++) {
+            has_feature = grd[x][y] == feature;
         }
     }
-
-    return (false);
+    return has_feature;
 }
 
-// stamp a box.  can avoid a possible type,  and walls and floors can
-// be different (or not stamped at all)
-// Note that the box boundaries are INclusive.
-static bool make_box(int room_x1, int room_y1, int room_x2, int room_y2,
-    unsigned char floor, unsigned char wall, unsigned char avoid)
-{
+/**
+ * @brief Stamp a box.
+ *
+ * @param room_x1 The x coordinate to start stamping at
+ * @param room_y1 The y coordinate to start stamping at
+ * @param room_x2 The x coordinate to end stamping at (inclusive)
+ * @param room_x2 The y coordinate to end stamping at (inclusive)
+ * @param floor The type of the floor tile (or 0 to not draw floors)
+ * @param wall The type of the wall tile (or 0 to not draw walls)
+ * @param avoid If this tile is present in (room_x1, room_y1) x (room_x2, room_y2), avoid stamping the box.
+ * @return True if the box was successfully stamped, false otherwise.
+ */
+static bool make_box(int room_x1, int room_y1, int room_x2, int room_y2, unsigned char floor, const unsigned char wall,
+                     unsigned char avoid) {
     int bx,by;
 
     // check for avoidance
@@ -3515,347 +3512,317 @@ static bool make_box(int room_x1, int room_y1, int room_x2, int room_y2,
         return false;
 
     // draw walls
-    if (wall != 0)
-    {
-        for(bx=room_x1; bx<=room_x2; bx++)
-        {
+    if (wall != 0) {
+        for (bx = room_x1; bx <= room_x2; bx++) {
             grd[bx][room_y1] = wall;
             grd[bx][room_y2] = wall;
         }
-        for(by=room_y1+1; by<room_y2; by++)
-        {
+        for (by = room_y1 + 1; by < room_y2; by++) {
             grd[room_x1][by] = wall;
             grd[room_x2][by] = wall;
         }
     }
 
     // draw floor
-    if (floor != 0)
-    {
-        for(bx=room_x1 + 1; bx < room_x2; bx++)
-            for(by=room_y1 + 1; by < room_y2; by++)
+    if (floor != 0) {
+        for (bx = room_x1 + 1; bx < room_x2; bx++) {
+            for (by = room_y1 + 1; by < room_y2; by++) {
                 grd[bx][by] = floor;
+            }
+        }
     }
 
     return true;
 }
 
-// take care of labyrinth, abyss, pandemonium
-// returns 1 if we should skip further generation,
-// -1 if we should immediately quit,  and 0 otherwise.
-static int builder_by_type(int level_number, char level_type)
-{
-    if (level_type == LEVEL_LABYRINTH)
-    {
-        labyrinth_level(level_number);
-        return -1;
-    }
+/**
+ * @brief
+ *
+ * @param level_number The depth of the current level.
+ * @param level_type The type of the level being generated.
+ * @return The next generation state.
+ */
+static generate_state_t builder_by_type(const int level_number, const LEVEL_TYPES level_type) {
+    auto state = GENERATE_CONTINUE;
+    auto which_demon = -1;
 
-    if (level_type == LEVEL_ABYSS)
-    {
-        generate_abyss();
-        return 1;
-    }
+    switch (level_type) {
+        case LEVEL_LABYRINTH:
+            labyrinth_level(level_number);
+            state = GENERATE_QUIT;
+            break;
 
-    if (level_type == LEVEL_PANDEMONIUM)
-    {
-        char which_demon = -1;
-        // Could do spotty_level, but that doesn't always put all paired
-        // stairs reachable from each other which isn't a problem in normal
-        // dungeon but could be in Pandemonium
-        if (one_chance_in(15))
-        {
-            do
-            {
-                which_demon = random2(4);
+        case LEVEL_ABYSS:
+            generate_abyss();
+            state = GENERATE_SKIP;
+            break;
 
-                // makes these things less likely as you find more
-                if (one_chance_in(4))
-                {
-                    which_demon = -1;
-                    break;
-                }
+        case LEVEL_PANDEMONIUM:
+            // Could do spotty_level, but that doesn't always put all paired
+            // stairs reachable from each other which isn't a problem in normal
+            // dungeon but could be in Pandemonium
+            if (one_chance_in(15)) {
+                do {
+                    which_demon = random2(4);
+
+                    // makes these things less likely as you find more
+                    if (one_chance_in(4)) {
+                        which_demon = -1;
+                        break;
+                    }
+                } while (you.unique_creatures[40 + which_demon] == 1);
             }
-            while (you.unique_creatures[40 + which_demon] == 1);
-        }
 
-        if (which_demon >= 0)
-        {
-            you.unique_creatures[40 + which_demon] = 1;
-            build_vaults(level_number, which_demon + 60);
-        }
-        else
-        {
-            plan_main(level_number, 0);
-            build_minivaults(level_number, 300 + random2(9));
-        }
+            if (which_demon >= 0) {
+                you.unique_creatures[40 + which_demon] = 1;
+                build_vaults(level_number, which_demon + 60);
+            } else {
+                plan_main(level_number, 0);
+                build_minivaults(level_number, 300 + random2(9));
+            }
 
-        return 1;
+            state = GENERATE_SKIP;
+            break;
+
+        // must be normal dungeon
+        default: ;
     }
 
-    // must be normal dungeon
-    return 0;
+    return state;
 }
 
 // returns 1 if we should skip further generation,
 // -1 if we should immediately quit,  and 0 otherwise.
-static int builder_by_branch(int level_number)
-{
-    switch (you.where_are_you)
-    {
-    case BRANCH_HIVE:
-        if (level_number == you.branch_stairs[STAIRS_HIVE]
-            + branch_depth(STAIRS_HIVE))
-            build_vaults(level_number, 80);
-        else
+static generate_state_t builder_by_branch(const int level_number) {
+    auto state = GENERATE_CONTINUE;
+
+    switch (you.where_are_you) {
+        case BRANCH_HIVE:
+            if (level_number == you.branch_stairs[STAIRS_HIVE]
+                + branch_depth(STAIRS_HIVE))
+                build_vaults(level_number, 80);
+            else
+                spotty_level(false, 100 + random2(500), false);
+            state = GENERATE_SKIP;
+            break;
+
+        case BRANCH_SLIME_PITS:
+            if (level_number == you.branch_stairs[STAIRS_SLIME_PITS]
+                + branch_depth(STAIRS_SLIME_PITS)) {
+                build_vaults(level_number, 81);
+            } else
+                spotty_level(false, 100 + random2(500), false);
+            state = GENERATE_SKIP;
+            break;
+
+        case BRANCH_VAULTS:
+            if (level_number == you.branch_stairs[STAIRS_VAULTS]
+                + branch_depth(STAIRS_VAULTS)) {
+                build_vaults(level_number, 82);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_HALL_OF_BLADES:
+            if (level_number == you.branch_stairs[STAIRS_HALL_OF_BLADES]
+                + branch_depth(STAIRS_HALL_OF_BLADES)) {
+                build_vaults(level_number, 83);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_HALL_OF_ZOT:
+            if (level_number == you.branch_stairs[STAIRS_HALL_OF_ZOT]
+                + branch_depth(STAIRS_HALL_OF_ZOT)) {
+                build_vaults(level_number, 84);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_ECUMENICAL_TEMPLE:
+            if (level_number == you.branch_stairs[STAIRS_ECUMENICAL_TEMPLE]
+                + branch_depth(STAIRS_ECUMENICAL_TEMPLE)) {
+                build_vaults(level_number, 85);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_SNAKE_PIT:
+            if (level_number == you.branch_stairs[STAIRS_SNAKE_PIT]
+                + branch_depth(STAIRS_SNAKE_PIT)) {
+                build_vaults(level_number, 86);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_ELVEN_HALLS:
+            if (level_number == you.branch_stairs[STAIRS_ELVEN_HALLS]
+                + branch_depth(STAIRS_ELVEN_HALLS)) {
+                build_vaults(level_number, 87);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_TOMB:
+            if (level_number == you.branch_stairs[STAIRS_TOMB] + 1) {
+                build_vaults(level_number, 88);
+                state = GENERATE_SKIP;
+            } else if (level_number == you.branch_stairs[STAIRS_TOMB] + 2) {
+                build_vaults(level_number, 89);
+                state = GENERATE_SKIP;
+            } else if (level_number == you.branch_stairs[STAIRS_TOMB] + 3) {
+                build_vaults(level_number, 90);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_SWAMP:
+            if (level_number == you.branch_stairs[STAIRS_SWAMP]
+                + branch_depth(STAIRS_SWAMP)) {
+                build_vaults(level_number, 91);
+                state = GENERATE_SKIP;
+            }
+            break;
+
+        case BRANCH_ORCISH_MINES:
             spotty_level(false, 100 + random2(500), false);
-        return 1;
+            state = GENERATE_SKIP;
+            break;
 
-    case BRANCH_SLIME_PITS:
-        if (level_number == you.branch_stairs[STAIRS_SLIME_PITS]
-                                + branch_depth(STAIRS_SLIME_PITS))
-        {
-            build_vaults(level_number, 81);
-        }
-        else
-            spotty_level(false, 100 + random2(500), false);
-        return 1;
+        case BRANCH_LAIR:
+            if (!one_chance_in(3)) {
+                spotty_level(false, 100 + random2(500), false);
+                state = GENERATE_SKIP;
+            }
+            break;
 
-    case BRANCH_VAULTS:
-        if (level_number == you.branch_stairs[STAIRS_VAULTS]
-            + branch_depth(STAIRS_VAULTS))
-        {
-            build_vaults(level_number, 82);
-            return 1;
-        }
-        break;
+        case BRANCH_VESTIBULE_OF_HELL:
+            build_vaults(level_number, 50);
+            link_items();
+            state = GENERATE_QUIT;
+            break;
 
-    case BRANCH_HALL_OF_BLADES:
-        if (level_number == you.branch_stairs[STAIRS_HALL_OF_BLADES]
-            + branch_depth(STAIRS_HALL_OF_BLADES))
-        {
-            build_vaults(level_number, 83);
-            return 1;
-        }
-        break;
+        case BRANCH_DIS:
+            if (level_number == 33) {
+                build_vaults(level_number, 51);
+                state = GENERATE_SKIP;
+            }
+            break;
 
-    case BRANCH_HALL_OF_ZOT:
-        if (level_number == you.branch_stairs[STAIRS_HALL_OF_ZOT]
-            + branch_depth(STAIRS_HALL_OF_ZOT))
-        {
-            build_vaults(level_number, 84);
-            return 1;
-        }
-        break;
+        case BRANCH_GEHENNA:
+            if (level_number == 33) {
+                build_vaults(level_number, 52);
+                state = GENERATE_SKIP;
+            }
+            break;
 
-    case BRANCH_ECUMENICAL_TEMPLE:
-        if (level_number == you.branch_stairs[STAIRS_ECUMENICAL_TEMPLE]
-                                    + branch_depth(STAIRS_ECUMENICAL_TEMPLE))
-        {
-            build_vaults(level_number, 85);
-            return 1;
-        }
-        break;
+        case BRANCH_COCYTUS:
+            if (level_number == 33) {
+                build_vaults(level_number, 53);
+                state = GENERATE_SKIP;
+            }
+            break;
 
-    case BRANCH_SNAKE_PIT:
-        if (level_number == you.branch_stairs[STAIRS_SNAKE_PIT]
-                                    + branch_depth(STAIRS_SNAKE_PIT))
-        {
-            build_vaults(level_number, 86);
-            return 1;
-        }
-        break;
+        case BRANCH_TARTARUS:
+            if (level_number == 33) {
+                build_vaults(level_number, 54);
+                state = GENERATE_SKIP;
+            }
+            break;
 
-    case BRANCH_ELVEN_HALLS:
-        if (level_number == you.branch_stairs[STAIRS_ELVEN_HALLS]
-                                    + branch_depth(STAIRS_ELVEN_HALLS))
-        {
-            build_vaults(level_number, 87);
-            return 1;
-        }
-        break;
-
-    case BRANCH_TOMB:
-        if (level_number == you.branch_stairs[STAIRS_TOMB] + 1)
-        {
-            build_vaults(level_number, 88);
-            return 1;
-        }
-        else if (level_number == you.branch_stairs[STAIRS_TOMB] + 2)
-        {
-            build_vaults(level_number, 89);
-            return 1;
-        }
-        else if (level_number == you.branch_stairs[STAIRS_TOMB] + 3)
-        {
-            build_vaults(level_number, 90);
-            return 1;
-        }
-        break;
-
-    case BRANCH_SWAMP:
-        if (level_number == you.branch_stairs[STAIRS_SWAMP]
-                                            + branch_depth(STAIRS_SWAMP))
-        {
-            build_vaults(level_number, 91);
-            return 1;
-        }
-        break;
-
-    case BRANCH_ORCISH_MINES:
-        spotty_level(false, 100 + random2(500), false);
-        return 1;
-
-    case BRANCH_LAIR:
-        if (!one_chance_in(3))
-        {
-            spotty_level(false, 100 + random2(500), false);
-            return 1;
-        }
-        break;
-
-    case BRANCH_VESTIBULE_OF_HELL:
-        build_vaults( level_number, 50 );
-        link_items();
-        return -1;
-
-    case BRANCH_DIS:
-        if (level_number == 33)
-        {
-            build_vaults(level_number, 51);
-            return 1;
-        }
-        break;
-
-    case BRANCH_GEHENNA:
-        if (level_number == 33)
-        {
-            build_vaults(level_number, 52);
-            return 1;
-        }
-        break;
-
-    case BRANCH_COCYTUS:
-        if (level_number == 33)
-        {
-            build_vaults(level_number, 53);
-            return 1;
-        }
-        break;
-
-    case BRANCH_TARTARUS:
-        if (level_number == 33)
-        {
-            build_vaults(level_number, 54);
-            return 1;
-        }
-        break;
-
-    default:
-        break;
+        default:
+            break;
     }
-    return 0;
+    return state;
 }
 
 // returns 1 if we should dispense with city building,
 // 0 otherwise.  Also sets special_room if one is generated
 // so that we can link it up later.
-
-static int builder_normal(int level_number, char level_type, spec_room &sr)
-{
-    UNUSED( level_type );
+static generate_state_t builder_normal(const int level_number, const LEVEL_TYPES level_type, spec_room &sr) {
+    UNUSED(level_type);
 
     bool skipped = false;
     bool done_city = false;
 
-    if (player_in_branch( BRANCH_DIS ))
-    {
+    if (player_in_branch(BRANCH_DIS)) {
         city_level(level_number);
-        return 1;
+        return GENERATE_SKIP;
     }
 
-    if (player_in_branch( BRANCH_MAIN_DUNGEON )
-        && level_number > 10 && level_number < 23 && one_chance_in(9))
-    {
+    if (player_in_branch(BRANCH_MAIN_DUNGEON)
+        && level_number > 10 && level_number < 23 && one_chance_in(9)) {
         // Can't have vaults on you.where_are_you != BRANCH_MAIN_DUNGEON levels
         build_vaults(level_number, 100);
-        return 1;
+        return GENERATE_SKIP;
     }
 
-    if (player_in_branch( BRANCH_VAULTS ))
-    {
+    if (player_in_branch(BRANCH_VAULTS)) {
         if (one_chance_in(3))
             city_level(level_number);
         else
             plan_main(level_number, 4);
-        return 1;
+        return GENERATE_SKIP;
     }
 
-    if (level_number > 7 && level_number < 23)
-    {
-        if (one_chance_in(16))
-        {
+    if (level_number > 7 && level_number < 23) {
+        if (one_chance_in(16)) {
             spotty_level(false, 0, coinflip());
-            return 1;
+            return GENERATE_SKIP;
         }
 
-        if (one_chance_in(16))
-        {
+        if (one_chance_in(16)) {
             bigger_room();
-            return 1;
+            return GENERATE_SKIP;
         }
     }
 
-    if (level_number > 2 && level_number < 23 && one_chance_in(3))
-    {
+    if (level_number > 2 && level_number < 23 && one_chance_in(3)) {
         plan_main(level_number, 0);
 
         if (one_chance_in(3) && level_number > 6)
             build_minivaults(level_number, 200);
 
-        return 1;
+        return GENERATE_SKIP;
     }
 
-    if (one_chance_in(3))
+    if (one_chance_in(3)) {
         skipped = true;
+    }
 
     //V was 3
-    if (!skipped && one_chance_in(7))
-    {
+    if (!skipped && one_chance_in(7)) {
         // sometimes roguey_levels generate a special room
         roguey_level(level_number, sr);
 
         if (level_number > 6
-            && player_in_branch( BRANCH_MAIN_DUNGEON )
-            && one_chance_in(4))
-        {
+            && player_in_branch(BRANCH_MAIN_DUNGEON)
+            && one_chance_in(4)) {
             build_minivaults(level_number, 200);
-            return 1;
+            return GENERATE_SKIP;
         }
-    }
-    else
-    {
-        if (!skipped && level_number > 13 && one_chance_in(8))
-        {
-            if (one_chance_in(3))
+    } else {
+        if (!skipped && level_number > 13 && one_chance_in(8)) {
+            if (one_chance_in(3)) {
                 city_level(level_number);
-            else
+            } else {
                 plan_main(level_number, 4);
+            }
             done_city = true;
         }
     }
 
     // maybe create a special room,  if roguey_level hasn't done it
     // already.
-    if (!sr.created && level_number > 5 && !done_city && one_chance_in(5))
+    if (!sr.created && level_number > 5 && !done_city && one_chance_in(5)) {
         special_room(level_number, sr);
+    }
 
-    return 0;
+    return GENERATE_CONTINUE;
 }
 
 // returns 1 if we should skip extras(),  otherwise 0
-static int builder_basic(int level_number)
-{
+static generate_state_t builder_basic(const int level_number) {
     int temp_rand;
     int doorlevel = random2(11);
     int corrlength = 2 + random2(14);
@@ -3863,25 +3830,23 @@ static int builder_basic(int level_number)
     int no_corr = (one_chance_in(100) ? 500 + random2(500) : 30 + random2(200));
     int intersect_chance = (one_chance_in(20) ? 400 : random2(20));
 
-    make_trail( 35, 30, 35, 20, corrlength, intersect_chance, no_corr,
-                DNGN_STONE_STAIRS_DOWN_I, DNGN_STONE_STAIRS_UP_I );
+    make_trail(35, 30, 35, 20, corrlength, intersect_chance, no_corr,
+               DNGN_STONE_STAIRS_DOWN_I, DNGN_STONE_STAIRS_UP_I);
 
-    make_trail( 10, 15, 10, 15, corrlength, intersect_chance, no_corr,
-                DNGN_STONE_STAIRS_DOWN_II, DNGN_STONE_STAIRS_UP_II );
+    make_trail(10, 15, 10, 15, corrlength, intersect_chance, no_corr,
+               DNGN_STONE_STAIRS_DOWN_II, DNGN_STONE_STAIRS_UP_II);
 
-    make_trail(50,20,10,15,corrlength,intersect_chance,no_corr,
-        DNGN_STONE_STAIRS_DOWN_III, DNGN_STONE_STAIRS_UP_III);
+    make_trail(50, 20, 10, 15, corrlength, intersect_chance, no_corr,
+               DNGN_STONE_STAIRS_DOWN_III, DNGN_STONE_STAIRS_UP_III);
 
-    if (one_chance_in(4))
-    {
-        make_trail( 10, 20, 40, 20, corrlength, intersect_chance, no_corr,
-                    DNGN_ROCK_STAIRS_DOWN );
+    if (one_chance_in(4)) {
+        make_trail(10, 20, 40, 20, corrlength, intersect_chance, no_corr,
+                   DNGN_ROCK_STAIRS_DOWN);
     }
 
-    if (one_chance_in(4))
-    {
-        make_trail( 50, 20, 40, 20, corrlength, intersect_chance, no_corr,
-                    DNGN_ROCK_STAIRS_UP );
+    if (one_chance_in(4)) {
+        make_trail(50, 20, 40, 20, corrlength, intersect_chance, no_corr,
+                   DNGN_ROCK_STAIRS_UP);
     }
 
 
@@ -3893,32 +3858,32 @@ static int builder_basic(int level_number)
 
     // make some rooms:
     int i, no_rooms, max_doors;
-    int sx,sy,ex,ey, time_run;
+    int sx, sy, ex, ey, time_run;
 
     temp_rand = random2(750);
     time_run = 0;
 
-    no_rooms = ((temp_rand > 63) ? (5 + random2avg(29, 2)) : // 91.47% {dlb}
-                (temp_rand > 14) ? 100                       //  6.53% {dlb}
-                                 : 1);                       //  2.00% {dlb}
+    no_rooms = ((temp_rand > 63)
+                    ? (5 + random2avg(29, 2))
+                    : // 91.47% {dlb}
+                    (temp_rand > 14)
+                        ? 100 //  6.53% {dlb}
+                        : 1); //  2.00% {dlb}
 
     max_doors = 2 + random2(8);
 
-    for (i = 0; i < no_rooms; i++)
-    {
+    for (i = 0; i < no_rooms; i++) {
         sx = 8 + random2(50);
         sy = 8 + random2(40);
         ex = sx + 2 + random2(roomsize);
         ey = sy + 2 + random2(roomsize);
 
-        if (!make_room(sx,sy,ex,ey,max_doors, doorlevel))
-        {
+        if (!make_room(sx, sy, ex, ey, max_doors, doorlevel)) {
             time_run++;
             i--;
         }
 
-        if (time_run > 30)
-        {
+        if (time_run > 30) {
             time_run = 0;
             i++;
         }
@@ -3928,32 +3893,28 @@ static int builder_basic(int level_number)
     no_rooms = 1 + random2(3);
     max_doors = 1;
 
-    for (i = 0; i < no_rooms; i++)
-    {
+    for (i = 0; i < no_rooms; i++) {
         sx = 8 + random2(55);
         sy = 8 + random2(45);
         ex = sx + 5 + random2(6);
         ey = sy + 5 + random2(6);
 
-        if (!make_room(sx,sy,ex,ey,max_doors, doorlevel))
-        {
+        if (!make_room(sx, sy, ex, ey, max_doors, doorlevel)) {
             time_run++;
             i--;
         }
 
-        if (time_run > 30)
-        {
+        if (time_run > 30) {
             time_run = 0;
             i++;
         }
     }
 
-    return 0;
+    return GENERATE_CONTINUE;
 }
 
-static void builder_extras( int level_number, int level_type )
-{
-    UNUSED( level_type );
+static void builder_extras(const int level_number, const LEVEL_TYPES level_type) {
+    UNUSED(level_type);
 
     if (level_number >= 11 && level_number <= 23 && one_chance_in(15))
         place_specific_stair(DNGN_ENTER_LABYRINTH);
@@ -4432,60 +4393,55 @@ static bool make_room(int sx,int sy,int ex,int ey,int max_doors, int doorlevel)
     return true;
 }                               //end make_room()
 
-static void builder_monsters(int level_number, char level_type, int mon_wanted)
-{
-    int i = 0;
+static void builder_monsters(const int level_number, const LEVEL_TYPES level_type, const int mon_wanted) {
     int totalplaced = 0;
-    int not_used=0;
-    int x,y;
-    int lava_spaces, water_spaces;
+    int not_used = 0;
     int aq_creatures;
     int swimming_things[4];
 
     if (level_type == LEVEL_PANDEMONIUM)
         return;
 
-    for (i = 0; i < mon_wanted; i++)
-    {
-        if (place_monster( not_used, RANDOM_MONSTER, level_number, BEH_SLEEP,
-                           MHITNOT, false, 1, 1, true ))
-        {
+    for (int i = 0; i < mon_wanted; i++) {
+        if (place_monster(not_used, RANDOM_MONSTER, level_number, BEH_SLEEP,
+                          MHITNOT, false, 1, 1, true)) {
             totalplaced++;
         }
     }
 
     // Unique beasties:
-    int which_unique;
 
     if (level_number > 0
-        && you.level_type == LEVEL_DUNGEON  // avoid generating on temp levels
+        && you.level_type == LEVEL_DUNGEON // avoid generating on temp levels
         && !player_in_hell()
-        && !player_in_branch( BRANCH_ORCISH_MINES )
-        && !player_in_branch( BRANCH_HIVE )
-        && !player_in_branch( BRANCH_LAIR )
-        && !player_in_branch( BRANCH_SLIME_PITS )
-        && !player_in_branch( BRANCH_ECUMENICAL_TEMPLE ))
-    {
-        while(one_chance_in(3))
-        {
-            which_unique = -1;   //     30 in total
+        && !player_in_branch(BRANCH_ORCISH_MINES)
+        && !player_in_branch(BRANCH_HIVE)
+        && !player_in_branch(BRANCH_LAIR)
+        && !player_in_branch(BRANCH_SLIME_PITS)
+        && !player_in_branch(BRANCH_ECUMENICAL_TEMPLE)) {
+        while (one_chance_in(3)) {
+            int which_unique = -1; //     30 in total
 
-            while(which_unique < 0 || you.unique_creatures[which_unique])
-            {
+            while (which_unique < 0 || you.unique_creatures[which_unique]) {
                 // sometimes,  we just quit if a unique is already placed.
-                if (which_unique >= 0 && !one_chance_in(3))
-                {
+                if (which_unique >= 0 && !one_chance_in(3)) {
                     which_unique = -1;
                     break;
                 }
 
-                which_unique = ((level_number > 19) ? 20 + random2(11) :
-                                (level_number > 16) ? 13 + random2(10) :
-                                (level_number > 13) ?  9 + random2( 9) :
-                                (level_number >  9) ?  6 + random2( 5) :
-                                (level_number >  7) ?  4 + random2( 4) :
-                                (level_number >  3) ?  2 + random2( 4)
-                                                    : random2(4));
+                which_unique = ((level_number > 19)
+                                    ? 20 + random2(11)
+                                    : (level_number > 16)
+                                          ? 13 + random2(10)
+                                          : (level_number > 13)
+                                                ? 9 + random2(9)
+                                                : (level_number > 9)
+                                                      ? 6 + random2(5)
+                                                      : (level_number > 7)
+                                                            ? 4 + random2(4)
+                                                            : (level_number > 3)
+                                                                  ? 2 + random2(4)
+                                                                  : random2(4));
             }
 
             // usually, we'll have quit after a few tries. Make sure we don't
@@ -4494,9 +4450,8 @@ static void builder_monsters(int level_number, char level_type, int mon_wanted)
                 break;
 
             // note: unique_creatures 40 + used by unique demons
-            if (place_monster( not_used, 280 + which_unique, level_number,
-                               BEH_SLEEP, MHITNOT, false, 1, 1, true ))
-            {
+            if (place_monster(not_used, 280 + which_unique, level_number,
+                              BEH_SLEEP, MHITNOT, false, 1, 1, true)) {
                 totalplaced++;
             }
         }
@@ -4505,36 +4460,29 @@ static void builder_monsters(int level_number, char level_type, int mon_wanted)
     // do aquatic and lava monsters:
 
     // count the number of lava and water tiles {dlb}:
-    lava_spaces = 0;
-    water_spaces = 0;
+    int lava_spaces = 0;
+    int water_spaces = 0;
 
-    for (x = 0; x < GXM; x++)
-    {
-        for (y = 0; y < GYM; y++)
-        {
-            if (grd[x][y] == DNGN_LAVA)
-            {
+    for (int x = 0; x < GXM; x++) {
+        for (int y = 0; y < GYM; y++) {
+            if (grd[x][y] == DNGN_LAVA) {
                 lava_spaces++;
-            }
-            else if (grd[x][y] == DNGN_DEEP_WATER
-                     || grd[x][y] == DNGN_SHALLOW_WATER)
-            {
+            } else if (grd[x][y] == DNGN_DEEP_WATER
+                       || grd[x][y] == DNGN_SHALLOW_WATER) {
                 water_spaces++;
             }
         }
     }
 
-    if (lava_spaces > 49)
-    {
-        for (i = 0; i < 4; i++)
-        {
-            swimming_things[i] = MONS_LAVA_WORM + random2(3);
+    if (lava_spaces > 49) {
+        for (int & swimming_thing : swimming_things) {
+            swimming_thing = MONS_LAVA_WORM + random2(3);
 
             //mv: this is really ugly, but easiest
             //IMO generation of water/lava beasts should be changed,
             //because we want data driven code and not things like it
             if (one_chance_in(30))
-                swimming_things[i] = MONS_SALAMANDER;
+                swimming_thing = MONS_SALAMANDER;
         }
 
         aq_creatures = random2avg(9, 2) + (random2(lava_spaces) / 10);
@@ -4542,106 +4490,78 @@ static void builder_monsters(int level_number, char level_type, int mon_wanted)
         if (aq_creatures > 15)
             aq_creatures = 15;
 
-        for (i = 0; i < aq_creatures; i++)
-        {
-            if (place_monster( not_used, swimming_things[ random2(4) ],
-                               level_number, BEH_SLEEP, MHITNOT,
-                               false, 1, 1, true ))
-            {
+        for (int i = 0; i < aq_creatures && totalplaced < 100; i++) {
+            if (place_monster(not_used, swimming_things[random2(4)],
+                              level_number, BEH_SLEEP, MHITNOT,
+                              false, 1, 1, true)) {
                 totalplaced++;
             }
-
-            if (totalplaced > 99)
-                break;
         }
     }
 
-    if (water_spaces > 49)
-    {
-        for (i = 0; i < 4; i++)
-        {
+    if (water_spaces > 49) {
+        for (int & swimming_thing : swimming_things) {
             // mixing enums and math ticks me off !!! 15jan2000 {dlb}
-            swimming_things[i] = MONS_BIG_FISH + random2(4);
+            swimming_thing = MONS_BIG_FISH + random2(4);
 
             // swamp worms and h2o elementals generated below: {dlb}
-            if (player_in_branch( BRANCH_SWAMP ) && !one_chance_in(3))
-                swimming_things[i] = MONS_SWAMP_WORM;
+            if (player_in_branch(BRANCH_SWAMP) && !one_chance_in(3))
+                swimming_thing = MONS_SWAMP_WORM;
         }
 
         if (level_number >= 25 && one_chance_in(5))
             swimming_things[0] = MONS_WATER_ELEMENTAL;
 
-        if (player_in_branch( BRANCH_COCYTUS ))
+        if (player_in_branch(BRANCH_COCYTUS))
             swimming_things[3] = MONS_WATER_ELEMENTAL;
 
-        aq_creatures = random2avg(9, 2) + (random2(water_spaces) / 10);
+        aq_creatures = random2avg(9, 2) + random2(water_spaces) / 10;
+        aq_creatures = MAXIMUM(aq_creatures, 15);
 
-        if (aq_creatures > 15)
-            aq_creatures = 15;
-
-        for (i = 0; i < aq_creatures; i++)
-        {
-            if (place_monster( not_used, swimming_things[ random2(4) ],
-                               level_number, BEH_SLEEP, MHITNOT,
-                               false, 1, 1, true ))
-            {
+        for (int i = 0; i < aq_creatures && totalplaced < 100; i++) {
+            if (place_monster(not_used, swimming_things[random2(4)],
+                              level_number, BEH_SLEEP, MHITNOT,
+                              false, 1, 1, true)) {
                 totalplaced++;
             }
-
-            if (totalplaced > 99)
-                break;
         }
     }
 }
 
-static void builder_items(int level_number, char level_type, int items_wanted)
-{
-    UNUSED( level_type );
+static void builder_items(const int level_number, const LEVEL_TYPES level_type, const int items_wanted) {
+    UNUSED(level_type);
 
-    int i = 0;
     unsigned char specif_type = OBJ_RANDOM;
     int items_levels = level_number;
-    int item_no;
 
-    if (player_in_branch( BRANCH_VAULTS ))
-    {
+    if (player_in_branch(BRANCH_VAULTS)) {
         items_levels *= 15;
         items_levels /= 10;
-    }
-    else if (player_in_branch( BRANCH_ORCISH_MINES ))
-    {
+    } else if (player_in_branch(BRANCH_ORCISH_MINES)) {
         specif_type = OBJ_GOLD; /* lots of gold in the orcish mines */
     }
 
-    if (player_in_branch( BRANCH_VESTIBULE_OF_HELL )
+    if (player_in_branch(BRANCH_VESTIBULE_OF_HELL)
         || player_in_hell()
-        || player_in_branch( BRANCH_SLIME_PITS )
-        || player_in_branch( BRANCH_HALL_OF_BLADES )
-        || player_in_branch( BRANCH_ECUMENICAL_TEMPLE ))
-    {
+        || player_in_branch(BRANCH_SLIME_PITS)
+        || player_in_branch(BRANCH_HALL_OF_BLADES)
+        || player_in_branch(BRANCH_ECUMENICAL_TEMPLE)) {
         /* No items in hell, the slime pits, the Hall */
-        return;
-    }
-    else
-    {
-        for (i = 0; i < items_wanted; i++)
-            items( 1, specif_type, OBJ_RANDOM, false, items_levels, 250 );
+    } else {
+        for (int i = 0; i < items_wanted; i++)
+            items(1, specif_type, OBJ_RANDOM, false, items_levels, 250);
 
         // Make sure there's a very good chance of a knife being placed
         // in the first five levels, but not a guarantee of one.  The
         // intent of this is to reduce the advantage that "cutting"
         // starting weapons have.  -- bwr
-        if (player_in_branch( BRANCH_MAIN_DUNGEON )
-            && level_number < 5 && coinflip())
-        {
-            item_no = items( 0, OBJ_WEAPONS, WPN_KNIFE, false, 0, 250 );
-
+        if (player_in_branch(BRANCH_MAIN_DUNGEON)
+            && level_number < 5 && coinflip()) {
             // Guarantee that the knife is uncursed and non-special
-            if (item_no != NON_ITEM)
-            {
+            if (const auto item_no = items(0, OBJ_WEAPONS, WPN_KNIFE, false, 0, 250); item_no != NON_ITEM) {
                 mitm[item_no].plus = 0;
                 mitm[item_no].plus2 = 0;
-                mitm[item_no].flags = 0;   // no id, no race/desc, no curse
+                mitm[item_no].flags = 0; // no id, no race/desc, no curse
                 mitm[item_no].special = 0; // no ego type
             }
         }

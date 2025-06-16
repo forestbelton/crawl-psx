@@ -451,8 +451,7 @@ static void dump_inventory( string & text, bool show_prices )
 
     for (i = 0; i < ENDOFPACK; i++)
     {
-        if (is_valid_item( you.inv[i] ))
-        {
+        if (you.inv[i].valid()) {
             // adds up number of each class in invent.
             inv_class2[you.inv[i].base_type]++;
             inv_count++;
@@ -496,8 +495,7 @@ static void dump_inventory( string & text, bool show_prices )
 
                 for (j = 0; j < ENDOFPACK; j++)
                 {
-                    if (is_valid_item(you.inv[j]) && you.inv[j].base_type == i)
-                    {
+                    if (you.inv[j].valid() && you.inv[j].base_type == i) {
                         text += " ";
 
                         in_name( j, DESC_INVENTORY_EQUIP, st_pass );

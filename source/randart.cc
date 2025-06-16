@@ -16,7 +16,6 @@
 #include "randart.h"
 
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "externs.h"
@@ -678,28 +677,18 @@ char does_unrandart_exist(int whun)
 }
 
 // returns true is item is a pure randart or an unrandart
-bool is_random_artefact( const item_def &item )
-{
-    return (item.flags & ISFLAG_ARTEFACT_MASK);
+bool is_random_artefact(const item_def &item) {
+    return item.is_random_artefact();
 }
 
 // returns true if item in an unrandart
-bool is_unrandom_artefact( const item_def &item )
-{
-    return (item.flags & ISFLAG_UNRANDART);
+bool is_unrandom_artefact(const item_def &item) {
+    return item.is_unrandom_artefact();
 }
 
 // returns true if item is one of the origional fixed artefacts
-bool is_fixed_artefact( const item_def &item )
-{
-    if (!is_random_artefact( item )
-        && item.base_type == OBJ_WEAPONS
-        && item.special >= SPWPN_SINGING_SWORD)
-    {
-        return (true);
-    }
-
-    return (false);
+bool is_fixed_artefact(const item_def &item) {
+    return item.is_fixed_artefact();
 }
 
 int get_unique_item_status( int base_type, int art )

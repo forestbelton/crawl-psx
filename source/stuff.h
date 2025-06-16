@@ -49,6 +49,11 @@ bool one_chance_in(int a_million);
  * *********************************************************************** */
 int random2(int randmax);
 
+template <typename T, size_t N>
+T random_choice(const T (&arr)[N]) {
+ const auto idx = random2(array_size(arr));
+ return arr[idx];
+}
 
 /* ***********************************************************************
  * called from: xxx
@@ -119,7 +124,7 @@ void redraw_screen(void);
  *              spell - spl-book - spells - spells1 - spells2 - spells3 -
  *              spells4
  * *********************************************************************** */
-void canned_msg(unsigned char which_message);
+void canned_msg(CANNED_MESSAGES which_message);
 
 
 // last updated 12may2000 {dlb}

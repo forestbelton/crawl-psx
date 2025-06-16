@@ -14,6 +14,8 @@
 #include "AppHdr.h"
 #include "misc.h"
 
+#include <initializer_list>
+
 #include <string.h>
 #if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__) || defined(PSX))
 #include <unistd.h>
@@ -52,8 +54,8 @@
 #include "view.h"
 
 
-bool scramble(void);
-bool trap_item(char base_type, char sub_type, char beam_x, char beam_y);
+bool scramble();
+void trap_item(OBJECT_CLASSES base_type, unsigned char sub_type, char beam_x, char beam_y);
 static void dart_trap(bool trap_known, int trapped, struct bolt &pbolt, bool poison);
 
 // void place_chunks(int mcls, unsigned char rot_status, unsigned char chx,
@@ -442,9 +444,7 @@ void up_stairs(void)
 
         for (i = 0; i < ENDOFPACK; i++)
         {
-            if (is_valid_item( you.inv[i] )
-                && you.inv[i].base_type == OBJ_ORBS)
-            {
+            if (you.inv[i].valid() && you.inv[i].base_type == OBJ_ORBS) {
                 ouch(-9999, 0, KILLED_BY_WINNING);
             }
         }
@@ -587,12 +587,9 @@ void down_stairs( bool remove_stairs, int old_level )
     {
         int num_runes = 0;
 
-        for (i = 0; i < ENDOFPACK; i++)
-        {
-            if (is_valid_item( you.inv[i] )
-                && you.inv[i].base_type == OBJ_MISCELLANY
-                && you.inv[i].sub_type == MISC_RUNE_OF_ZOT)
-            {
+        for (i = 0; i < ENDOFPACK; i++) {
+            if (you.inv[i].valid() && you.inv[i].base_type == OBJ_MISCELLANY && you.inv[i].sub_type ==
+                MISC_RUNE_OF_ZOT) {
                 num_runes += you.inv[i].quantity;
             }
         }
@@ -972,6 +969,7 @@ constexpr env_colour BRANCH_COLOURS[] = {
     {BROWN, BROWN},
 };
 
+// Sets the environment colours and updates the displayed level description.
 void new_level() {
     int curr_subdungeon_level = you.your_level + 1;
 
@@ -1131,13 +1129,11 @@ static void dart_trap( bool trap_known, int trapped, struct bolt &pbolt,
 // itrap takes location from target_x, target_y of bolt strcture.
 //
 
-void itrap( struct bolt &pbolt, int trapped )
-{
-    int base_type = OBJ_MISSILES;
-    int sub_type = MI_DART;
+void itrap(const bolt &pbolt, const int trapped ) {
+    OBJECT_CLASSES base_type = OBJ_MISSILES;
+    unsigned char sub_type = MI_DART;
 
-    switch (env.trap[trapped].type)
-    {
+    switch (env.trap[trapped].type) {
     case TRAP_DART:
         base_type = OBJ_MISSILES;
         sub_type = MI_DART;
@@ -1166,10 +1162,8 @@ void itrap( struct bolt &pbolt, int trapped )
         return;
     }
 
-    trap_item( base_type, sub_type, pbolt.target_x, pbolt.target_y );
-
-    return;
-}                               // end itrap()
+    trap_item(base_type, sub_type, pbolt.target_x, pbolt.target_y);
+}
 
 void handle_traps(char trt, int i, bool trap_known)
 {
@@ -1535,68 +1529,72 @@ bool scramble(void)
         return true;
 }                               // end scramble()
 
-void weird_colours(unsigned char coll, char wc[30])
-{
-    unsigned char coll_div16 = coll / 16; // conceivable max is then 16 {dlb}
+// NB: Must start with a consonant!
+constexpr const char *WEIRD_COLOUR_PREFIXES[] = {
+    "brilliant",
+    "pale",
+    "mottled",
+    "shimmering",
+    "bright",
+    "dark",
+    "shining",
+    "faint",
+};
 
-    // Must start with a consonant!
-    strcpy(wc, (coll_div16 == 0 || coll_div16 ==  7) ? "brilliant" :
-               (coll_div16 == 1 || coll_div16 ==  8) ? "pale" :
-               (coll_div16 == 2 || coll_div16 ==  9) ? "mottled" :
-               (coll_div16 == 3 || coll_div16 == 10) ? "shimmering" :
-               (coll_div16 == 4 || coll_div16 == 11) ? "bright" :
-               (coll_div16 == 5 || coll_div16 == 12) ? "dark" :
-               (coll_div16 == 6 || coll_div16 == 13) ? "shining"
-                                                     : "faint");
+constexpr const char *WEIRD_COLOR_SUFFIXES[] = {
+    "red",
+    "purple",
+    "green",
+    "orange",
+    "magenta",
+    "black",
+    "grey",
+    "silver",
+    "gold",
+    "pink",
+    "yellow",
+    "white",
+    "brown",
+    "aubergine",
+    "ochre",
+    "leaf green",
+    "mauve",
+    "azure",
+};
 
-    strcat(wc, " ");
+// Return the name of a weird colour derived from the input.
+const char *weird_colours(unsigned char coll) {
+    static char wc[30];
 
-    while (coll > 17)
+    const unsigned char coll_div16 = coll / 16; // conceivable max is then 16 {dlb}
+    while (coll >= array_size(WEIRD_COLOUR_PREFIXES)) {
         coll -= 10;
+    }
 
-    strcat(wc, (coll ==  0) ? "red" :
-               (coll ==  1) ? "purple" :
-               (coll ==  2) ? "green" :
-               (coll ==  3) ? "orange" :
-               (coll ==  4) ? "magenta" :
-               (coll ==  5) ? "black" :
-               (coll ==  6) ? "grey" :
-               (coll ==  7) ? "silver" :
-               (coll ==  8) ? "gold" :
-               (coll ==  9) ? "pink" :
-               (coll == 10) ? "yellow" :
-               (coll == 11) ? "white" :
-               (coll == 12) ? "brown" :
-               (coll == 13) ? "aubergine" :
-               (coll == 14) ? "ochre" :
-               (coll == 15) ? "leaf green" :
-               (coll == 16) ? "mauve" :
-               (coll == 17) ? "azure"
-                            : "colourless");
+    const auto prefix = WEIRD_COLOUR_PREFIXES[coll_div16 % array_size(WEIRD_COLOUR_PREFIXES)];
+    const auto suffix = WEIRD_COLOR_SUFFIXES[coll];
 
-    return;
-}                               // end weird_colours()
+    sprintf(wc, "%s %s", prefix, suffix);
+    return wc;
+}
 
-bool go_berserk(bool intentional)
-{
-    if (you.berserker)
-    {
+// Attempt to go berserk. Returns true if the attempt was successful.
+bool go_berserk(const bool intentional) {
+    if (you.berserker) {
         if (intentional)
             mpr("You're already berserk!");
         // or else you won't notice -- no message here.
         return false;
     }
 
-    if (you.exhausted)
-    {
+    if (you.exhausted) {
         if (intentional)
             mpr("You're too exhausted to go berserk.");
         // or else they won't notice -- no message here
         return false;
     }
 
-    if (you.is_undead)
-    {
+    if (you.is_undead) {
         if (intentional)
             mpr("You cannot raise a blood rage in your lifeless body.");
         // or else you won't notice -- no message here
@@ -1625,63 +1623,54 @@ bool go_berserk(bool intentional)
         you.berserk_penalty = 0;
 
     return true;
-}                               // end go_berserk()
+}
 
-bool trap_item(char base_type, char sub_type, char beam_x, char beam_y)
-{
-    item_def  item;
+// Attempt to place a trap item at the given position.
+void trap_item(const OBJECT_CLASSES base_type, const unsigned char sub_type, const char beam_x, const char beam_y) {
+    item_def item = {
+        static_cast<unsigned char>(base_type),
+        sub_type,
+        0,
+        0,
+        0,
+        LIGHTCYAN,
+        0,
+        1,
+    };
 
-    item.base_type = base_type;
-    item.sub_type = sub_type;
-    item.plus = 0;
-    item.plus2 = 0;
-    item.flags = 0;
-    item.special = 0;
-    item.quantity = 1;
-    item.colour = LIGHTCYAN;
+    auto item_type = OBJ_WEAPONS;
+    auto ego_type = SPMSL_NORMAL;
 
-    if (base_type == OBJ_MISSILES)
-    {
-        if (sub_type == MI_NEEDLE)
-        {
-            set_item_ego_type( item, OBJ_MISSILES, SPMSL_POISONED );
+    if (base_type == OBJ_MISSILES) {
+        item_type = OBJ_MISSILES;
+        if (sub_type == MI_NEEDLE) {
             item.colour = WHITE;
+            ego_type = SPMSL_POISONED;
         }
-        else
-        {
-            set_item_ego_type( item, OBJ_MISSILES, SPMSL_NORMAL );
-        }
-    }
-    else
-    {
-        set_item_ego_type( item, OBJ_WEAPONS, SPWPN_NORMAL );
     }
 
-    if (igrd[beam_x][beam_y] != NON_ITEM)
-    {
-        if (items_stack( item, mitm[ igrd[beam_x][beam_y] ] ))
-        {
-            inc_mitm_item_quantity( igrd[beam_x][beam_y], 1 );
-            return (false);
+    item.set_ego_type(item_type, ego_type);
+
+    if (igrd[beam_x][beam_y] != NON_ITEM) {
+        if (items_stack(item, mitm[igrd[beam_x][beam_y]])) {
+            inc_mitm_item_quantity(igrd[beam_x][beam_y], 1);
+            return;
         }
 
         // don't want to go overboard here. Will only generate up to three
         // separate trap items, or less if there are other items present.
-        if (mitm[ igrd[beam_x][beam_y] ].link != NON_ITEM)
-        {
-            if (mitm[ mitm[ igrd[beam_x][beam_y] ].link ].link != NON_ITEM)
-                return (false);
+        if (mitm[igrd[beam_x][beam_y]].link != NON_ITEM) {
+            if (mitm[mitm[igrd[beam_x][beam_y]].link].link != NON_ITEM)
+                return;
         }
-    }                           // end of if igrd != NON_ITEM
+    }
 
-    return (!copy_item_to_grid( item, beam_x, beam_y, 1 ));
-}                               // end trap_item()
+    copy_item_to_grid(item, beam_x, beam_y, 1);
+}
 
 // returns appropriate trap symbol for a given trap type {dlb}
-unsigned char trap_category(unsigned char trap_type)
-{
-    switch (trap_type)
-    {
+DUNGEON_FEATURES trap_category(const unsigned char trap_type) {
+    switch (trap_type) {
     case TRAP_TELEPORT:
     case TRAP_AMNESIA:
     case TRAP_ZOT:
@@ -1697,21 +1686,16 @@ unsigned char trap_category(unsigned char trap_type)
     default:                    // what *would* be the default? {dlb}
         return (DNGN_TRAP_MECHANICAL);
     }
-}                               // end trap_category()
+}
 
-// returns index of the trap for a given (x,y) coordinate pair {dlb}
-int trap_at_xy(int which_x, int which_y)
-{
-
-    for (int which_trap = 0; which_trap < MAX_TRAPS; which_trap++)
-    {
-        if (env.trap[which_trap].x == which_x
-            && env.trap[which_trap].y == which_y)
-        {
-            return (which_trap);
+// Retrieve the index of the trap at (x,y). If there is no trap, -1 is returned.
+int trap_at_xy(const int x, const int y) {
+    int trap_index = -1;
+    for (int i = 0; i < env.trap.size(); ++i) {
+        if (env.trap[i].x == x && env.trap[i].y == y) {
+            trap_index = i;
+            break;
         }
     }
-
-    // no idea how well this will be handled elsewhere: {dlb}
-    return (-1);
-}                               // end trap_at_xy()
+    return trap_index;
+}

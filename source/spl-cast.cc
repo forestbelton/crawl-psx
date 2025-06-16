@@ -626,10 +626,9 @@ bool cast_a_spell(void)
     you.turn_is_over = 1;
     alert_nearby_monsters();
 
-    if (you.conf)
-        random_uselessness( 2 + random2(7), 0 );
-    else
-    {
+    if (you.conf) {
+        random_uselessness(static_cast<random_useless_effect>(2 + random2(7)), 0);
+    } else {
         exercise_spell( spell, true, your_spells( spell ) );
         naughty( NAUGHTY_SPELLCASTING, 1 + random2(5) );
     }
@@ -2182,7 +2181,7 @@ bool miscast_effect( unsigned int sp_type, int mag_pow, int mag_fail,
                 potion_effect(POT_LEVITATION, 20);
                 break;
             case 1:
-                random_uselessness(2 + random2(7), 0);
+                random_uselessness(static_cast<random_useless_effect>(2 + random2(7)), 0);
                 break;
             }
             break;
@@ -2864,7 +2863,7 @@ bool miscast_effect( unsigned int sp_type, int mag_pow, int mag_fail,
                 ouch(1 + random2avg(11, 2), 0, KILLED_BY_WILD_MAGIC, cause);
                 break;
             case 1:
-                random_uselessness(2 + random2(7), 0);
+                random_uselessness(static_cast<random_useless_effect>(2 + random2(7)), 0);
                 break;
             }
             break;

@@ -334,20 +334,13 @@ void abyss_teleport( bool new_area )
     // Orbs and fixed artefacts are marked as "lost in the abyss"
     for (k = 0; k < MAX_ITEMS; k++)
     {
-        if (is_valid_item( mitm[k] ))
-        {
-            if (mitm[k].base_type == OBJ_ORBS)
-            {
-                set_unique_item_status( OBJ_ORBS, mitm[k].sub_type,
-                                        UNIQ_LOST_IN_ABYSS );
+        if (mitm[k].valid()) {
+            if (mitm[k].base_type == OBJ_ORBS) {
+                set_unique_item_status(OBJ_ORBS, mitm[k].sub_type, UNIQ_LOST_IN_ABYSS);
+            } else if (mitm[k].is_fixed_artefact()) {
+                set_unique_item_status(OBJ_WEAPONS, mitm[k].special, UNIQ_LOST_IN_ABYSS);
             }
-            else if (is_fixed_artefact( mitm[k] ))
-            {
-                set_unique_item_status( OBJ_WEAPONS, mitm[k].special,
-                                        UNIQ_LOST_IN_ABYSS );
-            }
-
-            destroy_item( k );
+            destroy_item(k);
         }
     }
 

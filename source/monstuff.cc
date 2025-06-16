@@ -187,7 +187,7 @@ bool curse_an_item( char which, char power )
 
     for (int i = 0; i < ENDOFPACK; i++)
     {
-        if (!is_valid_item( you.inv[i] ))
+        if (!you.inv[i].valid())
             continue;
 
         if (you.inv[i].base_type == OBJ_WEAPONS
@@ -3289,7 +3289,7 @@ static bool handle_throw(struct monsters *monster, bolt & beem)
         return (false);
 
     const int mon_item = monster->inv[MSLOT_MISSILE];
-    if (mon_item == NON_ITEM || !is_valid_item( mitm[mon_item] ))
+    if (mon_item == NON_ITEM || !mitm[mon_item].valid())
         return (false);
 
     // don't allow offscreen throwing.. for now.

@@ -149,8 +149,7 @@ struct delay_queue_item
 };
 
 
-struct item_def
-{
+struct item_def {
     unsigned char  base_type;  // basic class (ie OBJ_WEAPON)
     unsigned char  sub_type;   // type within that class (ie WPN_DAGGER)
     short          plus;       // +to hit, charges, corpse mon id
@@ -163,6 +162,63 @@ struct item_def
     short  x;          // x-location;         for inventory items = -1
     short  y;          // y-location;         for inventory items = -1
     short  link;       // link to next item;  for inventory items = slot
+
+    bool set_ego_type(const OBJECT_CLASSES item_type, const unsigned char ego_type) {
+        const auto can_set = base_type == item_type
+                             && !is_random_artefact()
+                             && !is_fixed_artefact();
+        if (can_set) {
+            special = ego_type;
+        }
+        return can_set;
+    }
+
+    // Returns true if the item is a pure randart or an unrandart.
+    [[nodiscard]] bool is_random_artefact() const {
+        return flags & ISFLAG_ARTEFACT_MASK;
+    }
+
+    // Returns true if item is an unrandart.
+    [[nodiscard]] bool is_unrandom_artefact() const {
+        return flags & ISFLAG_UNRANDART;
+    }
+
+    /**
+     * @brief Check if item is one of the original fixed artefacts.
+     * @return True if item is a fixed artefact
+     */
+    [[nodiscard]] bool is_fixed_artefact() const {
+        return !is_random_artefact()
+            && base_type == OBJ_WEAPONS
+            && special >= SPWPN_SINGING_SWORD;
+    }
+
+    /**
+     * @brief Check if the item definition is valid.
+     * @return True if the item is valid
+     */
+    [[nodiscard]] bool valid() const {
+        return base_type != OBJ_UNASSIGNED && quantity > 0;
+    }
+
+    [[nodiscard]] bool can_clean() const {
+        return base_type != OBJ_FOOD && base_type != OBJ_ORBS
+        && !(base_type == OBJ_MISCELLANY && sub_type == MISC_RUNE_OF_ZOT);
+    }
+
+    /**
+     * @brief Check if the item can be stacked
+     * @return True if the item is stackable
+     */
+    [[nodiscard]] bool is_stackable() const {
+        return valid()
+               && (base_type == OBJ_MISSILES
+                   || (base_type == OBJ_FOOD && sub_type != FOOD_CHUNK)
+                   || base_type == OBJ_SCROLLS
+                   || base_type == OBJ_POTIONS
+                   || base_type == OBJ_UNKNOWN_II
+                   || (base_type == OBJ_MISCELLANY && sub_type == MISC_RUNE_OF_ZOT));
+    }
 };
 
 
@@ -293,7 +349,7 @@ struct player
   FixedArray<unsigned char, 5, 50> item_description;
   FixedVector<unsigned char, 50> unique_items;
   FixedVector<unsigned char, 50> unique_creatures;
-  char level_type;
+  LEVEL_TYPES level_type;
 
   char where_are_you;
 

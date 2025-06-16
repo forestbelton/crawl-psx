@@ -157,7 +157,7 @@ void handle_delay( void )
             // original and that's why we do it this way.  Note that
             // we ignore the conversion to skeleton possiblity just to
             // be nice. -- bwr
-            if (is_valid_item( mitm[ delay.parm1 ] )
+            if (mitm[ delay.parm1 ].valid()
                 && mitm[ delay.parm1 ].base_type == OBJ_CORPSES
                 && mitm[ delay.parm1 ].x == you.x_pos
                 && mitm[ delay.parm1 ].y == you.y_pos)
@@ -491,7 +491,7 @@ void handle_delay( void )
                 // quantity (delay.parm2). -- bwr
 
                 // Make sure item still exists.
-                if (!is_valid_item( you.inv[ delay.parm1 ] ))
+                if (!you.inv[delay.parm1].valid())
                     break;
 
                 // Must handle unwield_item before we attempt to copy

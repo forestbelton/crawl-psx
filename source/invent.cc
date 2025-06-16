@@ -248,8 +248,7 @@ show_inv:
                         anything = 0;
                     }
 
-                    if (is_valid_item(you.inv[j]) && you.inv[j].base_type==i)
-                    {
+                    if (you.inv[j].valid() && you.inv[j].base_type == i) {
                         anything++;
 
                         if (lines > 0)
@@ -483,7 +482,7 @@ int prompt_invent_item( const char *prompt, int type_expect,
         {
             ret = letter_to_index( keyin );
 
-            if (must_exist && !is_valid_item( you.inv[ret] ))
+            if (must_exist && !you.inv[ret].valid())
                 mpr( "You do not have any such object." );
             else
                 break;

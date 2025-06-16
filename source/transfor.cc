@@ -529,23 +529,16 @@ void extra_hp(int amount_extra) // must also set in calc_hp
     deflate_hp(you.hp_max, false);
 }                               // end extra_hp()
 
-void drop_everything(void)
-{
-    int i = 0;
-
-    if (inv_count() < 1)
+void drop_everything() {
+    if (inv_count() < 1) {
         return;
-
-    mpr( "You find yourself unable to carry your possessions!" );
-
-    for (i = 0; i < ENDOFPACK; i++)
-    {
-        if (is_valid_item( you.inv[i] ))
-        {
-            copy_item_to_grid( you.inv[i], you.x_pos, you.y_pos );
-            you.inv[i].quantity = 0;
-        }
     }
 
-    return;
-}                               // end drop_everything()
+    mpr("You find yourself unable to carry your possessions!");
+    for (auto &item : you.inv) {
+        if (item.valid()) {
+            copy_item_to_grid(item, you.x_pos, you.y_pos);
+            item.quantity = 0;
+        }
+    }
+}

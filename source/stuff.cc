@@ -156,6 +156,7 @@ unsigned char get_ch(void)
     return gotched;
 }                               // end get_ch()
 
+// Generate a random number in [0, max).
 int random2(int max)
 {
 #ifdef USE_NEW_RANDOM
@@ -410,35 +411,24 @@ bool one_chance_in(int a_million)
 //        right after srandom() and srand() are called (note also
 //        that cf_setseed() requires rand() - random2 returns int
 //        but a long can't hurt there).
-bool coinflip(void)
-{
-    extern unsigned long cfseed;        // defined atop stuff.cc
-    unsigned long *ptr_cfseed = &cfseed;
+bool coinflip() {
+    const bool heads = cfseed & BIT(18);
 
-    if (*ptr_cfseed & IB18)
-    {
-        *ptr_cfseed = ((*ptr_cfseed ^ MASK) << 1) | IB1;
-        return true;
+    if (heads) {
+        cfseed = (cfseed ^ MASK) << 1 | BIT(1);
+    } else {
+        cfseed <<= 1;
     }
-    else
-    {
-        *ptr_cfseed <<= 1;
-        return false;
-    }
-}                               // end coinflip()
+
+    return heads;
+}
 
 // cf_setseed should only be called but once in all of Crawl!!! {dlb}
-void cf_setseed(void)
-{
-    extern unsigned long cfseed;        // defined atop stuff.cc
-    unsigned long *ptr_cfseed = &cfseed;
-
-    do
-    {
+void cf_setseed() {
+    do {
         // using rand() here makes these predictable -- bwr
-        *ptr_cfseed = rand();
-    }
-    while (*ptr_cfseed == 0);
+        cfseed = rand();
+    } while (cfseed == 0);
 }
 
 // simple little function to quickly modify all three stats
@@ -446,117 +436,106 @@ void cf_setseed(void)
 // adding .. could use checking for sums less than zero, I guess.
 // used in conjunction with newgame::species_stat_init() and
 // newgame::job_stat_init() routines 24jan2000 {dlb}
-void modify_all_stats(int STmod, int IQmod, int DXmod)
-{
-    if (STmod)
-    {
-        you.strength += STmod;
-        you.max_strength += STmod;
-        you.redraw_strength = 1;
+void modify_all_stats(const int STmod, const int IQmod, const int DXmod) {
+    you.strength += STmod;
+    you.max_strength += STmod;
+    you.redraw_strength = 1;
+
+    you.intel += IQmod;
+    you.max_intel += IQmod;
+    you.redraw_intelligence = 1;
+
+    you.dex += DXmod;
+    you.max_dex += DXmod;
+    you.redraw_dexterity = 1;
+}
+
+constexpr const char *CANNED_MESSAGE_STRINGS[] = {
+    nullptr,
+    "Nothing appears to happen.",
+    "You resist.",
+    "You are too berserk!",
+    "You aren't carrying anything.",
+    "You can't do that yet.",
+    "Okay, then.",
+    "Why would you want to do that?",
+    "The spell fizzles.",
+    "Huh?",
+    "You are now empty-handed.",
+};
+
+/**
+ * @brief Display a canned message based on type.
+ * @param which_message The type of message to display
+ */
+void canned_msg(const CANNED_MESSAGES which_message) {
+    if (which_message == MSG_SOMETHING_APPEARS) {
+        mprf("Something appears %s!",
+             you.species == SP_NAGA || you.species == SP_CENTAUR ? "before you" : "at your feet");
+    } else {
+        mpr(CANNED_MESSAGE_STRINGS[which_message]);
     }
+}
 
-    if (IQmod)
-    {
-        you.intel += IQmod;
-        you.max_intel += IQmod;
-        you.redraw_intelligence = 1;
-    }
+#ifndef PSX
+#define INPUT_YES 'Y'
+#define INPUT_NO 'N'
+#else
+#define INPUT_YES PAD_CROSS
+#define INPUT_NO PAD_CIRCLE
+#endif
 
-    if (DXmod)
-    {
-        you.dex += DXmod;
-        you.max_dex += DXmod;
-        you.redraw_dexterity = 1;
-    }
-
-    return;
-}                               // end modify_stat()
-
-void canned_msg(unsigned char which_message)
-{
-    switch (which_message)
-    {
-    case MSG_SOMETHING_APPEARS:
-        strcpy(info, "Something appears ");
-        strcat(info, (you.species == SP_NAGA || you.species == SP_CENTAUR)
-                                            ? "before you" : "at your feet");
-        strcat(info, "!");
-        mpr(info);
-        break;
-
-    case MSG_NOTHING_HAPPENS:
-        mpr("Nothing appears to happen.");
-        break;
-    case MSG_YOU_RESIST:
-        mpr("You resist.");
-        break;
-    case MSG_TOO_BERSERK:
-        mpr("You are too berserk!");
-        break;
-    case MSG_NOTHING_CARRIED:
-        mpr("You aren't carrying anything.");
-        break;
-    case MSG_CANNOT_DO_YET:
-        mpr("You can't do that yet.");
-        break;
-    case MSG_OK:
-        mpr("Okay, then.");
-        break;
-    case MSG_UNTHINKING_ACT:
-        mpr("Why would you want to do that?");
-        break;
-    case MSG_SPELL_FIZZLES:
-        mpr("The spell fizzles.");
-        break;
-    case MSG_HUH:
-        mpr("Huh?");
-        break;
-    case MSG_EMPTY_HANDED:
-        mpr("You are now empty-handed.");
-        break;
-    }
-
-    return;
-}                               // end canned_msg()
-
-// jmf: general helper (should be used all over in code)
-//      -- idea borrowed from Nethack
-bool yesno( const char *str, bool safe, bool clear_after )
-{
-    unsigned char tmp;
-
-    for (;;)
-    {
+/**
+ * @brief Ask a yes/no question to the player.
+ *
+ * @param str The question to ask
+ * @param safe
+ * @param clear_after Whether to clear the message log after asking
+ * @return True if they responded yes, false otherwise
+ */
+bool yesno(const char *str, const bool safe, const bool clear_after ) {
+    for (;;) {
         mpr(str, MSGCH_PROMPT);
 
-        tmp = (unsigned char) getch();
+#ifndef PSX
+        auto tmp = getch();
 
         if (Options.easy_confirm == CONFIRM_ALL_EASY
-            || (Options.easy_confirm == CONFIRM_SAFE_EASY && safe))
-        {
+            || (Options.easy_confirm == CONFIRM_SAFE_EASY && safe)) {
             tmp = toupper( tmp );
         }
+#else
+        UNUSED(safe);
+        auto tmp = getpad();
+#endif
 
-        if (clear_after)
+        if (clear_after) {
             mesclr();
+        }
 
-        if (tmp == 'N')
+        if (tmp == INPUT_NO) {
             return false;
-        else if (tmp == 'Y')
+        }
+
+        if (tmp == INPUT_YES) {
             return true;
-        else
-            mpr("[Y]es or [N]o only, please.");
+        }
+
+#ifndef PSX
+        mpr("[Y]es or [N]o only, please.");
+#else
+        mpr("Yes(" S_CROSS ") or No(" S_CIRCLE "), please.");
+#endif
     }
 }                               // end yesno()
 
 // More accurate than distance() given the actual movement geonmetry -- bwr
-int grid_distance( int x, int y, int x2, int y2 )
-{
-    const int dx = abs( x - x2 );
-    const int dy = abs( y - y2 );
+int grid_distance( const int x, const int y, const int x2, const int y2) {
+    const auto dx = abs( x - x2 );
+    const auto dy = abs( y - y2 );
 
-    // returns distance in terms of moves:
-    return ((dx > dy) ? dx : dy);
+    // NB: Shouldn't this be dx + dy...?
+    return MAXIMUM(dx, dy);
 }
 
 int distance( int x, int y, int x2, int y2 )
@@ -569,9 +548,17 @@ int distance( int x, int y, int x2, int y2 )
     return ((dx * dx) + (dy * dy));
 }                               // end distance()
 
-bool adjacent( int x, int y, int x2, int y2 )
-{
-    return (abs(x - x2) <= 1 && abs(y - y2) <= 1);
+/**
+ * @brief Determine if two positions are adjacent to each other.
+ *
+ * @param x The x-coordinate of the first position
+ * @param y The y-coordinate of the first position
+ * @param x2 The x-coordinate of the second position
+ * @param y2 The y-coordinate of the second position
+ * @return True if they are adjacent, false otherwise
+ */
+bool adjacent(const int x, const int y, const int x2, const int y2) {
+    return abs(x - x2) <= 1 && abs(y - y2) <= 1;
 }
 
 bool silenced(char x, char y)

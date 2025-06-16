@@ -218,7 +218,7 @@ bool butchery(void)
             // check if the swap slot is appropriate first
             if (you.equip[EQ_WEAPON] != swap_slot)
             {
-                if (is_valid_item( you.inv[ swap_slot ] ) // must have one
+                if (you.inv[swap_slot].valid() // must have one
 
                     // must be able to cut with it
                     && can_cut_meat( you.inv[ swap_slot ].base_type,
@@ -470,7 +470,7 @@ bool butchery(void)
 
           out_of_eating:
 
-            if (is_valid_item( mitm[o] ))
+            if (mitm[o].valid())
                 last_item = o;
 
             hrg = mitm[o].link;

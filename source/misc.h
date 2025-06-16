@@ -80,7 +80,7 @@ void merfolk_start_swimming(void);
 /* ***********************************************************************
  * called from: misc - mstuff2
  * *********************************************************************** */
-void itrap(struct bolt &pbolt, int trapped);
+void itrap(const struct bolt &pbolt, int trapped);
 
 
 // last updated 12may2000 {dlb}
@@ -101,7 +101,7 @@ void turn_corpse_into_chunks( item_def &item );
 /* ***********************************************************************
  * called from: acr - misc - mstuff2 - spells3
  * *********************************************************************** */
-int trap_at_xy(int which_x, int which_y);
+int trap_at_xy(int x, int y);
 
 
 // last updated 12may2000 {dlb}
@@ -115,7 +115,7 @@ void up_stairs(void);
 /* ***********************************************************************
  * called from: acr - effects
  * *********************************************************************** */
-void weird_colours(unsigned char coll, char wc[30]);
+const char *weird_colours(unsigned char coll);
 
 
 // last updated 12may2000 {dlb}
@@ -129,7 +129,7 @@ void weird_writing(char stringy[40]);
 /* ***********************************************************************
  * called from: acr - misc - mstuff2 - spells2 - spells3
  * *********************************************************************** */
-unsigned char trap_category(unsigned char trap_type);
+DUNGEON_FEATURES trap_category(unsigned char trap_type);
 
 
 #endif

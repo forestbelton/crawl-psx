@@ -112,8 +112,7 @@ static void adjust_item(void)
     in_name( to_slot, DESC_INVENTORY_EQUIP, str_pass );
     mpr( str_pass );
 
-    if (is_valid_item( you.inv[from_slot] ))
-    {
+    if (you.inv[from_slot].valid()) {
         in_name( from_slot, DESC_INVENTORY_EQUIP, str_pass );
         mpr( str_pass );
     }
@@ -485,8 +484,7 @@ void list_weapons(void)
 
         strcpy(info, (i == 0) ? "Primary   : " : "Secondary : ");
 
-        if (is_valid_item( you.inv[i] ))
-        {
+        if (you.inv[i].valid()) {
             char str_pass[ ITEMNAME_SIZE ];
             in_name(i, DESC_INVENTORY_EQUIP, str_pass);
             strcat(info, str_pass);

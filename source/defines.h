@@ -142,11 +142,8 @@
 #endif
 
 // required for stuff::coinflip()
-#define IB1 1
-#define IB2 2
-#define IB5 16
-#define IB18 131072
-#define MASK (IB1 + IB2 + IB5)
+#define BIT(n) (1 << (n))
+#define MASK (BIT(1) | BIT(2) | BIT(5))
 // required for stuff::coinflip()
 
 #define MINIMUM( xxx, yyy )     (((xxx) < (yyy)) ? (xxx) : (yyy))

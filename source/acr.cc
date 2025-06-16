@@ -2366,9 +2366,7 @@ static void input() {
     {
         if ((!you.invis && one_chance_in(3)) || one_chance_in(5))
         {
-            char wc[30];
-
-            weird_colours( random2(256), wc );
+            const auto wc = weird_colours(random2(256));
             snprintf(info, INFO_SIZE, "The silver statue's eyes glow %s.", wc);
             mpr( info, MSGCH_WARN );
 
@@ -3238,7 +3236,7 @@ void start_item_equipment() {
 
         cputs(EOL "  ");
         cputs(i == 0 ? "Primary   : " : "Secondary : ");
-        if (is_valid_item(you.inv[i])) {
+        if (you.inv[i].valid()) {
             char str_pass[ITEMNAME_SIZE];
             in_name(i, DESC_INVENTORY_EQUIP, str_pass);
             cputs(str_pass);

@@ -317,123 +317,96 @@ void mons_direct_effect(struct bolt &pbolt, int i)
     return;
 }                               // end mons_direct_effect()
 
-void random_uselessness(unsigned char ru, unsigned char sc_read_2)
-{
-    char wc[30];
-    int temp_rand = 0;          // probability determination {dlb}
+constexpr const char *RANDOM_ROAR[] = {
+    "frog",
+    "pill bug",
+    "millipede",
+    "eggplant",
+    "albino dragon",
+    "dragon",
+    "human",
+    "slug",
+};
 
-    switch (ru)
-    {
-    case 0:
-        strcpy(info, "The dust glows a ");
-        weird_colours(random2(256), wc);
-        strcat(info, wc);
-        strcat(info, " colour!");
-        mpr(info);
-        break;
+constexpr const char *RANDOM_BODY_HURT[] = {
+    "ears itch.",
+    "brain hurts!",
+    "nose twitches suddenly!",
+};
 
-    case 1:
-        mpr("The scroll reassembles itself in your hand!");
-        inc_inv_item_quantity( sc_read_2, 1 );
-        break;
+constexpr const char *RANDOM_SMELL[] = {
+    "coffee.",
+    "salt.",
+    "burning hair!",
+    "baking bread.",
+    "something weird.",
+    "wet wool.",
+    "sulphur.",
+    "fire and brimstone!",
+};
 
-    case 2:
-        if (you.equip[EQ_WEAPON] != -1)
-        {
-            char str_pass[ ITEMNAME_SIZE ];
-            in_name(you.equip[EQ_WEAPON], DESC_CAP_YOUR, str_pass);
-            strcpy(info, str_pass);
-            strcat(info, " glows ");
-            weird_colours(random2(256), wc);
-            strcat(info, wc);
-            strcat(info, " for a moment.");
-            mpr(info);
-        }
-        else
-        {
-            canned_msg(MSG_NOTHING_HAPPENS);
-        }
-        break;
+constexpr const char *RANDOM_NOISE[] = {
+    "snatches of song",
+    "a voice call someone else's name",
+    "a very strange noise",
+    "roaring flame",
+    "a very strange noise indeed",
+    "the chiming of a distant gong",
+    "the bellowing of a yak",
+    "a crunching sound",
+    "the tinkle of an enormous bell",
+};
 
-    case 3:
-        strcpy(info, "You hear the distant roaring of an enraged ");
+void random_uselessness(const random_useless_effect ru, const unsigned char sc_read_2) {
+    switch (ru) {
+        case RU_DUST_GLOW:
+            mprf("The dust glows a %s colour!", weird_colours(random2(256)));
+            break;
 
-        temp_rand = random2(8);
+        case RU_SCROLL_REASSEMBLE:
+            mpr("The scroll reassembles itself in your hand!");
+            inc_inv_item_quantity(sc_read_2, 1);
+            break;
 
-        strcat(info, (temp_rand == 0) ? "frog"          :
-                     (temp_rand == 1) ? "pill bug"      :
-                     (temp_rand == 2) ? "millipede"     :
-                     (temp_rand == 3) ? "eggplant"      :
-                     (temp_rand == 4) ? "albino dragon" :
-                     (temp_rand == 5) ? "dragon"        :
-                     (temp_rand == 6) ? "human"
-                                      : "slug");
+        case RU_WEAPON_GLOW:
+            if (you.equip[EQ_WEAPON] != -1) {
+                char str_pass[ITEMNAME_SIZE];
+                in_name(you.equip[EQ_WEAPON], DESC_CAP_YOUR, str_pass);
+                mprf("%s glows %s for a moment.", str_pass, weird_colours(random2(256)));
+            } else {
+                canned_msg(MSG_NOTHING_HAPPENS);
+            }
+            break;
 
-        strcat(info, "!");
-        mpr(info);
-        break;
+        case RU_DISTANT_ROAR:
+            mprf("You hear the distant roaring of an enraged %s!", random_choice(RANDOM_ROAR));
+            break;
 
-    case 4:
-        // josh declares mummies can't smell {dlb}
-        if (you.species != SP_MUMMY)
-        {
-            strcpy(info, "You smell ");
+        case RU_SMELL:
+            // josh declares mummies can't smell {dlb}
+            if (you.species != SP_MUMMY) {
+                mprf("You smell %s", random_choice(RANDOM_SMELL));
+            }
+            break;
 
-            temp_rand = random2(8);
+        case RU_INESCAPABLE_DOOM:
+            mpr("You experience a momentary feeling of inescapable doom!");
+            break;
 
-            strcat(info, (temp_rand == 0) ? "coffee."          :
-                         (temp_rand == 1) ? "salt."            :
-                         (temp_rand == 2) ? "burning hair!"    :
-                         (temp_rand == 3) ? "baking bread."    :
-                         (temp_rand == 4) ? "something weird." :
-                         (temp_rand == 5) ? "wet wool."        :
-                         (temp_rand == 6) ? "sulphur."
-                                          : "fire and brimstone!");
-            mpr(info);
-        }
-        break;
+        case RU_BODY_HURTS:
+            mprf("Your %s", random_choice(RANDOM_BODY_HURT));
+            break;
 
-    case 5:
-        mpr("You experience a momentary feeling of inescapable doom!");
-        break;
+        case RU_SUMMON_BUTTERFLIES:
+            mpr("You hear the tinkle of a tiny bell.");
+            cast_summon_butterflies(100);
+            break;
 
-    case 6:
-        strcpy(info, "Your ");
-
-        temp_rand = random2(3);
-
-        strcat(info, (temp_rand == 0) ? "ears itch."   :
-                     (temp_rand == 1) ? "brain hurts!"
-                                      : "nose twitches suddenly!");
-        mpr(info);
-        break;
-
-    case 7:
-        mpr("You hear the tinkle of a tiny bell.");
-        cast_summon_butterflies( 100 );
-        break;
-
-    case 8:
-        strcpy(info, "You hear ");
-
-        temp_rand = random2(9);
-
-        strcat(info, (temp_rand == 0) ? "snatches of song"                 :
-                     (temp_rand == 1) ? "a voice call someone else's name" :
-                     (temp_rand == 2) ? "a very strange noise"             :
-                     (temp_rand == 3) ? "roaring flame"                    :
-                     (temp_rand == 4) ? "a very strange noise indeed"      :
-                     (temp_rand == 5) ? "the chiming of a distant gong"    :
-                     (temp_rand == 6) ? "the bellowing of a yak"           :
-                     (temp_rand == 7) ? "a crunching sound"
-                                      : "the tinkle of an enormous bell");
-        strcat(info, ".");
-        mpr(info);
-        break;
+        case RU_NOISE:
+            mprf("You hear %s.", random_choice(RANDOM_NOISE));
+            break;
     }
-
-    return;
-}                               // end random_uselessness()
+}
 
 bool acquirement(unsigned char force_class)
 {
@@ -496,9 +469,7 @@ bool acquirement(unsigned char force_class)
 
     for (acqc = 0; acqc < ENDOFPACK; acqc++)
     {
-        if (is_valid_item( you.inv[acqc] )
-                && you.inv[acqc].base_type == class_wanted)
-        {
+        if (you.inv[acqc].valid() && you.inv[acqc].base_type == class_wanted) {
             ASSERT( you.inv[acqc].sub_type < max_has_value );
             already_has[you.inv[acqc].sub_type] += you.inv[acqc].quantity;
         }
