@@ -114,27 +114,7 @@ enum ABILITIES
     ABIL_RENOUNCE_RELIGION = 250       //  250
 };
 
-enum ABILITY_FLAGS
-{
-    ABFLAG_NONE         = 0x00000000,
-    ABFLAG_BREATH       = 0x00000001, // ability uses DUR_BREATH_WEAPON
-    ABFLAG_DELAY        = 0x00000002, // ability has its own delay (ie glamour)
-    ABFLAG_PAIN         = 0x00000004, // ability must hurt player (ie torment)
-    ABFLAG_EXHAUSTION   = 0x00000008, // fails if you.exhausted
-    ABFLAG_INSTANT      = 0x00000010, // doesn't take time to use
-    ABFLAG_PERMANENT_HP = 0x00000020, // costs permanent HPs
-    ABFLAG_PERMANENT_MP = 0x00000040  // costs permanent MPs
-};
-
-enum AMMUNITION_DESCRIPTIONS
-{
-    DAMMO_ORCISH = 3,                  //    3
-    DAMMO_ELVEN,
-    DAMMO_DWARVEN                      //    5
-};
-
-enum ARMOUR
-{
+enum ARMOUR {
     ARM_ROBE,                          //    0
     ARM_LEATHER_ARMOUR,
     ARM_RING_MAIL,
@@ -171,26 +151,13 @@ enum ARMOUR
     NUM_ARMOURS
 };
 
-enum ARMOUR_DESCRIPTIONS
-{
-    DARM_PLAIN,                 // added for the heck of it, 15 Apr 2000 {dlb}
-    DARM_EMBROIDERED_SHINY = 1, // which it is dependent upon armour subtype {dlb}
-    DARM_RUNED,
-    DARM_GLOWING,
-    DARM_ELVEN,
-    DARM_DWARVEN,                      //    5
-    DARM_ORCISH
-};
-
-enum ARMOUR_PROPERTIES
-{
+enum ARMOUR_PROPERTIES {
     PARM_AC,                           //    0
     PARM_EVASION
 };
 
 // Note:  currently the size of the attr array is hard coded at 30! ick! -- bwr
-enum ATTRIBUTES
-{
+enum ATTRIBUTES {
     ATTR_DIVINE_LIGHTNING_PROTECTION,  //    0
     // ATTR_SPEC_AIR,                  // don't use this!
     // ATTR_SPEC_EARTH,
@@ -210,56 +177,7 @@ enum ATTRIBUTES
     NUM_ATTRIBUTES              // must always remain last member {dlb}
 };
 
-enum BANDS
-{
-    BAND_NO_BAND                = 0,
-    BAND_KOBOLDS                = 1,
-    BAND_ORCS,
-    BAND_ORC_KNIGHT,
-    BAND_KILLER_BEES,
-    BAND_FLYING_SKULLS,         // 5
-    BAND_SLIME_CREATURES,
-    BAND_YAKS,
-    BAND_UGLY_THINGS,
-    BAND_HELL_HOUNDS,
-    BAND_JACKALS,               // 10
-    BAND_HELL_KNIGHTS,
-    BAND_ORC_HIGH_PRIEST,
-    BAND_GNOLLS,                // 13
-    BAND_BUMBLEBEES             = 16,
-    BAND_CENTAURS,
-    BAND_YAKTAURS,
-    BAND_INSUBSTANTIAL_WISPS,
-    BAND_OGRE_MAGE,             // 20
-    BAND_DEATH_YAKS,
-    BAND_NECROMANCER,
-    BAND_BALRUG,
-    BAND_CACODEMON,
-    BAND_EXECUTIONER,           // 25
-    BAND_HELLWING,
-    BAND_DEEP_ELF_FIGHTER,
-    BAND_DEEP_ELF_KNIGHT,
-    BAND_DEEP_ELF_HIGH_PRIEST,
-    BAND_KOBOLD_DEMONOLOGIST,   // 30
-    BAND_NAGAS,
-    BAND_WAR_DOGS,
-    BAND_GREY_RATS,
-    BAND_GREEN_RATS,
-    BAND_ORANGE_RATS,           // 35
-    BAND_SHEEP,
-    BAND_GHOULS,
-    BAND_DEEP_TROLLS,
-    BAND_HOGS,
-    BAND_HELL_HOGS,             // 40
-    BAND_GIANT_MOSQUITOES,
-    BAND_BOGGARTS,
-    BAND_BLINK_FROGS,
-    BAND_SKELETAL_WARRIORS,     // 44
-    NUM_BANDS                   // always last
-};
-
-enum BEAMS                        // beam[].flavour
-{
+enum BEAMS {                       // beam[].flavour
     BEAM_MISSILE,                 //    0
     BEAM_MMISSILE,                //    1 - and similarly unresistable things
     BEAM_FIRE,
@@ -315,8 +233,7 @@ enum BEAMS                        // beam[].flavour
     BEAM_POTION_RANDOM
 };
 
-enum BOOKS
-{
+enum BOOKS {
     BOOK_MINOR_MAGIC_I,                //    0
     BOOK_MINOR_MAGIC_II,
     BOOK_MINOR_MAGIC_III,
@@ -368,8 +285,7 @@ enum BOOKS
     NUM_BOOKS
 };
 
-enum BRANCHES                          // you.where_are_you
-{
+enum BRANCHES {                        // you.where_are_you
     BRANCH_MAIN_DUNGEON,               //    0
     BRANCH_DIS,
     BRANCH_GEHENNA,
@@ -393,8 +309,7 @@ enum BRANCHES                          // you.where_are_you
     BRANCH_SWAMP
 };
 
-enum BRANCH_STAIRS // you.branch_stairs[] - 10 less than BRANCHES {dlb}
-{
+enum BRANCH_STAIRS { // you.branch_stairs[] - 10 less than BRANCHES {dlb}
     STAIRS_ORCISH_MINES,               //    0
     STAIRS_HIVE,
     STAIRS_LAIR,
@@ -410,15 +325,13 @@ enum BRANCH_STAIRS // you.branch_stairs[] - 10 less than BRANCHES {dlb}
     STAIRS_SWAMP
 };
 
-enum BURDEN_STATES                     // you.burden_state
-{
+enum BURDEN_STATES {                   // you.burden_state
     BS_UNENCUMBERED,                   //    0
     BS_ENCUMBERED = 2,                 //    2
     BS_OVERLOADED = 5                  //    5
 };
 
-enum CANNED_MESSAGES                   // canned_msg() - unsigned char
-{
+enum CANNED_MESSAGES {                 // canned_msg() - unsigned char
     MSG_SOMETHING_APPEARS,             //    0
     MSG_NOTHING_HAPPENS,
     MSG_YOU_RESIST,
@@ -432,8 +345,7 @@ enum CANNED_MESSAGES                   // canned_msg() - unsigned char
     MSG_EMPTY_HANDED
 };
 
-enum CLOUD_TYPES // cloud_type[], place_cloud(), big_cloud()
-{
+enum CLOUD_TYPES { // cloud_type[], place_cloud(), big_cloud()
     CLOUD_NONE,                        //    0
     CLOUD_FIRE,                        //    1
     CLOUD_STINK,                       //    2
@@ -459,8 +371,7 @@ enum CLOUD_TYPES // cloud_type[], place_cloud(), big_cloud()
     CLOUD_BLACK_SMOKE_MON = 110        //  110: added 19jan2000 {dlb}
 };
 
-enum COMMANDS
-{
+enum COMMANDS {
     CMD_NO_CMD = 1000,                 // 1000
     CMD_MOVE_NOWHERE,
     CMD_MOVE_LEFT,
@@ -549,15 +460,13 @@ enum COMMANDS
     CMD_OPEN_START_MENU,
 };
 
-enum CONFIRM_LEVEL
-{
+enum CONFIRM_LEVEL {
     CONFIRM_NONE_EASY,
     CONFIRM_SAFE_EASY,
     CONFIRM_ALL_EASY
 };
 
-enum CORPSE_EFFECTS
-{
+enum CORPSE_EFFECTS {
     CE_NOCORPSE,                       //    0
     CE_CLEAN,                          //    1
     CE_CONTAMINATED,                   //    2
@@ -570,22 +479,19 @@ enum CORPSE_EFFECTS
     CE_ROTTEN = 50 //   50 - must remain at 50 for now {dlb}
 };
 
-enum CORPSES
-{
+enum CORPSES {
     CORPSE_BODY,                       //    0
     CORPSE_SKELETON
 };
 
-enum DEATH_KNIGHT_CHOICES
-{
+enum DEATH_KNIGHT_CHOICES {
     DK_NO_SELECTION,
     DK_NECROMANCY,
     DK_YREDELEMNUL,
     DK_RANDOM
 };
 
-enum DECKS
-{
+enum DECKS {
     DECK_OF_WONDERS,                   //    0
     DECK_OF_SUMMONING,
     DECK_OF_TRICKS,
@@ -593,8 +499,7 @@ enum DECKS
     DECK_OF_PUNISHMENT
 };
 
-enum DELAY
-{
+enum DELAY {
     DELAY_NOT_DELAYED,
     DELAY_EAT,
     DELAY_ARMOUR_ON,
@@ -611,23 +516,20 @@ enum DELAY
     DELAY_UNINTERUPTABLE               // simple uninteruptable delay
 };
 
-enum DEMON_BEAMS
-{
+enum DEMON_BEAMS {
     DMNBM_HELLFIRE,                    //    0
     DMNBM_SMITING,
     DMNBM_BRAIN_FEED,
     DMNBM_MUTATION
 };
 
-enum DEMON_CLASSES                     // summon_any_demon()
-{
+enum DEMON_CLASSES {                   // summon_any_demon()
     DEMON_LESSER,                      //    0: Class V
     DEMON_COMMON,                      //    1: Class II-IV
     DEMON_GREATER                      //    2: Class I
 };
 
-enum DESCRIPTION_LEVEL
-{
+enum DESCRIPTION_LEVEL {
     DESC_CAP_THE,                      // 0
     DESC_NOCAP_THE,                    // 1
     DESC_CAP_A,                        // 2
@@ -640,14 +542,12 @@ enum DESCRIPTION_LEVEL
     DESC_INVENTORY               // 8
 };
 
-enum DIRECTION                         // (unsigned char) you.char_direction
-{
+enum DIRECTION {                       // (unsigned char) you.char_direction
     DIR_DESCENDING = 0, //    0 - change and lose savefile compatibility (!!!)
     DIR_ASCENDING = 1   //    1 - change and lose savefile compatibility (!!!)
 };
 
-enum DUNGEON_FEATURES                  // (unsigned char) grd[][]
-{
+enum DUNGEON_FEATURES {                // (unsigned char) grd[][]
     DNGN_UNSEEN,                       //    0
     DNGN_ROCK_WALL,
     DNGN_STONE_WALL,
@@ -796,8 +696,7 @@ enum DURATIONS                         // you.duration[]
     // set at 30 to prevent savefile incompatibilities 12mar2000{dlb}
 };
 
-enum ENCHANTMENT                       // menv[].enchantment[]
-{
+enum ENCHANTMENT {                     // menv[].enchantment[]
     ENCH_NONE = 0,                     //    0
     ENCH_SLOW,
     ENCH_HASTE,                        //    2
@@ -859,14 +758,7 @@ enum ENCHANTMENT                       // menv[].enchantment[]
     NUM_ENCHANTMENTS
 };
 
-enum ENCHANT_STATS
-{
-    ENCHANT_TO_HIT,
-    ENCHANT_TO_DAM
-};
-
-enum EQUIPMENT
-{
+enum EQUIPMENT {
     EQ_WEAPON,                         //    0
     EQ_CLOAK,
     EQ_HELMET,
@@ -887,8 +779,7 @@ enum EQUIPMENT
     EQ_ALL_ARMOUR                      // check all armour types
 };
 
-enum FIRE_TYPES
-{
+enum FIRE_TYPES {
     FIRE_NONE,
     FIRE_LAUNCHER,
     FIRE_DART,
@@ -900,16 +791,14 @@ enum FIRE_TYPES
     NUM_FIRE_TYPES
 };
 
-enum FLUSH_REASONS
-{
+enum FLUSH_REASONS {
     FLUSH_ON_FAILURE,                  // spell/ability failed to cast
     FLUSH_BEFORE_COMMAND,              // flush before getting a command
     FLUSH_ON_MESSAGE,                  // flush when printing a message
     NUM_FLUSH_REASONS
 };
 
-enum FOODS                             // mitm[].sub_type[]
-{
+enum FOODS {                           // mitm[].sub_type[]
     FOOD_MEAT_RATION,                  //    0
     FOOD_BREAD_RATION,
     FOOD_PEAR,
@@ -935,22 +824,19 @@ enum FOODS                             // mitm[].sub_type[]
     NUM_FOODS
 };
 
-enum GENUS_PLAYER                      // see player::player_genus()
-{
+enum GENUS_PLAYER {                    // see player::player_genus()
     GENPC_DRACONIAN,                   //    0
     GENPC_ELVEN,                       //    1
     GENPC_DWARVEN                      //    2
 };
 
-enum GENDER
-{
+enum GENDER {
     GENDER_NEUTER,
     GENDER_MALE,
     GENDER_FEMALE
 };
 
-enum GHOST_VALUES
-{
+enum GHOST_VALUES {
     GVAL_MAX_HP,        // 0
     GVAL_EV,
     GVAL_AC,
@@ -981,8 +867,7 @@ enum GHOST_VALUES
     GVAL_DEMONLORD_CYCLE_COLOUR         // 13
 };
 
-enum GODS                              //  you.religion
-{
+enum GODS {                            //  you.religion
     GOD_NO_GOD,                        //    0
     GOD_ZIN,
     GOD_SHINING_ONE,
@@ -1001,8 +886,7 @@ enum GODS                              //  you.religion
     GOD_RANDOM  = 100
 };
 
-enum GOOD_THINGS
-{
+enum GOOD_THINGS {
     GOOD_KILLED_LIVING = 1, //    1 - killed a living monster in god's name
     GOOD_KILLED_UNDEAD,     //    2 - killed an undead in god's name
     GOOD_KILLED_DEMON,      //    3 - killed a demon in god's name
@@ -1022,15 +906,13 @@ enum GOOD_THINGS
     NUM_GOOD_THINGS
 };
 
-enum HANDS_REQUIRED
-{
+enum HANDS_REQUIRED {
     HANDS_ONE_HANDED = 1,              //    1
     HANDS_TWO_HANDED,
     HANDS_ONE_OR_TWO_HANDED
 };
 
-enum HELMET_TYPES  // used in pluses2
-{
+enum HELMET_TYPES { // used in pluses2
     THELM_HELMET        = 0x0000,
     THELM_HELM          = 0x0001,
     THELM_CAP           = 0x0002,
@@ -1053,40 +935,14 @@ enum HELMET_TYPES  // used in pluses2
     THELM_DESC_MASK     = 0xff00
 };
 
-#if 0
-enum HELMET_DESCRIPTIONS
-{
-    DHELM_WINGED = 1,                  //    1
-    DHELM_HORNED,
-    DHELM_CRESTED,
-    DHELM_PLUMED,
-    DHELM_SPIKED,                      //    5
-    DHELM_VISORED,
-    DHELM_JEWELLED
-};
-
-enum HELMET_TYPES  // used in pluses2
-{
-    THELM_HELMET = 0,
-    THELM_HELM,
-    THELM_CAP,
-    THELM_WIZARD_HAT,
-    NUM_HELMET_TYPES,
-    THELM_SPECIAL               // type used only for artefacts (mask, hat)
-};
-#endif
-
-enum BOOT_TYPES  // used in pluses2
-{
+enum BOOT_TYPES { // used in pluses2
     TBOOT_BOOTS = 0,
     TBOOT_NAGA_BARDING,
     TBOOT_CENTAUR_BARDING,
     NUM_BOOT_TYPES
 };
 
-
-enum HUNGER_STATES                     // you.hunger_state
-{
+enum HUNGER_STATES {                   // you.hunger_state
     HS_RAVENOUS,                       //    0: not used within code, really
     HS_STARVING,
     HS_HUNGRY,
@@ -1095,8 +951,7 @@ enum HUNGER_STATES                     // you.hunger_state
     HS_ENGORGED                        //    5
 };
 
-enum ITEM_STATUS_FLAGS      // per item flags: ie. ident status, cursed status
-{
+enum ITEM_STATUS_FLAGS {    // per item flags: ie. ident status, cursed status
     ISFLAG_KNOW_CURSE        = 0x00000001,  // curse status
     ISFLAG_KNOW_TYPE         = 0x00000002,  // artefact name, sub/special types
     ISFLAG_KNOW_PLUSES       = 0x00000004,  // to hit/to dam/to AC/charges
@@ -1133,8 +988,7 @@ enum ITEM_STATUS_FLAGS      // per item flags: ie. ident status, cursed status
     ISFLAG_DEBUG_MARK        = 0x80000000   // used for testing item structure
 };
 
-enum ITEM_DESCRIPTIONS
-{
+enum ITEM_DESCRIPTIONS {
     IDESC_WANDS,
     IDESC_POTIONS,
     IDESC_SCROLLS,                      // special field (like the others)
@@ -1142,33 +996,20 @@ enum ITEM_DESCRIPTIONS
     IDESC_SCROLLS_II                    // pluses field
 };
 
-enum ITEM_MAKE_SPECIES                  // used only for race during creation
-{
-    MAKE_ITEM_ELVEN       = 1,
-    MAKE_ITEM_DWARVEN     = 2,
-    MAKE_ITEM_ORCISH      = 3,
-
-    MAKE_ITEM_NO_RACE     = 100,
-    MAKE_ITEM_RANDOM_RACE = 250
-};
-
-enum ITEM_TYPE_ID       // used for first index of id[4][50]
-{
+enum ITEM_TYPE_ID {     // used for first index of id[4][50]
     IDTYPE_WANDS = 0,
     IDTYPE_SCROLLS,
     IDTYPE_JEWELLERY,
     IDTYPE_POTIONS
 };
 
-enum ITEM_TYPE_ID_STATE  // used for values in id[4][50]
-{
+enum ITEM_TYPE_ID_STATE { // used for values in id[4][50]
     ID_UNKNOWN_TYPE = 0,
     ID_KNOWN_TYPE,
     ID_TRIED_TYPE
 };
 
-enum JEWELLERY
-{
+enum JEWELLERY {
     RING_REGENERATION,                 //    0
     RING_PROTECTION,
     RING_PROTECTION_FROM_FIRE,
@@ -1206,8 +1047,7 @@ enum JEWELLERY
     NUM_JEWELLERY
 };
 
-enum JOB
-{
+enum JOB {
     JOB_FIGHTER,                       //    0
     JOB_WIZARD,
     JOB_PRIEST,
@@ -1242,8 +1082,7 @@ enum JOB
     JOB_UNKNOWN = 100
 };
 
-enum KILLBY
-{
+enum KILLBY {
     KILLED_BY_MONSTER,                 //    0
     KILLED_BY_POISON,
     KILLED_BY_CLOUD,
@@ -1277,8 +1116,7 @@ enum KILLBY
     NUM_KILLBY
 };
 
-enum KILLER                            // monster_die(), thing_thrown
-{
+enum KILLER {                          // monster_die(), thing_thrown
     KILL_YOU = 1,                      //    1
     KILL_MON,
     KILL_YOU_MISSILE,
@@ -1290,23 +1128,20 @@ enum KILLER                            // monster_die(), thing_thrown
 #define YOU_KILL(x) ((x) == KILL_YOU || (x) == KILL_YOU_MISSILE)
 #define MON_KILL(x) ((x) == KILL_MON || (x) == KILL_MON_MISSILE)
 
-enum LEVEL_TYPES                       // you.level_type
-{
+enum LEVEL_TYPES {                     // you.level_type
     LEVEL_DUNGEON,                     //    0
     LEVEL_LABYRINTH,
     LEVEL_ABYSS,
     LEVEL_PANDEMONIUM
 };
 
-enum LOAD_MODE
-{
+enum LOAD_MODE {
     LOAD_START_GAME,
     LOAD_RESTART_GAME,
     LOAD_ENTER_LEVEL
 };
 
-enum MAP_SECTIONS                      // see maps.cc and dungeon.cc {dlb}
-{
+enum MAP_SECTIONS {                    // see maps.cc and dungeon.cc {dlb}
     MAP_NORTH = 1,                     //    1
     MAP_NORTHWEST,
     MAP_NORTHEAST,
@@ -1317,8 +1152,7 @@ enum MAP_SECTIONS                      // see maps.cc and dungeon.cc {dlb}
 };
 
 // if you mess with this list, you'll need to make changes in initfile.cc
-enum MESSAGE_CHANNEL
-{
+enum MESSAGE_CHANNEL {
     MSGCH_PLAIN,          // regular text
     MSGCH_PROMPT,         // various prompts
     MSGCH_GOD,            // god/religion (param is god)
@@ -1339,8 +1173,7 @@ enum MESSAGE_CHANNEL
     NUM_MESSAGE_CHANNELS  // always last
 };
 
-enum MESSAGE_COLOURS
-{
+enum MESSAGE_COLOURS {
     MSGCOL_BLACK        = 0,    // the order of these colours is important
     MSGCOL_BLUE,
     MSGCOL_GREEN,
@@ -1362,8 +1195,7 @@ enum MESSAGE_COLOURS
     MSGCOL_PLAIN                // same as plain channel
 };
 
-enum MISCELLANY                        // mitm[].sub_type
-{
+enum MISCELLANY {                     // mitm[].sub_type
     MISC_BOTTLED_EFREET,               //    0
     MISC_CRYSTAL_BALL_OF_SEEING,
     MISC_AIR_ELEMENTAL_FAN,
@@ -1385,8 +1217,7 @@ enum MISCELLANY                        // mitm[].sub_type
     NUM_MISCELLANY // mv: used for random generation
 };
 
-enum MISSILES                          // (unsigned char)
-{
+enum MISSILES {                        // (unsigned char)
     MI_STONE,                          //    0
     MI_ARROW,
     MI_BOLT,
@@ -1397,16 +1228,14 @@ enum MISSILES                          // (unsigned char)
     MI_EGGPLANT
 };
 
-enum MON_TARG_MODE
-{
+enum MON_TARG_MODE {
     TARG_ANY,
     TARG_ENEMY,
     TARG_FRIEND,
     TARG_NUM_MODES
 };
 
-enum MONSTERS                          // (int) menv[].type
-{
+enum MONSTERS {                        // (int) menv[].type
     MONS_GIANT_ANT,                    //    0
     MONS_GIANT_BAT,
     MONS_CENTAUR,
@@ -1764,8 +1593,7 @@ enum MONSTERS                          // (int) menv[].type
 
 };
 
-enum MONSTER_BEHAVIOUR                  // create_monster()
-{
+enum MONSTER_BEHAVIOUR {                // create_monster()
     BEH_SLEEP,                         //    0
     BEH_WANDER,
     BEH_SEEK,
@@ -1778,15 +1606,13 @@ enum MONSTER_BEHAVIOUR                  // create_monster()
     BEH_GOD_GIFT                       //  creation only
 };
 
-enum MONSTER_ATTITUDES
-{
+enum MONSTER_ATTITUDES {
     ATT_HOSTILE,                       // 0, default in most cases
     ATT_FRIENDLY,                      // created friendly (or tamed?)
     ATT_NEUTRAL
 };
 
-enum MONSTER_EVENTS
-{
+enum MONSTER_EVENTS {
     ME_EVAL,                            // 0, evaluate monster AI state
     ME_DISTURB,                         // noisy
     ME_ANNOY,                           // annoy at range
@@ -1796,20 +1622,9 @@ enum MONSTER_EVENTS
     ME_CORNERED                         // cannot flee
 };
 
-#if 0
-// Obsolete... use mons_charclass()
-enum MONSTER_CATEGORIES
-{
-    MC_MIMIC, //    0
-    NUM_MC,
-    MC_UNSPECIFIED = 255 // keep at end !!! mind the upper limit of 255 {dlb}
-};
-#endif
-
 // Note: These are currently stored in chars!!!
 // Need to fix struct monsters and the savefile if you want more.
-enum MONSTER_FLAGS
-{
+enum MONSTER_FLAGS {
     MF_CREATED_FRIENDLY   = 0x01,  // no benefit from killing
     MF_GOD_GIFT           = 0x02,  // player not penalized by its death
     MF_BATTY              = 0x04,  // flutters like a bat
@@ -1821,8 +1636,7 @@ enum MONSTER_FLAGS
     MF_UNUSED_III         = 0x80
 };
 
-enum MONSTER_DAMAGE
-{
+enum MONSTER_DAMAGE {
     MDAM_OKAY,
     MDAM_LIGHTLY_DAMAGED,
     MDAM_MODERATELY_DAMAGED,
@@ -1832,15 +1646,13 @@ enum MONSTER_DAMAGE
     MDAM_DEAD
 };
 
-enum MONSTER_DESCRIPTORS // things that cross categorical lines {dlb}
-{
+enum MONSTER_DESCRIPTORS { // things that cross categorical lines {dlb}
     MDSC_LEAVES_HIDE,                  //    0
     MDSC_REGENERATES,
     MDSC_NOMSG_WOUNDS
 };
 
-enum MONSTER_HOLINESS // matches (char) H_foo in mon-util.h, see: monster_holiness()
-{
+enum MONSTER_HOLINESS { // matches (char) H_foo in mon-util.h, see: monster_holiness()
     MH_HOLY,                           //    0 - was -1
     MH_NATURAL,                        //    1 - was 0
     MH_UNDEAD,                         //    2 - was 1
@@ -1849,8 +1661,7 @@ enum MONSTER_HOLINESS // matches (char) H_foo in mon-util.h, see: monster_holine
     MH_PLANT                           //    plants
 };
 
-enum MONSTER_INVENTORY_SLOTS           // (int) menv[].inv[]
-{
+enum MONSTER_INVENTORY_SLOTS {         // (int) menv[].inv[]
     MSLOT_WEAPON,
     MSLOT_MISSILE, // although it is a second weapon for MONS_TWO_HEADED_OGRE - how to reconcile cleanly? {dlb}
     MSLOT_ARMOUR,
@@ -1862,8 +1673,7 @@ enum MONSTER_INVENTORY_SLOTS           // (int) menv[].inv[]
     NUM_MONSTER_SLOTS = 8 // value must remain 8 for savefile compatibility {dlb}
 };
 
-enum MONSTER_ITEM_USE
-{
+enum MONSTER_ITEM_USE {
     MONUSE_NOTHING,
     MONUSE_EATS_ITEMS,
     MONUSE_OPEN_DOORS,
@@ -1871,8 +1681,7 @@ enum MONSTER_ITEM_USE
     MONUSE_WEAPONS_ARMOUR
 };
 
-enum MONSTER_SPELLS   // mons_cast(), mspell_list[], mons_spells()
-{
+enum MONSTER_SPELLS { // mons_cast(), mspell_list[], mons_spells()
     MS_MMISSILE,                       //    0
     MS_FLAME,
     MS_FROST,
@@ -1931,8 +1740,7 @@ enum MONSTER_SPELLS   // mons_cast(), mspell_list[], mons_spells()
 };
 
 // XXX: These still need to be applied in mon-data.h
-enum MONSTER_SPELL_TEMPLATES
-{
+enum MONSTER_SPELL_TEMPLATES {
     MST_ORC_WIZARD_I     = 0,
     MST_ORC_WIZARD_II,
     MST_ORC_WIZARD_III,
@@ -2025,8 +1833,7 @@ enum MONSTER_SPELL_TEMPLATES
     MST_NO_SPELLS = 250
 };
 
-enum MUTATIONS
-{
+enum MUTATIONS {
     MUT_TOUGH_SKIN,                    //    0
     MUT_STRONG,
     MUT_CLEVER,
@@ -2111,8 +1918,7 @@ enum MUTATIONS
     NUM_MUTATIONS
 };
 
-enum NAUGHTY_THINGS
-{
+enum NAUGHTY_THINGS {
     NAUGHTY_NECROMANCY = 1, //    1 - using necromancy (spell or device)
     NAUGHTY_UNHOLY, //    2 - using unholy stuff (call imp, summon things)
     NAUGHTY_KILLING, //    3 - killing in the name of a peaceful deity
@@ -2129,8 +1935,7 @@ enum NAUGHTY_THINGS
     NUM_NAUGHTY_THINGS
 };
 
-enum OBJECT_CLASSES                    // (unsigned char) mitm[].base_type
-{
+enum OBJECT_CLASSES {                  // (unsigned char) mitm[].base_type
     OBJ_WEAPONS,                       //    0
     OBJ_MISSILES,
     OBJ_ARMOUR,
@@ -2154,13 +1959,11 @@ enum OBJECT_CLASSES                    // (unsigned char) mitm[].base_type
                      // for blanket random sub_type .. see dungeon::items()
 };
 
-enum ORBS
-{
+enum ORBS {
     ORB_ZOT                            //    0
 };
 
-enum POTIONS
-{
+enum POTIONS {
     POT_HEALING,                       //    0
     POT_HEAL_WOUNDS,
     POT_SPEED,
@@ -2188,8 +1991,7 @@ enum POTIONS
     NUM_POTIONS
 };
 
-enum PRONOUN_TYPE
-{
+enum PRONOUN_TYPE {
     PRONOUN_CAP,                        // 0
     PRONOUN_NOCAP,                      // 1
     PRONOUN_CAP_POSSESSIVE,             // 2
@@ -2197,16 +1999,14 @@ enum PRONOUN_TYPE
     PRONOUN_REFLEXIVE                   // 4 (reflexive is always lowercase)
 };
 
-enum PROXIMITY   // proximity to player to create monster
-{
+enum PROXIMITY { // proximity to player to create monster
     PROX_ANYWHERE,
     PROX_CLOSE_TO_PLAYER,
     PROX_AWAY_FROM_PLAYER,
     PROX_NEAR_STAIRS
 };
 
-enum RANDART_PROP
-{
+enum RANDART_PROP {
     RAP_BRAND,                         //    0
     RAP_AC,
     RAP_EVASION,
@@ -2239,15 +2039,13 @@ enum RANDART_PROP
     RAP_STEALTH
 };
 
-enum READ_BOOK_ACTION
-{
+enum READ_BOOK_ACTION {
     RBOOK_USE_STAFF,
     RBOOK_MEMORIZE,
     RBOOK_READ_SPELL
 };
 
-enum RUN_DIR
-{
+enum RUN_DIR {
     RDIR_UP = 0,
     RDIR_UP_RIGHT,
     RDIR_RIGHT,
@@ -2259,8 +2057,7 @@ enum RUN_DIR
     RDIR_REST
 };
 
-enum RUNE_TYPES
-{
+enum RUNE_TYPES {
     // Note: that runes DIS-SWAMP have the same numberic value as the branch
     RUNE_DIS                    = 1,
     RUNE_GEHENNA,
@@ -2286,15 +2083,13 @@ enum RUNE_TYPES
     NUM_RUNE_TYPES              // should always be last
 };
 
-enum SCORE_FORMAT
-{
+enum SCORE_FORMAT {
     SCORE_TERSE,                // one line
     SCORE_REGULAR,              // two lines (name, cause, blank)
     SCORE_VERBOSE               // everything (dates, times, god, etc)
 };
 
-enum SCROLLS
-{
+enum SCROLLS {
     SCR_IDENTIFY,                      //    0
     SCR_TELEPORTATION,
     SCR_FEAR,
@@ -2321,8 +2116,7 @@ enum SCROLLS
     NUM_SCROLLS
 };
 
-enum SHOPS // (unsigned char) env.sh_type[], item_in_shop(), in_a_shop()
-{
+enum SHOPS { // (unsigned char) env.sh_type[], item_in_shop(), in_a_shop()
     SHOP_WEAPON,                       //    0
     SHOP_ARMOUR,
     SHOP_WEAPON_ANTIQUE,
@@ -2340,8 +2134,7 @@ enum SHOPS // (unsigned char) env.sh_type[], item_in_shop(), in_a_shop()
     SHOP_RANDOM = 255                  // keep set at 255 for now {dlb}
 };
 
-enum SKILLS
-{
+enum SKILLS {
     SK_FIGHTING,                       //    0
     SK_SHORT_BLADES,
     SK_LONG_SWORDS,
@@ -2380,8 +2173,7 @@ enum SKILLS
     NUM_SKILLS                         // must remain last member {dlb}
 };
 
-enum SPECIAL_ARMOR
-{
+enum SPECIAL_ARMOR {
     SPARM_NORMAL,                      //    0
     SPARM_RUNNING,
     SPARM_FIRE_RESISTANCE,
@@ -2408,8 +2200,7 @@ enum SPECIAL_ARMOR
     SPARM_RANDART_V = 29 //   29 - highest value found thus far {dlb}
 };
 
-enum SPECIAL_MISSILES // to separate from weapons in general {dlb}
-{
+enum SPECIAL_MISSILES { // to separate from weapons in general {dlb}
     SPMSL_NORMAL,                      //    0
     SPMSL_FLAME,                       //    1
     SPMSL_ICE,                         //    2
@@ -2417,8 +2208,7 @@ enum SPECIAL_MISSILES // to separate from weapons in general {dlb}
     SPMSL_POISONED_II,                 //    4
 };
 
-enum SPECIAL_ROOMS
-{
+enum SPECIAL_ROOMS {
     SROOM_LAIR_ORC,                    //    0
     SROOM_LAIR_KOBOLD,
     SROOM_TREASURY,
@@ -2427,14 +2217,12 @@ enum SPECIAL_ROOMS
     NUM_SPECIAL_ROOMS                  //    5 - must remain final member {dlb}
 };
 
-enum SPECIAL_RINGS  // jewellery mitm[].special values
-{
+enum SPECIAL_RINGS { // jewellery mitm[].special values
     SPRING_RANDART = 200,
     SPRING_UNRANDART = 201
 };
 
-enum SPECIAL_WEAPONS // equivalent to (you.inv[].special or mitm[].special) % 30
-{
+enum SPECIAL_WEAPONS { // equivalent to (you.inv[].special or mitm[].special) % 30
     SPWPN_NORMAL,                      //    0
     SPWPN_FLAMING,
     SPWPN_FREEZING,
@@ -2483,8 +2271,7 @@ enum SPECIAL_WEAPONS // equivalent to (you.inv[].special or mitm[].special) % 30
     SPWPN_STAFF_OF_WUCAD_MU             //  195
 };
 
-enum SPECIAL_WIELD                     // you.special_wield
-{
+enum SPECIAL_WIELD {                   // you.special_wield
     SPWLD_NONE,                        //    0
     SPWLD_SING,
     SPWLD_TROG,
@@ -2503,8 +2290,7 @@ enum SPECIAL_WIELD                     // you.special_wield
     SPWLD_SHOUT //   54 - see it_use3::special_wielded() {dlb}
 };
 
-enum SPECIES
-{
+enum SPECIES {
     SP_HUMAN = 1,                      //    1
     SP_ELF,
     SP_HIGH_ELF,
@@ -2547,8 +2333,7 @@ enum SPECIES
     SP_UNKNOWN  = 100
 };
 
-enum SPELLS
-{
+enum SPELLS {
     SPELL_IDENTIFY,                    //    0
     SPELL_TELEPORT_SELF,
     SPELL_CAUSE_FEAR,
@@ -2742,8 +2527,7 @@ enum SPELLS
     SPELL_NO_SPELL = 210              //  210 - added 22jan2000 {dlb}
 };
 
-enum SPELL_TYPES //jmf: 24jul2000: changed from integer-list to bitfield
-{
+enum SPELL_TYPES { //jmf: 24jul2000: changed from integer-list to bitfield
   SPTYP_NONE           = 0, // "0" is reserved for no type at all {dlb}
   SPTYP_CONJURATION    = 1, // was 11, but only for old typematch routine {dlb}
   SPTYP_ENCHANTMENT    = 1<<1,
@@ -2763,8 +2547,7 @@ enum SPELL_TYPES //jmf: 24jul2000: changed from integer-list to bitfield
   SPTYP_RANDOM         = 1<<14
 };
 
-enum STATS
-{
+enum STATS {
   STAT_STRENGTH,                     //    0
   STAT_DEXTERITY,
   STAT_INTELLIGENCE,
@@ -2773,15 +2556,13 @@ enum STATS
   STAT_RANDOM = 255 // leave at 255, added for increase_stats() handling {dlb}
 };
 
-enum STATUE_TYPES
-{
+enum STATUE_TYPES {
     STATUE_SILVER,
     STATUE_ORANGE_CRYSTAL,
     NUM_STATUE_TYPES
 };
 
-enum STATUS_REDRAW_FLAGS
-{
+enum STATUS_REDRAW_FLAGS {
     REDRAW_HUNGER         = 0x00000001,
     REDRAW_BURDEN         = 0x00000002,
     REDRAW_LINE_1_MASK    = 0x00000003,
@@ -2806,8 +2587,7 @@ enum STATUS_REDRAW_FLAGS
     REDRAW_LINE_3_MASK    = 0x007f0000
 };
 
-enum STAVES
-{
+enum STAVES {
     STAFF_WIZARDRY,                    //    0
     STAFF_POWER,
     STAFF_FIRE,
@@ -2834,8 +2614,7 @@ enum STAVES
     NUM_STAVES                         // must remain last member {dlb}
 };
 
-enum SYMBOLS // beam[].type - note that this (and its variants) also accepts values from other enums - confusing {dlb}
-{
+enum SYMBOLS { // beam[].type - note that this (and its variants) also accepts values from other enums - confusing {dlb}
     SYM_SPACE = ' ',                   //   32
     SYM_FLASK = '!',                   //   33
     SYM_BOLT = '#',                    //   35
@@ -2852,8 +2631,7 @@ enum SYMBOLS // beam[].type - note that this (and its variants) also accepts val
     SYM_MISSILE = '`'                  //   96
 };
 
-enum TAGS   // used during save/load process to identify data blocks
-{
+enum TAGS { // used during save/load process to identify data blocks
     TAG_VERSION = 0,                    // should NEVER be read in!
     TAG_YOU = 1,                        // 'you' structure
     TAG_YOU_ITEMS,                      // your items
@@ -2866,16 +2644,13 @@ enum TAGS   // used during save/load process to identify data blocks
     NUM_TAGS
 };
 
-enum TAGTYPES   // file types supported by tag system
-{
+enum TAGTYPES { // file types supported by tag system
     TAGTYPE_PLAYER=0,           // Foo.sav
     TAGTYPE_LEVEL,              // Foo.00a, .01a, etc.
     TAGTYPE_GHOST               // bones.xxx
 };
 
-
-enum TRANSFORMATIONS
-{
+enum TRANSFORMATIONS {
     TRAN_NONE,                         //    0
     TRAN_SPIDER,
     TRAN_BLADE_HANDS,
@@ -2888,8 +2663,7 @@ enum TRANSFORMATIONS
     NUM_TRANSFORMATIONS                // must remain last member {dlb}
 };
 
-enum TRAPS                             // env.trap_type[]
-{
+enum TRAPS {                           // env.trap_type[]
     TRAP_DART,                         //    0
     TRAP_ARROW,
     TRAP_SPEAR,
@@ -2905,8 +2679,7 @@ enum TRAPS                             // env.trap_type[]
     TRAP_RANDOM = 255                  // set at 255 to avoid potential conflicts {dlb}
 };
 
-enum UNARMED_ATTACKS
-{
+enum UNARMED_ATTACKS {
     UNAT_NO_ATTACK,                    //    0
     UNAT_KICK,
     UNAT_HEADBUTT,
@@ -2914,22 +2687,19 @@ enum UNARMED_ATTACKS
     UNAT_PUNCH
 };
 
-enum UNDEAD_STATES                     // you.is_undead
-{
+enum UNDEAD_STATES {                   // you.is_undead
     US_ALIVE,                          //    0
     US_HUNGRY_DEAD,
     US_UNDEAD
 };
 
-enum UNIQUE_ITEM_STATUS
-{
+enum UNIQUE_ITEM_STATUS {
     UNIQ_NOT_EXISTS = 0,
     UNIQ_EXISTS = 1,
     UNIQ_LOST_IN_ABYSS = 2
 };
 
-enum VORPAL_DESCRIPTIONS
-{
+enum VORPAL_DESCRIPTIONS {
     DVORP_CRUSHING,                    //    0
     DVORP_SLICING,
     DVORP_PIERCING,
@@ -2938,8 +2708,7 @@ enum VORPAL_DESCRIPTIONS
 
 // NOTE:  This order is very special!  Its basically the same as ZAP_*,
 // and there are bits of the code that still use that fact.. see zap_wand().
-enum WANDS                             // mitm[].subtype
-{
+enum WANDS {                           // mitm[].subtype
     WAND_FLAME,                        //    0
     WAND_FROST,
     WAND_SLOWING,
@@ -2963,9 +2732,8 @@ enum WANDS                             // mitm[].subtype
     NUM_WANDS                          // must remain last member {dlb}
 };
 
-enum WEAPONS
-{
-// Base weapons
+enum WEAPONS {
+    // Base weapons
     WPN_CLUB,                          //    0
     WPN_MACE,
     WPN_FLAIL,
@@ -2985,11 +2753,11 @@ enum WEAPONS
     WPN_HAND_CROSSBOW,
     WPN_GLAIVE,
     WPN_QUARTERSTAFF,
-// these three not created ordinarily
+    // these three not created ordinarily
     WPN_SCYTHE,
     WPN_GIANT_CLUB,                    //   20
     WPN_GIANT_SPIKED_CLUB,
-// "rare" weapons - some have special cases and are uncommon
+    // "rare" weapons - some have special cases and are uncommon
     WPN_EVENINGSTAR,
     WPN_QUICK_BLADE,
     WPN_KATANA,
@@ -3020,8 +2788,7 @@ enum WEAPONS
     WPN_RANDOM
 };
 
-enum WEAPON_DESCRIPTIONS
-{
+enum WEAPON_DESCRIPTIONS {
     DWPN_PLAIN = 0,                    //    0 - added to round out enum {dlb}
     DWPN_RUNED = 1,                    //    1
     DWPN_GLOWING,
@@ -3030,8 +2797,7 @@ enum WEAPON_DESCRIPTIONS
     DWPN_DWARVEN                       //    5
 };
 
-enum WEAPON_PROPERTIES
-{
+enum WEAPON_PROPERTIES {
     PWPN_DAMAGE,                       //    0
     PWPN_HIT,
     PWPN_SPEED
@@ -3048,8 +2814,7 @@ enum WIZARD_OPTIONS
 
 #endif
 
-enum ZAPS                              // zapping(), zappy()
-{
+enum ZAPS {                            // zapping(), zappy()
     ZAP_FLAME,                         //    0
     ZAP_FROST,
     ZAP_SLOWING,

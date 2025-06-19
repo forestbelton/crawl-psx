@@ -90,6 +90,22 @@
 #include "stuff.h"
 #include "tags.h"
 
+enum AMMUNITION_DESCRIPTIONS {
+    DAMMO_ORCISH = 3,                  //    3
+    DAMMO_ELVEN,
+    DAMMO_DWARVEN                      //    5
+};
+
+enum ARMOUR_DESCRIPTIONS {
+    DARM_PLAIN,                 // added for the heck of it, 15 Apr 2000 {dlb}
+    DARM_EMBROIDERED_SHINY = 1, // which it is dependent upon armour subtype {dlb}
+    DARM_RUNED,
+    DARM_GLOWING,
+    DARM_ELVEN,
+    DARM_DWARVEN,                      //    5
+    DARM_ORCISH
+};
+
 // THE BIG IMPORTANT TAG CONSTRUCTION/PARSE BUFFER
 static char *tagBuffer = NULL;
 

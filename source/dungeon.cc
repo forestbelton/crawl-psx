@@ -48,6 +48,15 @@
 #include "stuff.h"
 #include "wpn-misc.h"
 
+enum ITEM_MAKE_SPECIES {                // used only for race during creation
+    MAKE_ITEM_ELVEN       = 1,
+    MAKE_ITEM_DWARVEN     = 2,
+    MAKE_ITEM_ORCISH      = 3,
+
+    MAKE_ITEM_NO_RACE     = 100,
+    MAKE_ITEM_RANDOM_RACE = 250
+};
+
 typedef struct spec_t {
     bool created;
     bool hooked_up;

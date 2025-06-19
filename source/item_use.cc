@@ -28,7 +28,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "externs.h"
 
@@ -38,18 +37,15 @@
 #include "describe.h"
 #include "direct.h"
 #include "effects.h"
-#include "fight.h"
 #include "food.h"
 #include "invent.h"
 #include "it_use2.h"
 #include "it_use3.h"
 #include "items.h"
 #include "itemname.h"
-#include "misc.h"
 #include "monplace.h"
 #include "monstuff.h"
 #include "mstuff2.h"
-#include "mon-util.h"
 #include "ouch.h"
 #include "player.h"
 #include "randart.h"
@@ -66,14 +62,20 @@
 #include "view.h"
 #include "wpn-misc.h"
 
-bool drink_fountain(void);
-static void throw_it(struct bolt &pbolt, int throw_2);
-void use_randart(unsigned char item_wield_2);
-static bool enchant_weapon( int which_stat, bool quiet = false );
-static bool enchant_armour( void );
+enum ENCHANT_STATS {
+    ENCHANT_TO_HIT,
+    ENCHANT_TO_DAM
+};
 
-void wield_weapon(bool auto_wield)
-{
+bool drink_fountain();
+
+static void throw_it(bolt &pbolt, int throw_2);
+
+static bool enchant_weapon(int which_stat, bool quiet = false);
+
+static bool enchant_armour();
+
+void wield_weapon(const bool auto_wield) {
     int item_slot = 0;
     char str_pass[ ITEMNAME_SIZE ];
 

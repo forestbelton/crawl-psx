@@ -15,6 +15,17 @@ struct ability_def {
     unsigned int flags;      // used for additonal cost notices
 };
 
+enum ABILITY_FLAGS {
+    ABFLAG_NONE         = 0x00000000,
+    ABFLAG_BREATH       = 0x00000001, // ability uses DUR_BREATH_WEAPON
+    ABFLAG_DELAY        = 0x00000002, // ability has its own delay (ie glamour)
+    ABFLAG_PAIN         = 0x00000004, // ability must hurt player (ie torment)
+    ABFLAG_EXHAUSTION   = 0x00000008, // fails if you.exhausted
+    ABFLAG_INSTANT      = 0x00000010, // doesn't take time to use
+    ABFLAG_PERMANENT_HP = 0x00000020, // costs permanent HPs
+    ABFLAG_PERMANENT_MP = 0x00000040  // costs permanent MPs
+};
+
 /**
  * @brief Retrieve the ability definition given its ID.
  * @param ability_id ID of ability to find
