@@ -71,7 +71,7 @@ static void append_value(string &description, const int valu, const bool plussed
 static void print_description(const string &d) {
     unsigned int nextLine = string::npos;
     unsigned int currentPos = 0;
-    constexpr auto lineWidth = 70;
+    constexpr auto lineWidth = 69;
 
     bool nlSearch = true; // efficiency
 
@@ -80,7 +80,7 @@ static void print_description(const string &d) {
     while (currentPos < d.length()) {
 #ifdef PLAIN_TERM
         if (currentPos != 0) {
-            gotoxy(1, wherey() + 1);
+            gotoxy(2, wherey() + 1);
         }
 #endif
 
@@ -630,6 +630,52 @@ static string describe_demon(void) {
     return description;
 } // end describe_demon()
 
+constexpr const char *WPN_SUBTYPE_DESCRIPTIONS[] = {
+    "A heavy piece of wood. ",
+    "A long handle with a heavy lump on one end. ",
+    "Like a mace, but with a length of chain between the handle and the lump of metal. ",
+    "A long knife or a very short sword, which can be held or thrown. ",
+    "A mace covered in spikes. ",
+    "A sword with a short, slashing blade. ",
+    "A sword with a long, slashing blade. ",
+    "A sword with a very long, heavy blade and a long handle. ",
+    "A long sword with a curved blade. ",
+    "An small axe designed for either hand combat or throwing. ",
+    "A large axe with a double-headed blade. ",
+    "A long stick with a pointy blade on one end, to be held or thrown. ",
+    "A long pole with a spiked axe head on one end. ",
+    "A piece of cloth and leather for launching stones, which do a small amount of damage on impact. ",
+    "A curved piece of wood and string, for shooting arrows. It does good damage in combat, and a skilled user can use it to great effect. ",
+    "A piece of machinery used for firing bolts, which takes some time to load and fire. It does very good damage in combat. ",
+    "A small crossbow, for firing darts. ",
+    "A pole with a large, heavy blade on one end. ",
+    "A sturdy wooden pole. ",
+    "A farm implement, usually unsuited to combat. ",
+    "A giant lump of wood, shaped for an ogre's hands. ",
+    "A giant lump of wood with sharp spikes at one end. ",
+    "The opposite of a morningstar. ",
+    "A small and magically quick sword. ",
+    "A very rare and extremely effective imported weapon, featuring a long single-edged blade. ",
+    "A huge axe. ",
+    "A magical weapon with two razor-sharp blades. ",
+    "A magical weapon with three great razor-sharp blades. ",
+    "The kind of thing you hit nails with, adapted for battle. ",
+    "A large and vicious toothed club. ",
+    "A whip. ",
+    "A sword with a medium length slashing blade. ",
+    "A terrible weapon, forged in the fires of Hell. ",
+    "A terrible weapon, woven in the depths of the inferno. ",
+    "A terrible weapon, molded by fire and brimstone. ",
+    "An axe with a large blade. ",
+    "An axe intended for hand to hand combat. ",
+    "A hafted weapon with three points at one end. ",
+    "A flail with large spikes on the metal lump. ",
+    "A large and heavy mace. ",
+    "A large and heavy flail. ",
+    "A simple survival knife. Designed more for utility than combat, it looks quite capable of butchering a corpse. ",
+    "A long, light tube, open at both ends.  Doing very little damage,  its main use is to fire poisoned needles from afar.  It makes very little noise. ",
+    "A sword with a broad slashing blade. ",
+};
 
 //---------------------------------------------------------------
 //
@@ -730,219 +776,7 @@ static string describe_weapon(const item_def &item, char verbose) {
         description += "$";
     } else {
         if (verbose == 1) {
-            switch (item.sub_type) {
-                case WPN_CLUB:
-                    description += "A heavy piece of wood. ";
-                    break;
-
-                case WPN_MACE:
-                    description += "A long handle "
-                            "with a heavy lump on one end. ";
-                    break;
-
-                case WPN_FLAIL:
-                    description += "Like a mace, but with a length of chain "
-                            "between the handle and the lump of metal. ";
-                    break;
-
-                case WPN_DAGGER:
-                    description += "A long knife or a very short sword, "
-                            "which can be held or thrown. ";
-                    break;
-
-                case WPN_KNIFE:
-                    description += "A simple survival knife. "
-                            "Designed more for utility than combat, "
-                            "it looks quite capable of butchering a corpse. ";
-                    break;
-
-                case WPN_MORNINGSTAR:
-                    description += "A mace covered in spikes. ";
-                    break;
-
-                case WPN_SHORT_SWORD:
-                    description += "A sword with a short, slashing blade. ";
-                    break;
-
-                case WPN_LONG_SWORD:
-                    description += "A sword with a long, slashing blade. ";
-                    break;
-
-                case WPN_GREAT_SWORD:
-                    description += "A sword with a very long, heavy blade "
-                            "and a long handle. ";
-                    break;
-
-                case WPN_SCIMITAR:
-                    description += "A long sword with a curved blade. ";
-                    break;
-
-                case WPN_HAND_AXE:
-                    description += "An small axe designed for either hand combat "
-                            "or throwing. ";
-                    // "It might also make a good tool.";
-                    break;
-
-                case WPN_BATTLEAXE:
-                    description += "A large axe with a double-headed blade. ";
-                    break;
-
-                case WPN_SPEAR:
-                    description += "A long stick with a pointy blade on one end, "
-                            "to be held or thrown. ";
-                    break;
-
-                case WPN_TRIDENT:
-                    description +=
-                            "A hafted weapon with three points at one end. ";
-                    break;
-
-                case WPN_HALBERD:
-                    description +=
-                            "A long pole with a spiked axe head on one end. ";
-                    break;
-
-                case WPN_SLING:
-                    description +=
-                            "A piece of cloth and leather for launching stones, "
-                            "which do a small amount of damage on impact. ";
-                    break;
-
-                case WPN_BOW:
-                    description += "A curved piece of wood and string, "
-                            "for shooting arrows. It does good damage in combat, "
-                            "and a skilled user can use it to great effect. ";
-                    break;
-
-                case WPN_BLOWGUN:
-                    description += "A long, light tube, open at both ends.  Doing "
-                            "very little damage,  its main use is to fire poisoned "
-                            "needles from afar.  It makes very little noise. ";
-                    break;
-
-                case WPN_CROSSBOW:
-                    description += "A piece of machinery used for firing bolts, "
-                            "which takes some time to load and fire. "
-                            "It does very good damage in combat. ";
-                    break;
-
-                case WPN_HAND_CROSSBOW:
-                    description += "A small crossbow, for firing darts. ";
-                    break;
-
-                case WPN_GLAIVE:
-                    description +=
-                            "A pole with a large, heavy blade on one end. ";
-                    break;
-
-                case WPN_QUARTERSTAFF:
-                    description += "A sturdy wooden pole. ";
-                    break;
-
-                case WPN_SCYTHE:
-                    description +=
-                            "A farm implement, usually unsuited to combat. ";
-                    break;
-
-                case WPN_GIANT_CLUB:
-                    description += "A giant lump of wood, "
-                            "shaped for an ogre's hands. ";
-                    break;
-
-                case WPN_GIANT_SPIKED_CLUB:
-                    description +=
-                            "A giant lump of wood with sharp spikes at one end. ";
-                    break;
-
-                case WPN_EVENINGSTAR:
-                    description += "The opposite of a morningstar. ";
-                    break;
-
-                case WPN_QUICK_BLADE:
-                    description += "A small and magically quick sword. ";
-                    break;
-
-                case WPN_KATANA:
-                    description += "A very rare and extremely effective "
-                            "imported weapon, featuring a long "
-                            "single-edged blade. ";
-                    break;
-
-                case WPN_EXECUTIONERS_AXE:
-                    description += "A huge axe. ";
-                    break;
-
-                case WPN_DOUBLE_SWORD:
-                    description +=
-                            "A magical weapon with two razor-sharp blades. ";
-                    break;
-
-                case WPN_TRIPLE_SWORD:
-                    description += "A magical weapon with three "
-                            "great razor-sharp blades. ";
-                    break;
-
-                case WPN_HAMMER:
-                    description += "The kind of thing you hit nails with, "
-                            "adapted for battle. ";
-                    break;
-
-                case WPN_ANCUS:
-                    description += "A large and vicious toothed club. ";
-                    break;
-
-                case WPN_WHIP:
-                    description += "A whip. ";
-                    break;
-
-                case WPN_SABRE:
-                    description += "A sword with a medium length slashing blade. ";
-                    break;
-
-                case WPN_DEMON_BLADE:
-                    description +=
-                            "A terrible weapon, forged in the fires of Hell. ";
-                    break;
-
-                case WPN_DEMON_WHIP:
-                    description += "A terrible weapon, woven "
-                            "in the depths of the inferno. ";
-                    break;
-
-                case WPN_DEMON_TRIDENT:
-                    description +=
-                            "A terrible weapon, molded by fire and brimstone. ";
-                    break;
-
-                case WPN_BROAD_AXE:
-                    description += "An axe with a large blade. ";
-                    break;
-
-                case WPN_WAR_AXE:
-                    description += "An axe intended for hand to hand combat. ";
-                    break;
-
-                case WPN_SPIKED_FLAIL:
-                    description +=
-                            "A flail with large spikes on the metal lump. ";
-                    break;
-
-                case WPN_GREAT_MACE:
-                    description += "A large and heavy mace. ";
-                    break;
-
-                case WPN_GREAT_FLAIL:
-                    description += "A large and heavy flail. ";
-                    break;
-
-                case WPN_FALCHION:
-                    description += "A sword with a broad slashing blade. ";
-                    break;
-
-                default:
-                    DEBUGSTR("Unknown weapon");
-            }
-
+            description += WPN_SUBTYPE_DESCRIPTIONS[item.sub_type];
             description += "$";
         }
     }
@@ -2977,6 +2811,7 @@ string get_item_description(const item_def &item, const char verbose, const bool
     if (!dump) {
         char str_pass[ITEMNAME_SIZE];
         item_name(item, DESC_INVENTORY_EQUIP, str_pass);
+        description += " ";
         description += str_pass;
     }
 
