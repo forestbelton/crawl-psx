@@ -85,18 +85,6 @@ static inline int calc_stat_to_dam_base( void );
  **************************************************
 */
 
-#if 0
-#define GUARANTEED_HIT_PERCENTAGE       5
-
-bool test_hit( int to_hit, int ev, int bonus )
-{
-    if (random2(100) < 2 * GUARANTEED_HIT_PERCENTAGE)
-        return (coinflip());
-
-    return (random2( to_hit ) + bonus >= ev);
-}
-#endif
-
 // This function returns the "extra" stats the player gets because of
 // choice of weapon... it's used only for giving warnings when a player
 // weilds a less than ideal weapon.
@@ -2713,16 +2701,6 @@ commented out for now
 
                 specdam = 0;
 
-                // This is related to old code where elec wpns had charges
-#if 0
-                if (menv[monster_attacking].type != MONS_PLAYER_GHOST
-                    && (mitm[attacker->inv[hand_used]].plus2 <= 0
-                        || item_cursed( mitm[attacker->inv[hand_used]] )))
-                {
-                    break;
-                }
-#endif
-
                 if (one_chance_in(3))
                 {
                     mpr("You are electrocuted!");
@@ -3461,17 +3439,6 @@ bool monsters_fight(int monster_attacking, int monster_attacked)
                         break;
 
                     specdam = 0;
-
-#if 0
-                    // more of the old code... -- bwr
-                    if (menv[monster_attacking].type != MONS_PLAYER_GHOST
-                        && (mitm[attacker->inv[hand_used]].plus2 <= 0
-                            || item_cursed( mitm[attacker->inv[hand_used]] )))
-                    {
-                        break;
-                    }
-#endif
-
                     if (one_chance_in(3))
                     {
                         if (sees)

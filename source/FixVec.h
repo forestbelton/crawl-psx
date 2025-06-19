@@ -39,16 +39,6 @@ public:
     typedef TYPE*           iterator;
     typedef const TYPE*     const_iterator;
 
-#if 0
-#if MSVC >= 1100
-    typedef std::reverse_iterator<const_iterator, const TYPE>    const_reverse_iterator;
-    typedef std::reverse_iterator<iterator, TYPE>                reverse_iterator;
-#else
-    typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
-    typedef std::reverse_iterator<iterator>          reverse_iterator;
-#endif
-#endif
-
 //-----------------------------------
 //    Initialization/Destruction
 //

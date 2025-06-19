@@ -2977,31 +2977,12 @@ int species_exp_mod(char species)
     }
 }                               // end species_exp_mod()
 
-unsigned long exp_needed(int lev)
-{
+unsigned long exp_needed(int lev) {
     lev--;
 
     unsigned long level = 0;
 
-#if 0
-    case  1: level = 1;
-    case  2: level = 10;
-    case  3: level = 35;
-    case  4: level = 70;
-    case  5: level = 120;
-    case  6: level = 250;
-    case  7: level = 510;
-    case  8: level = 900;
-    case  9: level = 1700;
-    case 10: level = 3500;
-    case 11: level = 8000;
-    case 12: level = 20000;
-
-    default:                    //return 14000 * (lev - 11);
-        level = 20000 * (lev - 11) + ((lev - 11) * (lev - 11) * (lev - 11)) * 130;
-        break;
-#endif
-
+    // NB: "The above" was commented out, so I removed it.
     // This is a better behaved function than the above.  The above looks
     // really ugly when you consider the second derivative, its not smooth
     // and has a horrible bump at level 12 followed by comparitively easy

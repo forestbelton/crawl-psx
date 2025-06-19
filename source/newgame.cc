@@ -108,12 +108,6 @@ void jobs_stat_init(int which_job);
 void openingScreen(void);
 void species_stat_init(unsigned char which_species);
 
-#if 0
-// currently unused -- bwr
-static void give_random_wand( int slot );
-static void give_random_scroll( int slot );
-#endif
-
 static void give_random_potion( int slot );
 static void give_random_secondary_armour( int slot );
 static bool give_wanderer_weapon( int slot, int wpn_skill );

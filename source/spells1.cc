@@ -429,23 +429,6 @@ static char healing_spell( int healed )
     return 1;
 }                               // end healing_spell()
 
-#if 0
-char cast_lesser_healing( int pow )
-{
-    return healing_spell(5 + random2avg(7, 2));
-}                               // end lesser healing()
-
-char cast_greater_healing( int pow )
-{
-    return healing_spell(15 + random2avg(29, 2));
-}                               // end cast_greater_healing()
-
-char cast_greatest_healing( int pow )
-{
-    return healing_spell(50 + random2avg(49, 2));
-}                               // end cast_greatest_healing()
-#endif
-
 char cast_healing( int pow )
 {
     if (pow > 50)
@@ -671,14 +654,6 @@ void extension(int pow)
 
     if (you.slow)
         potion_effect(POT_SLOWING, pow);
-
-#if 0
-    if (you.paralysis)
-        potion_effect(POT_PARALYSIS, pow);  // how did you cast extension?
-
-    if (you.conf)
-        potion_effect(POT_CONFUSION, pow);  // how did you cast extension?
-#endif
 
     if (you.might)
     {

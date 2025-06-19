@@ -70,14 +70,6 @@ bool item_known_uncursed( const item_def &item )
     return ((item.flags & ISFLAG_KNOW_CURSE) && !(item.flags & ISFLAG_CURSED));
 }
 
-#if 0
-// currently unused
-bool fully_identified( const item_def &item )
-{
-    return ((item.flags & ISFLAG_IDENT_MASK) == ISFLAG_IDENT_MASK);
-}
-#endif
-
 bool item_ident( const item_def &item, unsigned long flags )
 {
     return (item.flags & flags);

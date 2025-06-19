@@ -1623,12 +1623,6 @@ static void input() {
 
     stealth = check_stealth();
 
-#if 0
-    // too annoying for regular diagnostics
-    snprintf( info, INFO_SIZE, "stealth: %d", stealth );
-    mpr( info, MSGCH_DIAGNOSTICS );
-#endif
-
     if (you.special_wield != SPWLD_NONE)
         special_wielded();
 

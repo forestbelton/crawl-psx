@@ -36,10 +36,7 @@
 #include "mstuff2.h"
 #include "ouch.h"
 #include "player.h"
-#include "randart.h"
-#include "religion.h"
 #include "skills.h"
-#include "spells1.h"
 #include "spells4.h"
 #include "spl-cast.h"
 #include "spl-util.h"
@@ -465,110 +462,6 @@ void cast_see_invisible(int pow)
     if (you.duration[DUR_SEE_INVISIBLE] > 100)
         you.duration[DUR_SEE_INVISIBLE] = 100;
 }                               // end cast_see_invisible()
-
-#if 0
-// FIXME: This would be kinda cool if implemented right.
-//        The idea is that, like detect_secret_doors, the spell gathers all
-//        sorts of information about a thing and then tells the caster a few
-//        cryptic hints. So for a (+3,+5) Mace of Flaming, one might detect
-//        "enchantment and heat", but for a cursed ring of hunger, one might
-//        detect "enchantment and ice" (since it gives you a 'deathly cold'
-//        feeling when you put it on) or "necromancy" (since it's evil).
-//        A weapon of Divine Wrath and a randart that makes you angry might
-//        both give similar messages. The key would be to not tell more than
-//        hints about whether an item is benign or cursed, but give info
-//        on how strong its enchantment is (and therefore how valuable it
-//        probably is).
-static void cast_detect_magic(int pow)
-{
-    struct dist bmove;
-    int x, y;
-    int monster = 0, item = 0, next;    //int max;
-    FixedVector < int, NUM_SPELL_TYPES > found;
-    int strong = 0;             // int curse = 0;
-
-    for (next = 0; next < NUM_SPELL_TYPES; next++)
-    {
-        found[next] = 0;
-    }
-
-    mpr("Which direction?", MSGCH_PROMPT);
-    direction( bmove, DIR_DIR );
-
-    if (!bmove.isValid)
-    {
-        canned_msg(MSG_SPELL_FIZZLES);
-        return;
-    }
-
-    if (bmove.dx == 0 && bmove.dy == 0)
-    {
-        mpr("You detect a divination in progress.");
-        return;
-    }
-
-    x = you.x_pos + bmove.dx;
-    y = you.y_pos + bmove.dy;
-
-    monster = mgrd[x][y];
-    if (monster == NON_MONSTER)
-        goto do_items;
-    else
-        goto all_done;
-
-  do_items:
-    item = igrd[x][y];
-
-    if (item == NON_ITEM)
-        goto all_done;
-
-    while (item != NON_ITEM)
-    {
-        next = mitm[item].link;
-        if (is_dumpable_artifact
-            (mitm[item].base_type, mitm[item].sub_type, mitm[item].plus,
-             mitm[item].plus2, mitm[item].special, 0, 0))
-        {
-            strong++;
-            //FIXME: do checks for randart properties
-        }
-        else
-        {
-            switch (mitm[item].base_type)
-            {
-            case OBJ_WEAPONS:
-                found[SPTYP_ENCHANTMENT] += (mitm[item].plus > 50);
-                found[SPTYP_ENCHANTMENT] += (mitm[item].plus2 > 50);
-                break;
-
-            case OBJ_MISSILES:
-                found[SPTYP_ENCHANTMENT] += (mitm[item].plus > 50);
-                found[SPTYP_ENCHANTMENT] += (mitm[item].plus2 > 50);
-                break;
-
-            case OBJ_ARMOUR:
-                found[SPTYP_ENCHANTMENT] += mitm[item].plus;
-            }
-        }
-    }
-
-  all_done:
-    if (monster)
-    {
-        mpr("You detect a morphogenic field, such as a monster might have.");
-    }
-    if (strong)
-    {
-        mpr("You detect very strong enchantments.");
-        return;
-    }
-    else
-    {
-        //FIXME:
-    }
-    return;
-}
-#endif
 
 // The description idea was okay, but this spell just isn't that exciting.
 // So I'm converting it to the more practical expose secret doors. -- bwr
@@ -1563,53 +1456,6 @@ int make_a_normal_cloud(int x, int y, int pow, int ctype)
 
     return 1;
 }                               // end make_a_normal_cloud()
-
-#if 0
-
-static int make_a_random_cloud(int x, int y, int pow, int ctype)
-{
-    if (ctype == CLOUD_NONE)
-        ctype = CLOUD_BLACK_SMOKE;
-
-    unsigned char cloud_material;
-
-    switch (random2(9))
-    {
-    case 0:
-        cloud_material = CLOUD_FIRE;
-        break;
-    case 1:
-        cloud_material = CLOUD_STINK;
-        break;
-    case 2:
-        cloud_material = CLOUD_COLD;
-        break;
-    case 3:
-        cloud_material = CLOUD_POISON;
-        break;
-    case 4:
-        cloud_material = CLOUD_BLUE_SMOKE;
-        break;
-    case 5:
-        cloud_material = CLOUD_STEAM;
-        break;
-    case 6:
-        cloud_material = CLOUD_PURP_SMOKE;
-        break;
-    default:
-        cloud_material = ctype;
-        break;
-    }
-
-    // that last bit is equivalent to "random2(pow/4) + random2(pow/4)
-    // + random2(pow/4)" {dlb}
-    // can you see the pattern? {dlb}
-    place_cloud(cloud_material, x, y, 3 + random2avg(3 * (pow / 4) - 2, 3));
-
-    return 1;
-}                               // end make_a_random_cloud()
-
-#endif
 
 static int passwall(int x, int y, int pow, int garbage)
 {
@@ -2833,15 +2679,6 @@ void cast_far_strike(int pow)
     // apply monster's AC
     if (monster->armour_class > 0)
         damage -= random2( 1 + monster->armour_class );
-
-#if 0
-    // Removing damage limiter since it's categorized at level 4 right now.
-
-    // Force transmitted is limited by skill...
-    const int limit = (you.skills[SK_TRANSLOCATIONS] + 1) / 2 + 3;
-    if (damage > limit)
-        damage = limit;
-#endif
 
     // Roll the damage...
     damage = 1 + random2( damage );

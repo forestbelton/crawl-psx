@@ -3673,21 +3673,9 @@ limited diversity of existing monster types?
 I'm still far from happy about the inclusion of "Shuggoths" -- I just do
 not think it fits into Crawl ... {dlb}
 ************************************************************************ */
-  //jmf: it's never created anywhere yet, so you can save the punctuation.
-  //     as to bears & wolves: the lair needs more variety.
-
-#if 0
-{
-    MONS_SHUGGOTH, 'A', LIGHTGREEN, "shuggoth",
-    M_NO_SKELETON | M_RES_ELEC | M_RES_POISON | M_RES_FIRE | M_RES_COLD | M_SEE_INVIS,
-    1000, 10, MONS_SHUGGOTH, MH_DEMONIC, 300,
-    { 5, 5, 5, 0 },
-    { 10, 4, 4, 0 },
-    10, 10, 20, 7, MST_NO_SPELLS, CE_NOCORPSE, Z_NOZOMBIE, -1, I_NORMAL,
-    MONUSE_NOTHING
-}
-,
-#endif
+//jmf: it's never created anywhere yet, so you can save the punctuation.
+//     as to bears & wolves: the lair needs more variety.
+// NB: I removed this mythical "Shuggoth" since it was already commented out.
 
 {
     MONS_WOLF, 'h', LIGHTGREY, "wolf",
