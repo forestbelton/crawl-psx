@@ -21,26 +21,18 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "debug.h"
 #include "describe.h"
 #include "itemname.h"
+#include "macro.h"
 #include "monstuff.h"
 #include "mon-util.h"
 #include "player.h"
 #include "shopping.h"
 #include "stuff.h"
-#include "spells4.h"
 #include "view.h"
-
-#ifdef USE_MACROS
-#include "macro.h"
-#endif
 
 // x and y offsets in the following order:
 // SW, S, SE, W, E, NW, N, NE
@@ -369,9 +361,7 @@ void look_around(struct dist &moves, bool justLooking, int first_move, int mode)
 
                     case '-':
                         if (mons_find( cx, cy, monsfind_pos, -1, mode ) == 0) {
-#ifdef USE_MACROS
                             flush_input_buffer( FLUSH_ON_FAILURE );
-#endif
                         } else
                         {
                             newcx = monsfind_pos[0];
@@ -383,9 +373,7 @@ void look_around(struct dist &moves, bool justLooking, int first_move, int mode)
                     case '+':
                     case '=':
                         if (mons_find( cx, cy, monsfind_pos, 1, mode ) == 0) {
-#ifdef USE_MACROS
                             flush_input_buffer( FLUSH_ON_FAILURE );
-#endif
                         }
                         else
                         {

@@ -33,25 +33,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "beam.h"
-#include "cloud.h"
-#include "debug.h"
 #include "delay.h"
 #include "effects.h"
 #include "food.h"
-#include "it_use2.h"
-#include "items.h"
 #include "itemname.h"
-#include "macro.h"
 #include "misc.h"
 #include "monplace.h"
-#include "mon-pick.h"
 #include "monstuff.h"
 #include "mon-util.h"
 #include "mstuff2.h"
@@ -63,7 +53,6 @@
 #include "skills.h"
 #include "spells1.h"
 #include "spells3.h"
-#include "spells4.h"
 #include "spl-cast.h"
 #include "stuff.h"
 #include "view.h"

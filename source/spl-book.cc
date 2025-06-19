@@ -18,10 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "debug.h"
@@ -788,13 +784,6 @@ static unsigned char spellbook_contents( item_def &book, int action )
     }
 
     set_ident_flags( book, ISFLAG_KNOW_TYPE );
-
-#ifdef DOS_TERM
-    char buffer[4800];
-    gettext(1, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
-
     spellbook_template( type, spell_types );
 
     clrscr();
@@ -916,11 +905,6 @@ static unsigned char spellbook_contents( item_def &book, int action )
 
     if (keyn == 0)
         getch();
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-    window(1, 18, 80, 25);
-#endif
 
     return (keyn);     // try to figure out that for which this is used {dlb}
 }

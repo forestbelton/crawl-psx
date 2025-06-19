@@ -21,10 +21,6 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "direct.h"
@@ -34,11 +30,9 @@
 #include "items.h"
 #include "misc.h"
 #include "monplace.h"
-#include "monstuff.h"
 #include "mon-util.h"
 #include "mutation.h"
 #include "player.h"
-#include "randart.h"
 #include "religion.h"
 #include "skills.h"
 #include "skills2.h"

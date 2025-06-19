@@ -8,11 +8,10 @@
  *               <2>     6/25/02        JS              Removed old cruft
  *               <1>     -/--/--        JS              Created
  */
-
-#ifdef USE_MACROS
-
 #ifndef MACRO_H
 #define MACRO_H
+
+#ifdef USE_MACROS
 
 #ifndef MACRO_CC
 
@@ -32,9 +31,7 @@ void macro_save(void);
 
 #endif
 
-#else
-
 #define getch_with_command_macros()     getch()
-#define flush_input_buffer(XXX)         ;
+#define flush_input_buffer(XXX)         do {} while(0)
 
 #endif

@@ -28,11 +28,6 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#ifdef DOS
-#include <conio.h>
-#include <file.h>
-#endif
-
 #ifdef LINUX
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -61,15 +56,12 @@
 #include "itemname.h"
 #include "items.h"
 #include "message.h"
-#include "misc.h"
 #include "monstuff.h"
-#include "mon-util.h"
 #include "mstuff2.h"
 #include "player.h"
 #include "randart.h"
 #include "skills2.h"
 #include "stuff.h"
-#include "tags.h"
 #include "wpn-misc.h"
 
 void save_level(int level_saved, bool was_a_labyrinth, char where_were_you);
@@ -302,10 +294,6 @@ void load( unsigned char stair_taken, int load_mode, bool was_a_labyrinth,
 
     bool just_created_level = false;
 
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
-
     make_filename( cha_fil, you.your_name, you.your_level, you.where_are_you,
                    you.level_type != LEVEL_DUNGEON, false );
 
@@ -432,10 +420,6 @@ void load( unsigned char stair_taken, int load_mode, bool was_a_labyrinth,
     strcpy( ghost.name, "" );
     for (ic = 0; ic < NUM_GHOST_VALUES; ++ic)
         ghost.values[ic] = 0;
-
-#ifdef DOS
-    strupr(cha_fil);
-#endif
 
     // Try to open level savefile.
     FILE *levelFile = fopen(cha_fil, "rb");
@@ -880,10 +864,6 @@ void save_level(int level_saved, bool was_a_labyrinth, char where_were_you)
 
     you.prev_targ = MHITNOT;
 
-#ifdef DOS
-    strupr(cha_fil);
-#endif
-
     FILE *saveFile = fopen(cha_fil, "wb");
 
     if (saveFile == NULL)
@@ -935,10 +915,6 @@ void save_game(bool leave_game)
     strncpy(charFile, you.your_name, kFileNameLen);
     charFile[kFileNameLen] = 0;
     strcat(charFile, ".sav");
-
-#ifdef DOS
-    strupr(charFile);
-#endif
 #endif
 
     FILE *saveFile = fopen(charFile, "wb");
@@ -972,10 +948,6 @@ void save_game(bool leave_game)
     // must be exiting -- save level & goodbye!
     save_level(you.your_level, (you.level_type != LEVEL_DUNGEON),
                you.where_are_you);
-
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
 
     clrscr();
 
@@ -1113,10 +1085,6 @@ void restore_game(void)
 #endif
 
     strcat(char_f, ".sav");
-
-#ifdef DOS
-    strupr(char_f);
-#endif
 
     FILE *restoreFile = fopen(char_f, "rb");
 

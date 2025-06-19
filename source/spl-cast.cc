@@ -24,7 +24,6 @@
 #include "beam.h"
 #include "cloud.h"
 #include "effects.h"
-#include "fight.h"
 #include "food.h"
 #include "it_use2.h"
 #include "itemname.h"
@@ -45,10 +44,6 @@
 #include "stuff.h"
 #include "transfor.h"
 #include "view.h"
-
-#ifdef DOS
-#include <conio.h>
-#endif
 
 #define WILD_MAGIC_NASTINESS 150
 
@@ -86,16 +81,6 @@ char list_spells(void)
 
     const int num_lines = get_number_of_lines();
 
-#ifdef DOS_TERM
-    char buffer[4800];
-
-    gettext(1, 1, 80, 25, buffer);
-#endif
-
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
-
     clrscr();
 
     cprintf( " Your Spells                      Type                          Success   Level" );
@@ -110,19 +95,9 @@ char list_spells(void)
 
             ki = getch();
 
-            if (ki == ESCAPE)
-            {
-#ifdef DOS_TERM
-                puttext(1, 1, 80, 25, buffer);
-#endif
+            if (ki == ESCAPE) {
                 return (ESCAPE);
-            }
-
-            if (isalpha( ki ))
-            {
-#ifdef DOS_TERM
-                puttext(1, 1, 80, 25, buffer);
-#endif
+            } else if (isalpha( ki )) {
                 return (ki);
             }
 
@@ -195,27 +170,16 @@ char list_spells(void)
     {
         ki = getch();
 
-        if (ki >= 'A' && ki <= 'z')
-        {
-#ifdef DOS_TERM
-            puttext(1, 1, 80, 25, buffer);
-#endif
+        if (ki >= 'A' && ki <= 'z') {
             return (ki);
         }
 
         if (ki == 0)
             ki = getch();
 
-#ifdef DOS_TERM
-        puttext(1, 1, 80, 25, buffer);
-#endif
-
         return (anything);
     }
 
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
     // was 35
     ki = getch();
 

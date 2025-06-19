@@ -15,18 +15,6 @@
 #include "stuff.h"
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
-// may need this later for something else {dlb}:
-// required for table_lookup() {dlb}
-//#include <stdarg.h>
-// required for table_lookup() {dlb}
-
-#ifdef DOS
-#include <conio.h>
-#endif
 
 #ifdef LINUX
 #include "liblinux.h"
@@ -34,14 +22,11 @@
 
 #include "externs.h"
 
-#include "macro.h"
 #include "misc.h"
 #include "monstuff.h"
 #include "mon-util.h"
 #include "output.h"
-#include "skills2.h"
 #include "view.h"
-
 
 // required for stuff::coinflip() and cf_setseed()
 unsigned long cfseed;
@@ -78,8 +63,7 @@ void set_redraw_status( unsigned long flags )
     you.redraw_status_flags |= flags;
 }
 
-void tag_followers( void )
-{
+void tag_followers() {
     int count_x, count_y;
 
     for (count_x = you.x_pos - 1; count_x <= you.x_pos + 1; count_x++)

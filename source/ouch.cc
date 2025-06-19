@@ -34,11 +34,6 @@
 #include <time.h>
 #endif
 
-#ifdef DOS
-#include <conio.h>
-#include <file.h>
-#endif
-
 #ifdef LINUX
 #include <sys/types.h>
 #include <fcntl.h>
@@ -66,7 +61,6 @@
 #include "invent.h"
 #include "itemname.h"
 #include "items.h"
-#include "macro.h"
 #include "mon-util.h"
 #include "player.h"
 #include "randart.h"
@@ -76,7 +70,6 @@
 #include "spells4.h"
 #include "stuff.h"
 #include "view.h"
-
 
 void end_game( struct scorefile_entry &se );
 void item_corrode( char itco );
@@ -972,11 +965,6 @@ void end_game( struct scorefile_entry &se )
 #endif // DEBUG
 
     more();
-
-    clrscr();
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
 
     clrscr();
     cprintf( "Goodbye, " );

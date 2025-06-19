@@ -26,22 +26,15 @@
 
 #include <string.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
-
 #include "debug.h"
 #include "insult.h"
-#include "macro.h"
 #include "monstuff.h"
 #include "mon-util.h"
 #include "overmap.h"
 #include "player.h"
 #include "skills2.h"
 #include "stuff.h"
-#include "spells4.h"
 
 unsigned char your_sign;        // accessed as extern in transfor.cc and acr.cc
 unsigned char your_colour;      // accessed as extern in transfor.cc and acr.cc
@@ -563,13 +556,7 @@ static void get_ibm_symbol(unsigned int object, unsigned short *ch,
 void viewwindow2(char draw_it, bool do_updates)
 {
     const long BUFFER_SIZE = 1550;
-#ifdef DOS_TERM
-    // DOS functions like gettext() and puttext() can only
-    // work with arrays of characters, not shorts.
-    FixedVector < unsigned char, BUFFER_SIZE > buffy;   //[800]; //392];
-#else
     FixedVector < unsigned short, BUFFER_SIZE > buffy;   //[800]; //392];
-#endif
 
     unsigned short ch, color;
 
@@ -733,10 +720,6 @@ void viewwindow2(char draw_it, bool do_updates)
             if (you.special_wield == SPWLD_SHADOW)
                 show_green = DARKGREY;
         }
-
-#ifdef DOS_TERM
-        puttext(2, 1, 34, 17, buffy.buffer());
-#endif
 
 #ifdef PLAIN_TERM
         gotoxy(2, 1);
@@ -1758,10 +1741,6 @@ void show_map( FixedVector<int, 2> &spec_place )
     char move_y = 0;
     char getty = 0;
 
-#ifdef DOS_TERM
-    char buffer[4800];
-#endif
-
     // buffer2[GYM * GXM * 2] segfaults my box {dlb}
     char buffer2[GYM * GXM * 2];
 
@@ -1819,11 +1798,6 @@ void show_map( FixedVector<int, 2> &spec_place )
     int curs_x = you.x_pos - start_x;
     int curs_y = you.y_pos - screen_y + half_screen;
 
-#ifdef DOS_TERM
-    gettext(1, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
-
     clrscr();
     textcolor(DARKGREY);
 
@@ -1838,25 +1812,16 @@ void show_map( FixedVector<int, 2> &spec_place )
 
     start_y = screen_y - half_screen;
 
-    for (j = 0; j < num_lines; j++)
-    {
-        for (i = 0; i < 80; i++)
-        {
+    for (j = 0; j < num_lines; j++) {
+        for (i = 0; i < 80; i++) {
             if (start_y + j >= 65 || start_y + j <= 3
-                || start_x + i < 0 || start_x + i >= GXM - 1)
-            {
+                || start_x + i < 0 || start_x + i >= GXM - 1) {
                 buffer2[bufcount2 + 1] = DARKGREY;
                 buffer2[bufcount2] = 0;
                 bufcount2 += 2;
-
 #ifdef PLAIN_TERM
                 goto print_it;
 #endif
-
-#ifdef DOS_TERM
-                continue;
-#endif
-
             }
 
             buffer2[bufcount2 + 1] = colour_code_map(start_x + i, start_y + j);
@@ -1883,10 +1848,6 @@ void show_map( FixedVector<int, 2> &spec_place )
 #endif
         }
     }
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer2);
-#endif
 
     _setcursortype(_NORMALCURSOR);
     gotoxy(curs_x, curs_y);
@@ -2126,14 +2087,8 @@ void show_map( FixedVector<int, 2> &spec_place )
     curs_y += move_y;
     goto put_screen;
 
-  putty:
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
-
-    return;
-}                               // end show_map()
+  putty: ;
+}
 
 
 void magic_mapping(int map_radius, int proportion)
@@ -3170,10 +3125,6 @@ void viewwindow3(char draw_it, bool do_updates)
                                                               : BLACK);
         }
 
-#ifdef DOS_TERM
-        puttext(2, 1, 34, 17, buffy.buffer());
-#endif
-
 #ifdef PLAIN_TERM
         gotoxy(2, 1);
         bufcount = 0;
@@ -3186,10 +3137,6 @@ void viewwindow3(char draw_it, bool do_updates)
                 putch(buffy[count_x]);
 
                 if (count_x % 66 == 64 && count_x > 0)
-#ifdef DOS_TERM
-                    cprintf(EOL " ");
-#endif
-
 #ifdef PLAIN_TERM
                 gotoxy(2, wherey() + 1);
 #endif

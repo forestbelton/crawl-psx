@@ -23,10 +23,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "beam.h"
@@ -46,7 +42,6 @@
 #include "religion.h"
 #include "spl-cast.h"
 #include "spells2.h"
-#include "spells4.h"
 #include "stuff.h"
 #include "view.h"
 

@@ -15,25 +15,16 @@
 #include "AppHdr.h"
 #include "invent.h"
 
-#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "describe.h"
 #include "externs.h"
-
 #include "itemname.h"
-#include "items.h"
-#include "macro.h"
 #include "player.h"
 #include "shopping.h"
 #include "stuff.h"
 #include "view.h"
-
 
 const char *command_string( int i );
 const char *wizard_string( int i );
@@ -65,13 +56,6 @@ unsigned char invent( int item_class_inv, bool show_price )
     int item_line = 0;
     unsigned char ki = 0;
     item_def *selected_item = nullptr;
-
-#ifdef DOS_TERM
-    char buffer[4600];
-
-    gettext(1, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
 
 show_inv:
     lines = 0;
@@ -150,30 +134,19 @@ show_inv:
                  (you.burden * 100) / cap, cap / 10, cap % 10 );
         lines += 2;
 
-        for (i = 0; i < 15; i++)
-        {
-            if (inv_class2[i] != 0)
-            {
-                if (lines > num_lines - 3)
-                {
+        for (i = 0; i < 15; i++) {
+            if (inv_class2[i] != 0) {
+                if (lines > num_lines - 3) {
                     gotoxy(1, num_lines);
                     cputs("-more-");
 
                     ki = getch();
 
-                    if (ki == ESCAPE)
-                    {
-#ifdef DOS_TERM
-                        puttext(1, 1, 80, 25, buffer);
-#endif
-                        return (ESCAPE);
+                    if (ki == ESCAPE) {
+                        return ESCAPE;
                     }
-                    else if (isalpha(ki) || ki == '?' || ki == '*')
-                    {
-#ifdef DOS_TERM
-                        puttext(1, 1, 80, 25, buffer);
-#endif
-                        return (ki);
+                    else if (isalpha(ki) || ki == '?' || ki == '*') {
+                        return ki;
                     }
 
                     if (ki == 0)
@@ -183,7 +156,6 @@ show_inv:
                     clrscr();
                     gotoxy(1, 1);
                     anything = 0;
-
                 }
 
                 if (lines > 0)
@@ -224,18 +196,9 @@ show_inv:
                         cputs("-more-");
                         ki = getch();
 
-                        if (ki == ESCAPE)
-                        {
-#ifdef DOS_TERM
-                            puttext(1, 1, 80, 25, buffer);
-#endif
+                        if (ki == ESCAPE) {
                             return (ESCAPE);
-                        }
-                        else if (isalpha(ki) || ki == '?' || ki == '*')
-                        {
-#ifdef DOS_TERM
-                            puttext(1, 1, 80, 25, buffer);
-#endif
+                        } else if (isalpha(ki) || ki == '?' || ki == '*') {
                             return (ki);
                         }
 
@@ -307,16 +270,11 @@ show_inv:
         }
     }
 
-    if (anything > 0)
-    {
+    if (anything > 0) {
 #ifndef PSX
         ki = getch();
 
-        if (isalpha(ki) || ki == '?' || ki == '*')
-        {
-#ifdef DOS_TERM
-            puttext(1, 1, 80, 25, buffer);
-#endif
+        if (isalpha(ki) || ki == '?' || ki == '*') {
             return (ki);
         }
 
@@ -349,11 +307,7 @@ show_inv:
     }
 
   putty:
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
-
-    return (ki);
+    return ki;
 }                               // end invent()
 
 
@@ -502,13 +456,6 @@ void list_commands(bool wizard)
     const char *line;
     int j = 0;
 
-#ifdef DOS_TERM
-    char buffer[4800];
-
-    window(1, 1, 80, 25);
-    gettext(1, 1, 80, 25, buffer);
-#endif
-
     clrscr();
 
     // BCR - Set to screen length - 1 to display the "more" string
@@ -541,12 +488,6 @@ void list_commands(bool wizard)
     }
 
     getch();
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
-
-    return;
 }                               // end list_commands()
 
 const char *wizard_string( int i )

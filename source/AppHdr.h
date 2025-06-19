@@ -211,18 +211,6 @@
     #define COL_TO_REPLACE_DARKGREY     MAGENTA
 #endif
 
-#elif defined(DOS)
-    #define DOS_TERM
-    #define SHORT_FILE_NAMES
-    #define EOL "\n\r"
-    #define CHARACTER_SET           A_ALTCHARSET
-
-    #include <string>
-
-    #ifdef __DJGPP__
-        #define NEED_SNPRINTF
-    #endif
-
 #elif defined(WIN32CONSOLE) && (defined(__IBMCPP__) || defined(__BCPLUSPLUS__))
     #include "libw32c.h"
     #define PLAIN_TERM

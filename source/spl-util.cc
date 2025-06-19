@@ -15,8 +15,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
-#include <string.h>
 #include <limits.h>
 
 #include "externs.h"
@@ -24,28 +22,19 @@
 #include "direct.h"
 #include "debug.h"
 #include "stuff.h"
-#include "itemname.h"
-#include "macro.h"
 #include "monstuff.h"
 #include "player.h"
 #include "spl-book.h"
-#include "view.h"
 
-
-#ifdef DOS
-#include <conio.h>
-#endif
-
-
-static struct playerspell spelldata[] = {
+static playerspell spelldata[] = {
 #include "spl-data.h"
 };
 
 static int plyrspell_list[NUM_SPELLS];
 
-#define PLYRSPELLDATASIZE (sizeof(spelldata)/sizeof(struct playerspell))
+#define PLYRSPELLDATASIZE array_size(spelldata)
 
-static struct playerspell *seekspell(int spellid);
+static playerspell *seekspell(int spellid);
 static bool cloud_helper( int (*func) (int, int, int, int), int x, int y,
                           int pow, int ctype );
 
@@ -54,9 +43,8 @@ static bool cloud_helper( int (*func) (int, int, int, int), int x, int y,
  */
 
 // all this does is merely refresh the internal spell list {dlb}:
-void init_playerspells(void)
-{
-    unsigned int x = 0;
+void init_playerspells() {
+    int x = 0;
 
     for (x = 0; x < NUM_SPELLS; x++)
         plyrspell_list[x] = -1;
@@ -67,14 +55,13 @@ void init_playerspells(void)
     for (x = 0; x < PLYRSPELLDATASIZE - 1; x++)
         plyrspell_list[spelldata[x].id] = x;
 
-    for (x = 0; x < NUM_SPELLS; x++)
-    {
-        if (plyrspell_list[x] == -1)
+    for (x = 0; x < NUM_SPELLS; x++) {
+        if (plyrspell_list[x] == -1) {
+            // NB: Bug?
             plyrspell_list[x] = plyrspell_list[SPELL_NO_SPELL];
+        }
     }
-
-    return;                     // return value should not matter here {dlb}
-};                              // end init_playerspells()
+}
 
 int get_spell_slot_by_letter( char letter )
 {

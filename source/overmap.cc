@@ -79,15 +79,7 @@ void init_overmap( void )
         stair_level[i] = -1;
 }          // end init_overmap()
 
-void display_overmap( void )
-{
-#ifdef DOS_TERM
-    char buffer[4800];
-
-    window(1, 1, 80, 25);
-    gettext(1, 1, 80, 25, buffer);
-#endif
-
+void display_overmap() {
     //mv: must be set to 0 so "More..." message appears really at the
     // bottom of the screen
     //Don't forget it could be changed since the last call of display_overmap
@@ -305,10 +297,6 @@ void display_overmap( void )
     getch();
 
     redraw_screen();
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
 }          // end display_overmap()
 
 

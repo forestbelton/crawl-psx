@@ -21,10 +21,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #ifdef LINUX
 #include "liblinux.h"
 #endif
@@ -33,14 +29,12 @@
 
 #include "defines.h"
 #include "effects.h"
-#include "macro.h"
 #include "ouch.h"
 #include "player.h"
 #include "skills2.h"
 #include "stuff.h"
 #include "transfor.h"
 #include "view.h"
-
 
 int how_mutated(void);
 char body_covered(void);
@@ -862,19 +856,11 @@ const char mutation_rarity[] = {
     0                           //
 };
 
-void display_mutations(void)
-{
+void display_mutations() {
     int i;
     int j = 0;
-    const char *mut_title = "Innate abilities, Weirdness & Mutations";
+    constexpr auto mut_title = "Innate abilities, Weirdness & Mutations";
     const int num_lines = get_number_of_lines();
-
-#ifdef DOS_TERM
-    char buffer[4800];
-
-    window(1, 1, 80, 25);
-    gettext(1, 1, 80, 25, buffer);
-#endif
 
     clrscr();
     textcolor(WHITE);
@@ -1094,15 +1080,7 @@ void display_mutations(void)
 
     if (getch() == 0)
         getch();
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
-
-    //cprintf("xxxxxxxxxxxxx");
-    //last_requested = 0;
-
-    return;
-}                               // end display_mutations()
+}
 
 bool mutate(int which_mutation, bool failMsg)
 {

@@ -12,46 +12,37 @@
 #include "AppHdr.h"
 #include "output.h"
 
-#include <stdlib.h>
-
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "itemname.h"
 #include "ouch.h"
 #include "player.h"
 
-static int bad_ench_colour( int lvl, int orange, int red )
-{
-    if (lvl > red)
-        return (RED);
-    else if (lvl > orange)
-        return (LIGHTRED);
-
-    return (YELLOW);
+static int bad_ench_colour(const int lvl, const int orange, const int red) {
+    int colour = YELLOW;
+    if (lvl > red) {
+        colour = RED;
+    } else if (lvl > orange) {
+        colour = LIGHTRED;
+    }
+    return colour;
 }
 
-static void dur_colour( int colour, bool running_out )
-{
+static void dur_colour(const int colour, const bool running_out) {
     if (running_out)
         textcolor( colour );
-    else
-    {
-        switch (colour)
-        {
-        case GREEN:     textcolor( LIGHTGREEN );        break;
-        case BLUE:      textcolor( LIGHTBLUE );         break;
-        case MAGENTA:   textcolor( LIGHTMAGENTA );      break;
-        case LIGHTGREY: textcolor( WHITE );             break;
+    else {
+        switch (colour) {
+            case GREEN:     textcolor( LIGHTGREEN );        break;
+            case BLUE:      textcolor( LIGHTBLUE );         break;
+            case MAGENTA:   textcolor( LIGHTMAGENTA );      break;
+            case LIGHTGREY: textcolor( WHITE );             break;
+            default: ;
         }
     }
 }
 
-void print_stats(void)
-{
+void print_stats() {
     textcolor(LIGHTGREY);
 
     if (you.redraw_hit_points)
@@ -327,6 +318,8 @@ void print_stats(void)
 
         case BS_UNENCUMBERED:
             break;
+
+            default: ;
         }
 
         switch (you.hunger_state)
@@ -353,6 +346,8 @@ void print_stats(void)
             textcolor( RED );
             cprintf( "Starving" );
             break;
+
+            default: ;
         }
 
         textcolor( LIGHTGREY );

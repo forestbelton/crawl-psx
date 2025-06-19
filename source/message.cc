@@ -16,16 +16,11 @@
 
 #include <string.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "macro.h"
 #include "stuff.h"
 #include "view.h"
-
 
 // circular buffer for keeping past messages
 message_item Store_Message[ NUM_STORED_MESSAGES ];    // buffer of old messages
@@ -221,10 +216,6 @@ void mpr(const char *inf, int channel, int param)
     you.running = 0;
     flush_input_buffer( FLUSH_ON_MESSAGE );
 
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
-
     textcolor(LIGHTGREY);
 
     const int num_lines = get_number_of_lines();
@@ -305,12 +296,6 @@ void mesclr( bool force )
     // turn cursor off -- avoid 'cursor dance'
     _setcursortype(_NOCURSOR);
 
-#ifdef DOS_TERM
-    window(1, 18, 78, 25);
-    clrscr();
-    window(1, 1, 80, 25);
-#endif
-
 #ifdef PLAIN_TERM
     int startLine = 18;
     const int numLines = get_number_of_lines();
@@ -339,16 +324,7 @@ void more() {
     gotoxy( 2, get_number_of_lines() );
 #endif
 
-#ifdef DOS_TERM
-    window(1, 18, 80, 25);
-    gotoxy(2, 7);
-#endif
-
     textcolor(LIGHTGREY);
-
-#ifdef DOS
-    cprintf(EOL);
-#endif
     cprintf("--more--");
 
     do {
@@ -378,13 +354,6 @@ void replay_messages() {
     int last_message = Next_Message - 1;
     if (last_message < 0)
         last_message += NUM_STORED_MESSAGES;
-
-#ifdef DOS_TERM
-    char buffer[4800];
-
-    window(1, 1, 80, 25);
-    gettext(1, 1, 80, 25, buffer);
-#endif
 
     // track back a screen's worth of messages from the end
     win_start_line = Next_Message - (num_lines - 2);
@@ -523,11 +492,4 @@ void replay_messages() {
             }
         }
     }
-
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
-
-    return;
-}                               // end replay_messages()
+}

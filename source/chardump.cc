@@ -17,7 +17,6 @@
 #include "chardump.h"
 #include "string-compat.h"
 
-#include <stdio.h>
 #include <string.h>
 #ifndef PSX
 #include <fcntl.h>
@@ -39,17 +38,11 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "debug.h"
 #include "describe.h"
 #include "itemname.h"
-#include "items.h"
-#include "macro.h"
 #include "mutation.h"
 #include "player.h"
 #include "religion.h"

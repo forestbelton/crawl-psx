@@ -84,38 +84,31 @@
 #define mgrd   env.mgrid
 #define igrd   env.igrid
 
-
 // (MNG) -- for a reason! see usage {dlb}:
 #define MHITNOT 201
 // (MNG + 1) -- for a reason! see usage {dlb}:
 #define MHITYOU 202
 
 // colors, such pretty colors ...
-#ifndef DOS
-    #define BLACK 0
-    #define BLUE 1
-    #define GREEN 2
-    #define CYAN 3
-    #define RED 4
-    #define MAGENTA 5
-    #define BROWN 6
-    #define LIGHTGREY 7
-    #define DARKGREY 8
-    #define LIGHTBLUE 9
-    #define LIGHTGREEN 10
-    #define LIGHTCYAN 11
-    #define LIGHTRED 12
-    #define LIGHTMAGENTA 13
-    #define YELLOW 14
-    #define WHITE 15
+#define BLACK 0
+#define BLUE 1
+#define GREEN 2
+#define CYAN 3
+#define RED 4
+#define MAGENTA 5
+#define BROWN 6
+#define LIGHTGREY 7
+#define DARKGREY 8
+#define LIGHTBLUE 9
+#define LIGHTGREEN 10
+#define LIGHTCYAN 11
+#define LIGHTRED 12
+#define LIGHTMAGENTA 13
+#define YELLOW 14
+#define WHITE 15
 
-    #define LIGHTGRAY LIGHTGREY
-    #define DARKGRAY DARKGREY
-#else
-    #include <conio.h>
-    #define LIGHTGREY LIGHTGRAY
-    #define DARKGREY DARKGRAY
-#endif
+#define LIGHTGRAY LIGHTGREY
+#define DARKGRAY DARKGREY
 
 // Colour options... these are used as bit flags along with the colour
 // value in the low byte.

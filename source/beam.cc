@@ -22,10 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef DOS
-#include <dos.h>
-#include <conio.h>
-#endif
 #if DEBUG_DIAGNOSTICS
 #include <stdio.h>
 #endif
@@ -38,7 +34,6 @@
 #include "it_use2.h"
 #include "itemname.h"
 #include "items.h"
-#include "misc.h"
 #include "monplace.h"
 #include "monstuff.h"
 #include "mon-util.h"

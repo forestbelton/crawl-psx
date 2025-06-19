@@ -18,10 +18,6 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "debug.h"
@@ -31,8 +27,6 @@
 #include "itemname.h"
 #include "item_use.h"
 #include "it_use2.h"
-#include "macro.h"
-#include "misc.h"
 #include "mon-util.h"
 #include "mutation.h"
 #include "player.h"

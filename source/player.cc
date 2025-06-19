@@ -18,10 +18,6 @@
 #include "AppHdr.h"
 #include "player.h"
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,18 +26,13 @@
 #include "externs.h"
 
 #include "itemname.h"
-#include "macro.h"
-#include "misc.h"
 #include "mon-util.h"
 #include "mutation.h"
-#include "output.h"
 #include "randart.h"
 #include "religion.h"
 #include "skills2.h"
 #include "spl-util.h"
-#include "spells4.h"
 #include "stuff.h"
-#include "view.h"
 #include "wpn-misc.h"
 
 
@@ -2702,14 +2693,11 @@ void redraw_skill(const char your_name[kNameLen], const char class_name[80])
         snprintf( print_it, sizeof(print_it), "%s, %s", name_buff, class_name );
     }
 
-    for (int i = strlen(print_it); i < 41; i++)
+    for (auto i = strlen(print_it); i < 41; i++) {
         print_it[i] = ' ';
+    }
 
     print_it[40] = '\0';
-
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
     gotoxy(40, 1);
 
     textcolor( LIGHTGREY );

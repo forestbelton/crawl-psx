@@ -26,17 +26,12 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "beam.h"
 #include "effects.h"
 #include "food.h"
 #include "it_use2.h"
-#include "macro.h"
 #include "message.h"
 #include "misc.h"
 #include "monplace.h"
@@ -1230,14 +1225,6 @@ char show_abilities( void )
         }
     }
 
-
-#ifdef DOS_TERM
-    char buffer[4800];
-
-    gettext(1, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
-
     clrscr();
     cprintf("  Ability                           Cost                    Success");
     lines++;
@@ -1264,17 +1251,11 @@ char show_abilities( void )
 
                 if (ki == ESCAPE)
                 {
-#ifdef DOS_TERM
-                    puttext(1, 1, 80, 25, buffer);
-#endif
                     return (ESCAPE);
                 }
 
                 if (ki >= 'A' && ki <= 'z')
                 {
-#ifdef DOS_TERM
-                    puttext(1, 1, 80, 25, buffer);
-#endif
                     return (ki);
                 }
 
@@ -1333,36 +1314,23 @@ char show_abilities( void )
         }                                  // end "for loopy"
     }
 
-    if (anything > 0)
-    {
+    if (anything > 0) {
         ki = getch();
 
-        if (ki >= 'A' && ki <= 'z')
-        {
-#ifdef DOS_TERM
-            puttext(1, 1, 80, 25, buffer);
-#endif
+        if (ki >= 'A' && ki <= 'z') {
             return (ki);
         }
 
         if (ki == 0)
             ki = getch();
 
-#ifdef DOS_TERM
-        puttext(1, 1, 80, 25, buffer);
-#endif
-
         return (ki);
     }
 
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-#endif
-
     ki = getch();
 
-    return (ki);
-}                               // end show_abilities()
+    return ki;
+}
 
 
 bool generate_abilities( void )

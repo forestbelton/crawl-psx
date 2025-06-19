@@ -17,22 +17,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "describe.h"
 #include "invent.h"
 #include "items.h"
 #include "itemname.h"
-#include "macro.h"
 #include "player.h"
 #include "randart.h"
 #include "spl-book.h"
 #include "stuff.h"
-
 
 static char in_a_shop(char shoppy, char id[4][50]);
 static char more3(void);
@@ -55,15 +49,6 @@ char in_a_shop( char shoppy, char id[4][50] )
     unsigned int gp_value = 0;
     char i;
     unsigned char ft;
-
-#ifdef DOS_TERM
-    char buffer[4800];
-    gettext(1, 1, 80, 25, buffer);
-#endif
-
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-#endif
 
     clrscr();
     int itty = 0;
@@ -191,9 +176,6 @@ char in_a_shop( char shoppy, char id[4][50] )
         shop_uninit_id(shoppy, shop_id);
         invent(-1, false);
         shop_init_id(shoppy, shop_id);
-#ifdef DOS_TERM
-        window(1, 1, 80, 25);
-#endif
         goto print_stock;
     }
 
@@ -237,12 +219,6 @@ char in_a_shop( char shoppy, char id[4][50] )
     //clear_line();
     shop_print("Goodbye!", 20);
     more3();
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
-    gotoxy(1, 1);
-    cprintf(" ");
-#endif
 
     shop_uninit_id( shoppy, shop_id );
     return 0;

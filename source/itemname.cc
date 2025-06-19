@@ -19,13 +19,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
-#include "macro.h"
 #include "mon-util.h"
 #include "randart.h"
 #include "skills2.h"
@@ -2683,16 +2678,6 @@ unsigned char check_item_knowledge(void)
 
     const int num_lines = get_number_of_lines();
 
-#ifdef DOS_TERM
-    char buffer[2400];
-
-    gettext(35, 1, 80, 25, buffer);
-#endif
-
-#ifdef DOS_TERM
-    window(35, 1, 80, 25);
-#endif
-
     clrscr();
 
     for (i = 0; i < 4; i++)
@@ -2750,16 +2735,10 @@ unsigned char check_item_knowledge(void)
 
                 if (ki == ESCAPE)
                 {
-#ifdef DOS_TERM
-                    puttext(35, 1, 80, 25, buffer);
-#endif
                     return ESCAPE;
                 }
                 if (ki >= 'A' && ki <= 'z')
                 {
-#ifdef DOS_TERM
-                    puttext(35, 1, 80, 25, buffer);
-#endif
                     return ki;
                 }
 
@@ -2799,33 +2778,19 @@ unsigned char check_item_knowledge(void)
         }                       // end of j loop
     }
 
-    if (anything > 0)
-    {
+    if (anything > 0) {
         ki = getch();
-        //ki = getch();
-        //ki = anything;
 
-        if (ki >= 'A' && ki <= 'z')
-        {
-#ifdef DOS_TERM
-            puttext(35, 1, 80, 25, buffer);
-#endif
+        if (ki >= 'A' && ki <= 'z') {
             return ki;
         }
 
         if (ki == 0)
             ki = getch();
-#ifdef DOS_TERM
-        puttext(35, 1, 80, 25, buffer);
-#endif
         return anything;
     }
 
   putty:
-#ifdef DOS_TERM
-    puttext(35, 1, 80, 25, buffer);
-#endif
-
     return ki;
 }                               // end check_item_knowledge()
 

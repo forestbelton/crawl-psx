@@ -52,16 +52,13 @@
 #ifndef NO_SYSTEM_TIME
 #include <time.h>
 #endif
+
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+
 #ifndef PSX
 #include <fcntl.h>
-#endif
-#include <stdio.h>
-
-#ifdef DOS
-#include <conio.h>
-#include <file.h>
 #endif
 
 #ifdef USE_UNIX_SIGNALS
@@ -2635,10 +2632,6 @@ static bool initialise(void)
 
     // system initialisation stuff:
     textbackground(0);
-
-#ifdef DOS
-    directvideo = 1;
-#endif
 
 #ifdef USE_EMX
     init_emx();

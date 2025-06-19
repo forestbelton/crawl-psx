@@ -19,19 +19,12 @@
 #include "skills2.h"
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
-
-#ifdef DOS
-#include <conio.h>
-#endif
 
 #include "externs.h"
 #include "fight.h"
 #include "player.h"
 #include "randart.h"
-#include "religion.h"
 #include "stuff.h"
 #include "wpn-misc.h"
 #include "view.h"
@@ -1796,13 +1789,6 @@ void show_skills() {
     const int num_lines = get_number_of_lines();
     constexpr auto skill_y0 = 5;
 
-#ifdef DOS_TERM
-    window(1, 1, 80, 25);
-    char buffer[4600];
-
-    gettext(1, 1, 80, 25, buffer);
-#endif
-
     clrscr();
 
   reprint_stuff:
@@ -1985,10 +1971,6 @@ void show_skills() {
             goto reprint_stuff;
         }
     }
-#endif
-
-#ifdef DOS_TERM
-    puttext(1, 1, 80, 25, buffer);
 #endif
 }
 

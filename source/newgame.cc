@@ -52,13 +52,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
+
 #ifndef NO_SYSTEM_TIME
 #include <time.h>
-#endif
-
-#ifdef DOS
-#include <conio.h>
 #endif
 
 #ifdef LINUX
@@ -1962,39 +1958,7 @@ void enterPlayerName(bool blankOK)
     while (!acceptable_name);
 }                               // end enterPlayerName()
 
-bool verifyPlayerName(void)
-{
-#if defined(DOS) || defined(WIN32CONSOLE)
-    static int william_tanksley_asked_for_this = 2;
-
-    // quick check for CON -- blows up real good under DOS/Windows
-    if (stricmp(you.your_name, "con") == 0)
-    {
-        cprintf(EOL "Sorry, that name gives your OS a headache." EOL);
-        return (false);
-    }
-
-    // quick check for LPTx -- thank you,  Mr. Tanksley!   ;-)
-    if (strnicmp(you.your_name, "LPT", 3) == 0)
-    {
-        switch (william_tanksley_asked_for_this)
-        {
-            case 2:
-                cprintf(EOL "Hello, William!  How is work on Omega going?" EOL);
-                break;
-            case 1:
-                cprintf(EOL "Look, it's just not a legal name." EOL);
-                break;
-            case 0:
-                strcpy(you.your_name, "William");
-                return (true);
-        } // end switch
-
-        william_tanksley_asked_for_this --;
-        return (false);
-    }
-#endif
-
+bool verifyPlayerName() {
     const size_t len = strlen( you.your_name );
     for (unsigned int i = 0; i < len; i++)
     {
@@ -2032,48 +1996,6 @@ bool verifyPlayerName(void)
     return (true);
 }                               // end verifyPlayerName()
 
-#if 0
-// currently unused
-static void give_random_scroll( int slot )
-{
-    you.inv[ slot ].quantity = 1;
-    you.inv[ slot ].base_type = OBJ_SCROLLS;
-    you.inv[ slot ].plus = 0;
-    you.inv[ slot ].special = 0;
-    you.inv[ slot ].colour = WHITE;
-
-    switch (random2(8))
-    {
-    case 0:
-        you.inv[ slot ].sub_type = SCR_DETECT_CURSE;
-        break;
-
-    case 1:
-        you.inv[ slot ].sub_type = SCR_IDENTIFY;
-        break;
-
-    case 2:
-    case 3:
-        you.inv[ slot ].sub_type = SCR_BLINKING;
-        break;
-
-    case 4:
-        you.inv[ slot ].sub_type = SCR_FEAR;
-        break;
-
-    case 5:
-        you.inv[ slot ].sub_type = SCR_SUMMONING;
-        break;
-
-    case 6:
-    case 7:
-    default:
-        you.inv[ slot ].sub_type = SCR_TELEPORTATION;
-        break;
-    }
-}
-#endif
-
 static void give_random_potion( int slot )
 {
     you.inv[ slot ].quantity = 1;
@@ -2103,38 +2025,6 @@ static void give_random_potion( int slot )
         break;
     }
 }
-
-#if 0
-// currently unused
-static void give_random_wand( int slot )
-{
-    you.inv[ slot ].quantity = 1;
-    you.inv[ slot ].base_type = OBJ_WANDS;
-    you.inv[ slot ].special = 0;
-    you.inv[ slot ].plus2 = 0;
-    you.inv[ slot ].colour = random_colour();
-
-    switch (random2(4))
-    {
-    case 0:
-        you.inv[ slot ].sub_type = WAND_SLOWING;
-        you.inv[ slot ].plus = 7 + random2(5);
-        break;
-    case 1:
-        you.inv[ slot ].sub_type = WAND_PARALYSIS;
-        you.inv[ slot ].plus = 5 + random2(4);
-        break;
-    case 2:
-        you.inv[ slot ].sub_type = coinflip() ? WAND_FROST : WAND_FLAME;
-        you.inv[ slot ].plus = 6 + random2(4);
-        break;
-    case 3:
-        you.inv[ slot ].sub_type = WAND_TELEPORTATION;
-        you.inv[ slot ].plus = 3 + random2(4);
-        break;
-    }
-}
-#endif
 
 static void give_random_secondary_armour( int slot )
 {

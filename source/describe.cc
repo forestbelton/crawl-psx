@@ -23,17 +23,12 @@
 #include <stdio.h>
 #include "string-compat.h"
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "abl-show.h"
 #include "debug.h"
 #include "fight.h"
 #include "itemname.h"
-#include "macro.h"
 #include "mon-util.h"
 #include "player.h"
 #include "randart.h"
@@ -81,28 +76,18 @@ static void print_description( const string &d )
 {
     unsigned int  nextLine = string::npos;
     unsigned int  currentPos = 0;
-
-#ifdef DOS
-    const unsigned int lineWidth = 52;
-#else
-    const unsigned int lineWidth = 70;
-#endif
+    constexpr auto lineWidth = 70;
 
     bool nlSearch = true;       // efficiency
 
     textcolor(LIGHTGREY);
 
-    while(currentPos < d.length())
-    {
-        if (currentPos != 0)
-        {
+    while(currentPos < d.length()) {
 #ifdef PLAIN_TERM
+        if (currentPos != 0) {
             gotoxy(1, wherey() + 1);
-#endif
-#ifdef DOS_TERM
-            cprintf(EOL);
-#endif
         }
+#endif
 
         // see if $ sign is within one lineWidth
         if (nlSearch)
@@ -3271,21 +3256,12 @@ string get_item_description( const item_def &item, char verbose, bool dump )
 // Describes all items in the game.
 //
 //---------------------------------------------------------------
-void describe_item( const item_def &item )
-{
-#ifdef DOS_TERM
-    char buffer[3400];
-
-    gettext(25, 1, 80, 25, buffer);
-
-    window(25, 1, 80, 25);
-#endif
-
+void describe_item(const item_def &item) {
     clrscr();
 
-    const auto description = get_item_description( item, 1 );
-
+    const auto description = get_item_description(item, 1);
     print_description(description);
+
 #ifdef PSX
     auto btn = getpad();
     while (btn != PAD_CIRCLE) {
@@ -3295,12 +3271,7 @@ void describe_item( const item_def &item )
     if (getch() == 0)
         getch();
 #endif
-
-#ifdef DOS_TERM
-    puttext(25, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
-}                               // end describe_item()
+}
 
 
 //---------------------------------------------------------------
@@ -3313,15 +3284,7 @@ void describe_item( const item_def &item )
 void describe_spell(int spelled)
 {
     string description;
-
     description.reserve(500);
-
-#ifdef DOS_TERM
-    char buffer[3400];
-
-    gettext(25, 1, 80, 25, buffer);
-    window(25, 1, 80, 25);
-#endif
 
     clrscr();
     description += spell_title( spelled );
@@ -4410,11 +4373,6 @@ void describe_spell(int spelled)
 
     if (getch() == 0)
         getch();
-
-#ifdef DOS_TERM
-    puttext(25, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
 }                               // end describe_spell()
 
 
@@ -4428,15 +4386,7 @@ void describe_spell(int spelled)
 void describe_monsters(int class_described, unsigned char which_mons)
 {
     string description;
-
     description.reserve(200);
-
-#ifdef DOS_TERM
-    char buffer[3400];
-
-    gettext(25, 1, 80, 25, buffer);
-    window(25, 1, 80, 25);
-#endif
 
     clrscr();
     description = string( ptr_monam( &(menv[ which_mons ]), DESC_CAP_A ) );
@@ -6170,11 +6120,6 @@ void describe_monsters(int class_described, unsigned char which_mons)
 
     if (getch() == 0)
         getch();
-
-#ifdef DOS_TERM
-    puttext(25, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
 }                               // end describe_monsters
 
 
@@ -6212,12 +6157,6 @@ void describe_god( int which_god, bool give_title )
 
     const char *description; // mv: tmp string used for printing description
     int         colour;      // mv: colour used for some messages
-
-#ifdef DOS_TERM
-    char buffer[4000];
-    gettext( 1, 1, 80, 25, buffer );
-    window( 1, 1, 80, 25 );
-#endif
 
     clrscr();
 
@@ -6694,11 +6633,4 @@ void describe_god( int which_god, bool give_title )
 end_god_info: //end of everything (life, world, universe etc.)
 
     getch(); // wait until keypressed
-
-#ifdef DOS_TERM //mv: if DOS_TERM is defined than buffer is returned to screen
-                //if not redraw_screen() is called everytime when this function is
-                //called
-    puttext(1, 1, 80, 25, buffer);
-    window(1, 1, 80, 25);
-#endif
 }          //mv: That's all folks.

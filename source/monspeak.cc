@@ -14,31 +14,17 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
-#include "beam.h"
-#include "debug.h"
-#include "fight.h"
 #include "insult.h"
-#include "itemname.h"
-#include "misc.h"
 #include "monplace.h"
 #include "monstuff.h"
 #include "mon-util.h"
 #include "mstuff2.h"
-#include "player.h"
-#include "spells2.h"
-#include "spells4.h"
 #include "stuff.h"
-#include "view.h"
 
 // returns true if something is said
-bool mons_speaks(struct monsters *monster)
-{
+bool mons_speaks(struct monsters *monster) {
     int temp_rand;              // probability determination
 
     // This function is a little bit of a problem for the message channels

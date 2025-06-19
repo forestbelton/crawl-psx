@@ -14,8 +14,6 @@
 #include "AppHdr.h"
 #include "misc.h"
 
-#include <initializer_list>
-
 #include <string.h>
 #if !(defined(__IBMCPP__) || defined(__BCPLUSPLUS__) || defined(PSX))
 #include <unistd.h>
@@ -23,22 +21,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef DOS
-#include <conio.h>
-#endif
-
 #include "externs.h"
 
 #include "cloud.h"
 #include "delay.h"
-#include "fight.h"
 #include "files.h"
-#include "food.h"
 #include "it_use2.h"
 #include "items.h"
-#include "itemname.h"
 #include "lev-pand.h"
-#include "macro.h"
 #include "monplace.h"
 #include "mon-util.h"
 #include "monstuff.h"
@@ -51,8 +41,6 @@
 #include "spl-cast.h"
 #include "stuff.h"
 #include "transfor.h"
-#include "view.h"
-
 
 bool scramble();
 void trap_item(OBJECT_CLASSES base_type, unsigned char sub_type, char beam_x, char beam_y);
@@ -766,10 +754,6 @@ void down_stairs( bool remove_stairs, int old_level )
 
         strcpy(del_file, glorpstr);
         strcat(del_file, ".lab");
-
-#ifdef DOS
-        strupr(del_file);
-#endif
         sysg = unlink(del_file);
 
 #if DEBUG_DIAGNOSTICS
