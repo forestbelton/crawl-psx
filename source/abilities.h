@@ -1,3 +1,4 @@
+// GENERATED, DO NOT EDIT! See scripts/gen-abilities.py
 #ifndef ABILITIES_H
 #define ABILITIES_H
 

@@ -38,6 +38,7 @@ def generate_abilities_entry(ability: Ability) -> str:
 
 def generate_abilities_header(abilities: list[Ability]) -> str:
     return f"""
+// GENERATED, DO NOT EDIT! See scripts/gen-abilities.py
 #ifndef ABILITIES_H
 #define ABILITIES_H
 
