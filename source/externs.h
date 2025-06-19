@@ -50,39 +50,34 @@ extern FixedVector<unsigned short, 1000> mcolour;
         const int kFileNameLen = 250;
         const int kFileNameSize = 5 + kFileNameLen;
     #else
-        const int kNameLen = 30;
-        const int kFileNameLen = 28;
-        const int kFileNameSize = 5 + kFileNameLen;
+        constexpr int kNameLen = 30;
+        constexpr int kFileNameLen = 28;
+        constexpr int kFileNameSize = 5 + kFileNameLen;
     #endif
 #endif
 
 
 // Length of Path + File Name
-const int kPathLen = 256;
+constexpr int kPathLen = 256;
 
 // This value is used to mark that the current berserk is free from
 // penalty (Xom's granted or from a deck of cards).
-#define NO_BERSERK_PENALTY    -1
+#define NO_BERSERK_PENALTY (-1)
 
-struct coord_def
-{
-    int         x;
-    int         y;
-
-    // coord_def( int x_in = 0, int y_in = 0 ) : x(x_in), y(y_in) {};
+struct coord_def {
+    int x;
+    int y;
 };
 
-struct dice_def
-{
-    int         num;
-    int         size;
+struct dice_def {
+    int num;
+    int size;
 
-    dice_def( int n = 0, int s = 0 ) : num(n), size(s) {}
+    explicit dice_def(const int n = 0, const int s = 0) : num(n), size(s) {}
 };
 
 // output from direction() function:
-struct dist
-{
+struct dist {
     bool isValid;       // valid target chosen?
     bool isTarget;      // target (true), or direction (false)?
     bool isMe;          // selected self (convenience: tx == you.x_pos,
@@ -96,8 +91,7 @@ struct dist
 };
 
 
-struct bolt
-{
+struct bolt {
     // INPUT parameters set by caller
     int         range;                 // minimum range
     int         rangeMax;              // maximum range
@@ -132,16 +126,14 @@ struct bolt
 };
 
 
-struct run_check_dir
-{
+struct run_check_dir {
     unsigned char       grid;
     char                dx;
     char                dy;
 };
 
 
-struct delay_queue_item
-{
+struct delay_queue_item {
     int  type;
     int  duration;
     int  parm1;
@@ -150,18 +142,18 @@ struct delay_queue_item
 
 
 struct item_def {
-    unsigned char  base_type;  // basic class (ie OBJ_WEAPON)
-    unsigned char  sub_type;   // type within that class (ie WPN_DAGGER)
-    short          plus;       // +to hit, charges, corpse mon id
-    short          plus2;      // +to dam, sub-sub type for boots and helms
-    long           special;    // special stuff
-    unsigned char  colour;     // item colour
-    unsigned long  flags;      // item statuc flags
-    short          quantity;   // number of items
+    unsigned char base_type; // basic class (ie OBJ_WEAPON)
+    unsigned char sub_type; // type within that class (ie WPN_DAGGER)
+    short plus; // +to hit, charges, corpse mon id
+    short plus2; // +to dam, sub-sub type for boots and helms
+    long special; // special stuff
+    unsigned char colour; // item colour
+    unsigned long flags; // item statuc flags
+    short quantity; // number of items
 
-    short  x;          // x-location;         for inventory items = -1
-    short  y;          // y-location;         for inventory items = -1
-    short  link;       // link to next item;  for inventory items = slot
+    short x; // x-location;         for inventory items = -1
+    short y; // y-location;         for inventory items = -1
+    short link; // link to next item;  for inventory items = slot
 
     bool set_ego_type(const OBJECT_CLASSES item_type, const unsigned char ego_type) {
         const auto can_set = base_type == item_type
@@ -222,8 +214,7 @@ struct item_def {
 };
 
 
-struct player
-{
+struct player {
   char turn_is_over; // flag signaling that player has performed a timed action
 
   unsigned char prev_targ;
@@ -401,10 +392,9 @@ struct player
   FixedVector<int, 52>  ability_letter_table; // ref to ability by enum
 };
 
-extern struct player you;
+extern player you;
 
-struct monsters
-{
+struct monsters {
     int type;
     int hit_points;
     int max_hit_points;
@@ -428,16 +418,14 @@ struct monsters
                                        // once they go out of sight
 };
 
-struct cloud_struct
-{
+struct cloud_struct {
     unsigned char       x;
     unsigned char       y;
     unsigned char       type;
     int                 decay;
 };
 
-struct shop_struct
-{
+struct shop_struct {
     unsigned char       x;
     unsigned char       y;
     unsigned char       greed;
@@ -447,15 +435,13 @@ struct shop_struct
     FixedVector<unsigned char, 3> keeper_name;
 };
 
-struct trap_struct
-{
+struct trap_struct {
     unsigned char       x;
     unsigned char       y;
     unsigned char       type;
 };
 
-struct crawl_environment
-{
+struct crawl_environment {
     unsigned char rock_colour;
     unsigned char floor_colour;
 
@@ -478,29 +464,24 @@ struct crawl_environment
     FixedVector< shop_struct, MAX_SHOPS >    shop;  // shop list
     FixedVector< trap_struct, MAX_TRAPS >    trap;  // trap list
 
-    FixedVector< int, 20 >   mons_alloc;
+    FixedVector<int, 10> mons_alloc; // only used for colouring
+
     int                      trap_known;
     double                   elapsed_time; // used during level load
 };
 
-extern struct crawl_environment env;
+extern crawl_environment env;
 
-
-struct ghost_struct
-{
+struct ghost_struct {
     char name[20];
     FixedVector< short, NUM_GHOST_VALUES > values;
 };
 
-
-extern struct ghost_struct ghost;
-
+extern ghost_struct ghost;
 
 extern void (*viewwindow) (char, bool);
 
-
-struct system_environment
-{
+struct system_environment {
     char *crawl_name;
     char *crawl_pizza;
     char *crawl_rc;
@@ -511,8 +492,7 @@ struct system_environment
 
 extern system_environment SysEnv;
 
-struct game_options
-{
+struct game_options {
     long        autopickups;    // items to autopickup
     bool        verbose_dump;   // make character dumps contain more detail
     bool        colour_map;     // add colour to the map
@@ -564,14 +544,12 @@ struct game_options
 
 extern game_options  Options;
 
-struct tagHeader
-{
+struct tagHeader {
     short tagID;
     long offset;
 };
 
-struct scorefile_entry
-{
+struct scorefile_entry {
     char        version;
     char        release;
     long        points;

@@ -1,35 +1,16 @@
-/*
- *  File:       lev-pand.cc
- *  Summary:    Functions used in Pandemonium.
- *  Written by: Linley Henzell
- *
- *  Change History (most recent first):
- *
- *               <1>     -/--/--        LRH             Created
- */
-
 #include "AppHdr.h"
 #include "lev-pand.h"
 
 #include "externs.h"
-
 #include "monplace.h"
 #include "mon-pick.h"
 #include "stuff.h"
 
-void init_pandemonium(void)
-{
-    int pc = 0;
-    struct monsters *monster = 0;       // NULL
-
-    for (pc = 0; pc < MAX_MONSTERS; pc++)
-    {
-        monster = &menv[pc];
-
+void init_pandemonium() {
+    for (const auto &monster : menv) {
         // Looks for unique demons and sets appropriate lists of demons.
         // NB - also sets the level colours.
-        if (monster->type == MONS_MNOLEG)
-        {
+        if (monster.type == MONS_MNOLEG) {
             env.mons_alloc[0] = MONS_ABOMINATION_SMALL;
             env.mons_alloc[1] = MONS_ABOMINATION_SMALL;
             env.mons_alloc[2] = MONS_ABOMINATION_SMALL;
@@ -43,8 +24,7 @@ void init_pandemonium(void)
             return;
         }
 
-        if (monster->type == MONS_LOM_LOBON)
-        {
+        if (monster.type == MONS_LOM_LOBON) {
             env.mons_alloc[0] = MONS_HELLWING;
             env.mons_alloc[1] = MONS_SMOKE_DEMON;
             env.mons_alloc[2] = MONS_SMOKE_DEMON;
@@ -58,8 +38,7 @@ void init_pandemonium(void)
             return;
         }
 
-        if (monster->type == MONS_CEREBOV)
-        {
+        if (monster.type == MONS_CEREBOV) {
             env.mons_alloc[0] = MONS_EFREET;
             env.mons_alloc[1] = MONS_ABOMINATION_SMALL;
             env.mons_alloc[2] = MONS_ORANGE_DEMON;
@@ -73,8 +52,7 @@ void init_pandemonium(void)
             return;
         }
 
-        if (monster->type == MONS_GLOORX_VLOQ)
-        {
+        if (monster.type == MONS_GLOORX_VLOQ) {
             env.mons_alloc[0] = MONS_SKELETON_SMALL;
             env.mons_alloc[1] = MONS_SKELETON_SMALL;
             env.mons_alloc[2] = MONS_SKELETON_LARGE;
@@ -89,25 +67,23 @@ void init_pandemonium(void)
         }
     }
 
-// colour of monster 9 is colour of floor, 8 is colour of rock
-// IIRC, BLACK is set to LIGHTGRAY
-
-    for (pc = 0; pc < 10; pc++)
-    {
-        switch (random2(17))
-        {
-        case 0: case 10: env.mons_alloc[pc] = MONS_WHITE_IMP;         break;
-        case 1: case 11: env.mons_alloc[pc] = MONS_LEMURE;            break;
-        case 2: case 12: env.mons_alloc[pc] = MONS_UFETUBUS;          break;
-        case 3: case 13: env.mons_alloc[pc] = MONS_MANES;             break;
-        case 4: case 14: env.mons_alloc[pc] = MONS_MIDGE;             break;
-        case 5:          env.mons_alloc[pc] = MONS_NEQOXEC;           break;
-        case 6:          env.mons_alloc[pc] = MONS_ORANGE_DEMON;      break;
-        case 7:          env.mons_alloc[pc] = MONS_HELLWING;          break;
-        case 8:          env.mons_alloc[pc] = MONS_SMOKE_DEMON;       break;
-        case 9:          env.mons_alloc[pc] = MONS_YNOXINUL;          break;
-        case 15:         env.mons_alloc[pc] = MONS_ABOMINATION_SMALL; break;
-        case 16:         env.mons_alloc[pc] = MONS_ABOMINATION_LARGE; break;
+    // colour of monster 9 is colour of floor, 8 is colour of rock
+    // IIRC, BLACK is set to LIGHTGRAY
+    for (auto pc = 0; pc < 10; pc++) {
+        switch (random2(17)) {
+            case 0: case 10: env.mons_alloc[pc] = MONS_WHITE_IMP;         break;
+            case 1: case 11: env.mons_alloc[pc] = MONS_LEMURE;            break;
+            case 2: case 12: env.mons_alloc[pc] = MONS_UFETUBUS;          break;
+            case 3: case 13: env.mons_alloc[pc] = MONS_MANES;             break;
+            case 4: case 14: env.mons_alloc[pc] = MONS_MIDGE;             break;
+            case 5:          env.mons_alloc[pc] = MONS_NEQOXEC;           break;
+            case 6:          env.mons_alloc[pc] = MONS_ORANGE_DEMON;      break;
+            case 7:          env.mons_alloc[pc] = MONS_HELLWING;          break;
+            case 8:          env.mons_alloc[pc] = MONS_SMOKE_DEMON;       break;
+            case 9:          env.mons_alloc[pc] = MONS_YNOXINUL;          break;
+            case 15:         env.mons_alloc[pc] = MONS_ABOMINATION_SMALL; break;
+            case 16:         env.mons_alloc[pc] = MONS_ABOMINATION_LARGE; break;
+            default: ;
         }
 
         if (one_chance_in(10))
@@ -146,21 +122,16 @@ void init_pandemonium(void)
 
     // set at least some specific monsters for the special levels - this
     // can also be used to set some colours
-}                               // end init_pandemonium()
+}
 
-void pandemonium_mons(void)
-{
+void pandemonium_mons() {
     // must leave allowance for monsters rare on pandemonium (eg wizards etc)
-    int pan_mons = env.mons_alloc[random2(10)];
+    auto pan_mons = env.mons_alloc[random2(10)];
 
-    if (one_chance_in(40))
-    {
-        do
-        {
+    if (one_chance_in(40)) {
+        do {
             pan_mons = random2(NUM_MONSTERS);   // was random2(400) {dlb}
-        }
-        while (!mons_pan(pan_mons));
+        } while (!mons_pan(pan_mons));
     }
-    mons_place(pan_mons, BEH_HOSTILE, MHITNOT, false, 50,50,
-        LEVEL_PANDEMONIUM);
-}                               // end pandemonium_mons()
+    mons_place(pan_mons, BEH_HOSTILE, MHITNOT, false, 50,50, LEVEL_PANDEMONIUM);
+}

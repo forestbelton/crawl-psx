@@ -1,30 +1,15 @@
-/*
- *  File:       lev-pand.h
- *  Summary:    Functions used in Pandemonium.
- *  Written by: Linley Henzell
- *
- *  Change History (most recent first):
- *
- *               <1>     -/--/--        LRH             Created
- */
-
-
+// Functions used in Pandemonium
 #ifndef LEVPAND_H
 #define LEVPAND_H
 
+/**
+ * @brief Initialize the level colours for Pandemonium.
+ */
+void init_pandemonium();
 
-// last updated 12may2000 {dlb}
-/* ***********************************************************************
- * called from: abyss - misc
- * *********************************************************************** */
-void init_pandemonium(void);
-
-
-// last updated 12may2000 {dlb}
-/* ***********************************************************************
- * called from: acr - misc
- * *********************************************************************** */
-void pandemonium_mons(void);
-
+/**
+ * @brief Place a Pandemonium monster on the current level.
+ */
+void pandemonium_mons();
 
 #endif
