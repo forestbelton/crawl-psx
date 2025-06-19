@@ -610,12 +610,12 @@ void item_check(const char keyin) {
 
     if (counter == 1) {
         mprf("You see here %s.", item_show[counter]); // remember 'an'.
-    } else if (counter < 6 || keyin == ';') {
+    } else if ((counter > 0 && counter < 6) || keyin == ';') {
         mpr("Things that are here:");
         for (auto i = 1; i <= counter; ++i) {
             mpr(item_show[i]);
         }
-    } else {
+    } else if (counter > 0) {
         mpr("There are several objects here.");
     }
 }
