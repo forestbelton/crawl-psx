@@ -40,11 +40,9 @@ char reduce(unsigned char reducee);
 char retbit(char sed);
 char retvow(char sed);
 
-bool is_vowel( const char chr )
-{
-    const char low = tolower( chr );
-
-    return (low == 'a' || low == 'e' || low == 'i' || low == 'o' || low == 'u');
+bool is_vowel(const char chr) {
+    const auto low = tolower(chr);
+    return low == 'a' || low == 'e' || low == 'i' || low == 'o' || low == 'u';
 }
 
 // Some convenient functions to hide the bit operations and create

@@ -1651,35 +1651,29 @@ bool debug_add_mutation(void)
 //
 //---------------------------------------------------------------
 #ifdef WIZARD
-void debug_get_religion(void)
-{
+void debug_get_religion() {
     char specs[80];
 
-    mpr( "Which god (by name)? ", MSGCH_PROMPT );
+    mpr("Which god (by name)? ", MSGCH_PROMPT);
     get_input_line( specs, sizeof( specs ) );
 
     if (specs[0] == '\0')
         return;
 
-    int god = -1;
-
-    for (int i = 1; i < NUM_GODS; i++)
-    {
+    GODS god = GOD_NO_GOD;
+    for (auto i = GOD_ZIN; i < NUM_GODS; i = static_cast<GODS>(static_cast<int>(i) + 1)) {
         char name[80];
         strncpy( name, god_name(i), sizeof( name ) );
 
-        char *ptr = strstr( strlwr(name), strlwr(specs) );
-        if (ptr != NULL)
-        {
+        if (strstr(strlwr(name), strlwr(specs)) != nullptr) {
             god = i;
             break;
         }
     }
 
-    if (god == -1)
-        mpr( "That god doesn't seem to be taking followers today." );
-    else
-    {
+    if (god == GOD_NO_GOD) {
+        mpr("That god doesn't seem to be taking followers today.");
+    } else {
         grd[you.x_pos][you.y_pos] = 179 + god;
         god_pitch(god);
     }
@@ -1687,9 +1681,7 @@ void debug_get_religion(void)
 #endif
 
 
-void error_message_to_player(void)
-{
+void error_message_to_player() {
     mpr("Oh dear. There appears to be a bug in the program.");
     mpr("I suggest you leave this level then save as soon as possible.");
-
 }                               // end error_message_to_player()

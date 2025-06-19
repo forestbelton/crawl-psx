@@ -33,14 +33,14 @@ string get_item_description( const item_def &item, char verbose,
 /* ***********************************************************************
  * called from: acr - religion
  * *********************************************************************** */
-void describe_god( int which_god, bool give_title );
+void describe_god(GODS which_god, bool give_title);
 
-
-// last updated 12may2000 {dlb}
-/* ***********************************************************************
- * called from: item_use - shopping
- * *********************************************************************** */
-void describe_item( const item_def &item );
+/**
+ * @brief Describe any item in the game.
+ * @param item Item to describe
+ * @param interact Whether to display interaction options
+ */
+void describe_item(const item_def &item, bool interact = false);
 
 // last updated 12may2000 {dlb}
 /* ***********************************************************************

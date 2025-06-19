@@ -155,6 +155,42 @@ struct item_def {
     short y; // y-location;         for inventory items = -1
     short link; // link to next item;  for inventory items = slot
 
+    item_def(const unsigned char base_type, const unsigned char sub_type, const short plus, const short plus2,
+             const long special, const unsigned char colour, const unsigned long flags, const short quantity)
+        : base_type(base_type),
+          sub_type(sub_type),
+          plus(plus),
+          plus2(plus2),
+          special(special),
+          colour(colour),
+          flags(flags),
+          quantity(quantity),
+          x(0),
+          y(0),
+          link(NON_ITEM) {
+    }
+
+    item_def(const unsigned char base_type, const unsigned char sub_type, const short plus, const short plus2,
+             const long special, const unsigned char colour, const unsigned long flags, const short quantity,
+             const short x,
+             const short y, const short link)
+        : base_type(base_type),
+          sub_type(sub_type),
+          plus(plus),
+          plus2(plus2),
+          special(special),
+          colour(colour),
+          flags(flags),
+          quantity(quantity),
+          x(x),
+          y(y),
+          link(link) {
+    }
+
+    item_def() : base_type(0), sub_type(0), plus(0), plus2(0), special(0), colour(0), flags(0), quantity(0), x(0), y(0),
+                 link(NON_ITEM) {
+    }
+
     bool set_ego_type(const OBJECT_CLASSES item_type, const unsigned char ego_type) {
         const auto can_set = base_type == item_type
                              && !is_random_artefact()
@@ -346,7 +382,7 @@ struct player {
 
   FixedVector<unsigned char, 30> branch_stairs;
 
-  char religion;
+  GODS religion;
   unsigned char piety;
   unsigned char gift_timeout;
   FixedVector<unsigned char, MAX_NUM_GODS>  penance;
@@ -508,9 +544,9 @@ struct game_options {
     int         background;     // select default background colour
     int         channels[NUM_MESSAGE_CHANNELS];  // msg channel colouring
     int         weapon;         // auto-choose weapon for character
-    int         chaos_knight;   // choice of god for Chaos Knights (Xom/Makleb)
+    GODS        chaos_knight;   // choice of god for Chaos Knights (Xom/Makleb)
     int         death_knight;   // choice of god/necromancy for Death Knights
-    int         priest;         // choice of god for priests (Zin/Yred)
+    GODS        priest;         // choice of god for priests (Zin/Yred)
     bool        random_pick;    // randomly generate character
     int         hp_warning;     // percentage hp for danger warning
     int         hp_attention;   // percentage hp for danger attention

@@ -28,8 +28,7 @@ int Next_Message = 0;                                 // end of messages
 
 char Message_Line = 0;                // line of next (previous?) message
 
-static char god_message_altar_colour( char god )
-{
+static char god_message_altar_colour(const GODS god) {
     int  rnd;
 
     switch (god)
@@ -82,134 +81,120 @@ static char god_message_altar_colour( char god )
     }
 }
 
-#ifdef USE_COLOUR_MESSAGES
-
 // returns a colour or MSGCOL_MUTED
-static char channel_to_colour( int channel, int param )
-{
-    char        ret;
+static int channel_to_colour(const int channel, int param) {
+    int ret;
 
-    switch (Options.channels[ channel ])
-    {
-    case MSGCOL_PLAIN:
-        // note that if the plain channel is muted, then we're protecting
-        // the player from having that spead to other other channels here.
-        // The intent of plain is to give non-coloured messages, not to
-        // supress them.
-        if (Options.channels[ MSGCH_PLAIN ] >= MSGCOL_DEFAULT)
-            ret = LIGHTGREY;
-        else
-            ret = Options.channels[ MSGCH_PLAIN ];
-        break;
-
-    case MSGCOL_DEFAULT:
-    case MSGCOL_ALTERNATE:
-        switch (channel)
-        {
-        case MSGCH_GOD:
-            ret = (Options.channels[ channel ] == MSGCOL_DEFAULT)
-                                    ? god_colour( param )
-                                    : god_message_altar_colour( param );
-            break;
-
-        case MSGCH_DURATION:
-            ret = LIGHTBLUE;
-            break;
-
-        case MSGCH_DANGER:
-            ret = RED;
-            break;
-
-        case MSGCH_WARN:
-            ret = LIGHTRED;
-            break;
-
-        case MSGCH_FOOD:
-            ret = YELLOW;
-            break;
-
-        case MSGCH_INTRINSIC_GAIN:
-            ret = GREEN;
-            break;
-
-        case MSGCH_RECOVERY:
-            ret = LIGHTGREEN;
-            break;
-
-        case MSGCH_TALK:
-            ret = WHITE;
-            break;
-
-        case MSGCH_MONSTER_SPELL:
-        case MSGCH_MONSTER_ENCHANT:
-            ret = LIGHTMAGENTA;
-            break;
-
-        case MSGCH_MONSTER_DAMAGE:
-            ret =  ((param == MDAM_DEAD)               ? RED :
-                    (param >= MDAM_HORRIBLY_DAMAGED)   ? LIGHTRED :
-                    (param >= MDAM_MODERATELY_DAMAGED) ? YELLOW
-                                                       : LIGHTGREY);
-            break;
-
-        case MSGCH_PROMPT:
-            ret = CYAN;
-            break;
-
-        case MSGCH_DIAGNOSTICS:
-            ret = DARKGREY;     // makes is easier to ignore at times -- bwr
-            break;
-
-        case MSGCH_PLAIN:
-        case MSGCH_ROTTEN_MEAT:
-        case MSGCH_EQUIPMENT:
-        default:
-            ret = LIGHTGREY;
-            break;
-        }
-        break;
-
-    case MSGCOL_MUTED:
-        ret = MSGCOL_MUTED;
-        break;
-
-    default:
-        // Setting to a specific colour is handled here, special
-        // cases should be handled above.
-        if (channel == MSGCH_MONSTER_DAMAGE)
-        {
-            // a special case right now for monster damage (at least until
-            // the init system is improved)... selecting a specific
-            // colour here will result in only the death messages coloured
-            if (param == MDAM_DEAD)
-                ret = Options.channels[ channel ];
-            else if (Options.channels[ MSGCH_PLAIN ] >= MSGCOL_DEFAULT)
+    switch (Options.channels[channel]) {
+        case MSGCOL_PLAIN:
+            // note that if the plain channel is muted, then we're protecting
+            // the player from having that spead to other channels here.
+            // The intent of plain is to give non-coloured messages, not to
+            // supress them.
+            if (Options.channels[MSGCH_PLAIN] >= MSGCOL_DEFAULT)
                 ret = LIGHTGREY;
             else
-                ret = Options.channels[ MSGCH_PLAIN ];
-        }
-        else
-            ret = Options.channels[ channel ];
-        break;
+                ret = Options.channels[MSGCH_PLAIN];
+            break;
+
+        case MSGCOL_DEFAULT:
+        case MSGCOL_ALTERNATE:
+            switch (channel) {
+                case MSGCH_GOD:
+                    ret = Options.channels[channel] == MSGCOL_DEFAULT
+                              ? god_colour(static_cast<GODS>(param))
+                              : god_message_altar_colour(static_cast<GODS>(param));
+                    break;
+
+                case MSGCH_DURATION:
+                    ret = LIGHTBLUE;
+                    break;
+
+                case MSGCH_DANGER:
+                    ret = RED;
+                    break;
+
+                case MSGCH_WARN:
+                    ret = LIGHTRED;
+                    break;
+
+                case MSGCH_FOOD:
+                    ret = YELLOW;
+                    break;
+
+                case MSGCH_INTRINSIC_GAIN:
+                    ret = GREEN;
+                    break;
+
+                case MSGCH_RECOVERY:
+                    ret = LIGHTGREEN;
+                    break;
+
+                case MSGCH_TALK:
+                    ret = WHITE;
+                    break;
+
+                case MSGCH_MONSTER_SPELL:
+                case MSGCH_MONSTER_ENCHANT:
+                    ret = LIGHTMAGENTA;
+                    break;
+
+                case MSGCH_MONSTER_DAMAGE:
+                    ret = ((param == MDAM_DEAD)
+                               ? RED
+                               : (param >= MDAM_HORRIBLY_DAMAGED)
+                                     ? LIGHTRED
+                                     : (param >= MDAM_MODERATELY_DAMAGED)
+                                           ? YELLOW
+                                           : LIGHTGREY);
+                    break;
+
+                case MSGCH_PROMPT:
+                    ret = CYAN;
+                    break;
+
+                case MSGCH_DIAGNOSTICS:
+                    ret = DARKGREY; // makes is easier to ignore at times -- bwr
+                    break;
+
+                case MSGCH_PLAIN:
+                case MSGCH_ROTTEN_MEAT:
+                case MSGCH_EQUIPMENT:
+                default:
+                    ret = LIGHTGREY;
+                    break;
+            }
+            break;
+
+        case MSGCOL_MUTED:
+            ret = MSGCOL_MUTED;
+            break;
+
+        default:
+            // Setting to a specific colour is handled here, special
+            // cases should be handled above.
+            if (channel == MSGCH_MONSTER_DAMAGE) {
+                // a special case right now for monster damage (at least until
+                // the init system is improved)... selecting a specific
+                // colour here will result in only the death messages coloured
+                if (param == MDAM_DEAD)
+                    ret = Options.channels[channel];
+                else if (Options.channels[MSGCH_PLAIN] >= MSGCOL_DEFAULT)
+                    ret = LIGHTGREY;
+                else
+                    ret = Options.channels[MSGCH_PLAIN];
+            } else
+                ret = Options.channels[channel];
+            break;
     }
 
-    return (ret);
+    return ret;
 }
 
-#else // don't use colour messages
-
-static char channel_to_colour( int channel, int param )
-{
-    return (LIGHTGREY);
-}
-
-#endif
-
-void mpr(const char *inf, int channel, int param)
-{
+void mpr(const char *inf, const int channel, const int param) {
     char info2[80];
 
-    int colour = channel_to_colour( channel, param );
+    const int colour = channel_to_colour( channel, param );
     if (colour == MSGCOL_MUTED)
         return;
 
@@ -254,7 +239,7 @@ void mpr(const char *inf, int channel, int param)
         if (Next_Message >= NUM_STORED_MESSAGES)
             Next_Message = 0;
     }
-}                               // end mpr()
+}
 
 void mprf2(const int channel, const int param, const char *fmt, ...) {
     char inf[100];
@@ -274,13 +259,11 @@ void mprf2(const int channel, const int param, const char *fmt, ...) {
     mpr(inf, channel, param);
 }
 
-bool any_messages(void)
-{
-    return (Message_Line > 0);
+bool any_messages() {
+    return Message_Line > 0;
 }
 
-void mesclr( bool force )
-{
+void mesclr(const bool force) {
     // if no messages, return.
     if (!any_messages())
         return;

@@ -234,19 +234,7 @@ void init_item(const int item) {
         return;
     }
 
-    mitm[item] = {
-        OBJ_UNASSIGNED,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        NON_ITEM,
-    };
+    mitm[item] = item_def{};
 }
 
 int get_item_slot(const int reserve) {
@@ -409,20 +397,19 @@ void destroy_item(const int dest) {
 }
 
 void destroy_item_stack(const int x, const int y) {
-    int o = igrd[x][y];
-    igrd[x][y] = NON_ITEM;
-    while (o != NON_ITEM) {
-        const int next = mitm[o].link;
-        if (mitm[o].valid()) {
-            if (mitm[o].base_type == OBJ_ORBS) {
-                set_unique_item_status(OBJ_ORBS, mitm[o].sub_type, UNIQ_LOST_IN_ABYSS);
-            } else if (mitm[o].is_fixed_artefact()) {
-                set_unique_item_status(OBJ_WEAPONS, mitm[o].special, UNIQ_LOST_IN_ABYSS);
-            }
-            mitm[o].base_type = OBJ_UNASSIGNED;
-            mitm[o].quantity = 0;
+    for (auto &item : item_list(x, y)) {
+        if (!item.valid()) {
+            continue;
         }
-        o = next;
+
+        if (item.base_type == OBJ_ORBS) {
+            set_unique_item_status(OBJ_ORBS, item.sub_type, UNIQ_LOST_IN_ABYSS);
+        } else {
+            set_unique_item_status(OBJ_WEAPONS, item.special, UNIQ_LOST_IN_ABYSS);
+        }
+
+        item.base_type = OBJ_UNASSIGNED;
+        item.quantity = 0;
     }
 }
 

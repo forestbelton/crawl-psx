@@ -1611,7 +1611,7 @@ bool go_berserk(const bool intentional) {
 
 // Attempt to place a trap item at the given position.
 void trap_item(const OBJECT_CLASSES base_type, const unsigned char sub_type, const char beam_x, const char beam_y) {
-    item_def item = {
+    auto item = item_def(
         static_cast<unsigned char>(base_type),
         sub_type,
         0,
@@ -1619,8 +1619,8 @@ void trap_item(const OBJECT_CLASSES base_type, const unsigned char sub_type, con
         0,
         LIGHTCYAN,
         0,
-        1,
-    };
+        1
+    );
 
     auto item_type = OBJ_WEAPONS;
     auto ego_type = SPMSL_NORMAL;

@@ -38,7 +38,6 @@
 #include "it_use2.h"
 #include "itemname.h"
 #include "items.h"
-#include "misc.h"
 #include "monplace.h"
 #include "mutation.h"
 #include "newgame.h"
@@ -67,55 +66,50 @@ const char *sacrifice[] = {
     {" evaporates."}
 };
 
-void altar_prayer(void);
+void altar_prayer();
+
 void dec_penance(int god, int val);
-void divine_retribution(int god);
+
+void divine_retribution(GODS god);
+
 void inc_penance(int god, int val);
+
 void inc_penance(int val);
 
-void dec_penance(int god, int val)
-{
-    if (you.penance[god] > 0)
-    {
-        if (you.penance[god] <= val)
-        {
+void dec_penance(const GODS god, const int val) {
+    if (you.penance[god] > 0) {
+        if (you.penance[god] <= val) {
             simple_god_message(" seems mollified.", god);
             you.penance[god] = 0;
-        }
-        else
+        } else {
             you.penance[god] -= val;
+        }
     }
-}                               // end dec_penance()
+}
 
-void dec_penance(int val)
-{
+void dec_penance(const int val) {
     dec_penance(you.religion, val);
-}                               // end dec_penance()
+}
 
-void inc_penance(int god, int val)
-{
+void inc_penance(const int god, const int val) {
     if ((int) you.penance[god] + val > 200)
         you.penance[god] = 200;
     else
         you.penance[god] += val;
 }                               // end inc_penance()
 
-void inc_penance(int val)
-{
+void inc_penance(const int val) {
     inc_penance(you.religion, val);
 }                               // end inc_penance()
 
-static void inc_gift_timeout(int val)
-{
+static void inc_gift_timeout(const int val) {
     if ((int) you.gift_timeout + val > 200)
         you.gift_timeout = 200;
     else
         you.gift_timeout += val;
 }                               // end inc_gift_timeout()
 
-void pray(void)
-{
-    int            temp_rand = 0;
+void pray() {
     unsigned char  was_praying = you.duration[DUR_PRAYER];
     bool           success = false;
 
@@ -141,7 +135,7 @@ void pray(void)
             mpr("Sorry, a being of your status cannot worship here.");
             return;
         }
-        god_pitch(grd[you.x_pos][you.y_pos] - 179);
+        god_pitch(static_cast<GODS>(grd[you.x_pos][you.y_pos] - 179));
         return;
     }
 
@@ -311,8 +305,7 @@ void pray(void)
             && random2(you.piety) > 80 && one_chance_in(5))
         {
             int thing_called = MONS_PROGRAM_BUG;  // error trapping {dlb}
-
-            temp_rand = random2(100);
+            const int temp_rand = random2(100);
             thing_called = ((temp_rand > 66) ? MONS_WRAITH :            // 33%
                             (temp_rand > 52) ? MONS_WIGHT :             // 12%
                             (temp_rand > 40) ? MONS_SPECTRAL_WARRIOR :  // 16%
@@ -541,10 +534,9 @@ char *god_name( int which_god, bool long_name ) // mv - rewritten
     return (godname_buff);
 }                               // end god_name()
 
-void god_speaks( int god, const char *mesg )
-{
-    mpr( mesg, MSGCH_GOD, god );
-}                               // end god_speaks()
+void god_speaks(const GODS god, const char *mesg ) {
+    mpr(mesg, MSGCH_GOD, god);
+}
 
 void Xom_acts(bool niceness, int sever, bool force_sever)
 {
@@ -1680,8 +1672,7 @@ void lose_piety(char pgn)
     }
 }                               // end lose_piety()
 
-void divine_retribution( int god )
-{
+void divine_retribution(const GODS god) {
     ASSERT(god != GOD_NO_GOD);
 
     int loopy = 0;              // general purpose loop variable {dlb}
@@ -2143,9 +2134,8 @@ void divine_retribution( int god )
     return;
 }                               // end divine_retribution()
 
-void excommunication(void)
-{
-    const int old_god = you.religion;
+void excommunication() {
+    const GODS old_god = you.religion;
 
     you.duration[DUR_PRAYER] = 0;
     you.religion = GOD_NO_GOD;
@@ -2322,12 +2312,8 @@ void altar_prayer(void)
     }
 }                               // end altar_prayer()
 
-void god_pitch(unsigned char which_god)
-{
-    strcpy(info, "You kneel at the altar of ");
-    strcat(info, god_name(which_god));
-    strcat(info, ".");
-    mpr(info);
+void god_pitch(const GODS which_god) {
+    mprf("You kneel at the altar of %s.", god_name(which_god));
 
     more();
 
@@ -2437,16 +2423,15 @@ void handle_god_time(void)
         // why we do it this way... it requires only one pass and doesn't
         // require an array.
 
-        int which_god = GOD_NO_GOD;
+        GODS which_god = GOD_NO_GOD;
         unsigned int count = 0;
 
-        for (int i = GOD_NO_GOD; i < NUM_GODS; i++)
-        {
-            if (you.penance[i])
-            {
+        for (auto i = GOD_NO_GOD; i < NUM_GODS; i = static_cast<GODS>(static_cast<int>(i) + 1)) {
+            if (you.penance[i]) {
                 count++;
-                if (one_chance_in(count))
+                if (one_chance_in(count)) {
                     which_god = i;
+                }
             }
         }
 
@@ -2522,48 +2507,35 @@ void handle_god_time(void)
 }                               // end handle_god_time()
 
 // yet another wrapper for mpr() {dlb}:
-void simple_god_message(const char *event, int which_deity)
-{
-    char buff[ INFO_SIZE ];
+void simple_god_message(const char *event, GODS which_deity) {
+    char buff[INFO_SIZE];
 
-    if (which_deity == GOD_NO_GOD)
+    if (which_deity == GOD_NO_GOD) {
         which_deity = you.religion;
-
-    snprintf( buff, sizeof(buff), "%s%s", god_name( which_deity ), event );
-
-    god_speaks( which_deity, buff );
-}
-
-char god_colour( char god ) //mv - added
-{
-    switch (god)
-    {
-    case GOD_SHINING_ONE:
-    case GOD_ZIN:
-    case GOD_ELYVILON:
-    case GOD_OKAWARU:
-        return(CYAN);
-
-    case GOD_YREDELEMNUL:
-    case GOD_KIKUBAAQUDGHA:
-    case GOD_MAKHLEB:
-    case GOD_VEHUMET:
-    case GOD_TROG:
-        return(LIGHTRED);
-
-    case GOD_XOM:
-        return(YELLOW);
-
-    case GOD_NEMELEX_XOBEH:
-        return(LIGHTMAGENTA);
-
-    case GOD_SIF_MUNA:
-        return(LIGHTBLUE);
-
-    case GOD_NO_GOD:
-    default:
-        break;
     }
 
-    return(YELLOW);
+    snprintf(buff, sizeof(buff), "%s%s", god_name(which_deity), event);
+    god_speaks(which_deity, buff);
+}
+
+constexpr int GOD_COLOURS[] = {
+    YELLOW,
+    CYAN,
+    CYAN,
+    LIGHTRED,
+    LIGHTRED,
+    YELLOW,
+    LIGHTRED,
+    CYAN,
+    LIGHTRED,
+    LIGHTBLUE,
+    LIGHTRED,
+    LIGHTMAGENTA,
+    CYAN,
+};
+
+int god_colour(const GODS god) {
+    return god < array_size(GOD_COLOURS)
+               ? GOD_COLOURS[god]
+               : YELLOW;
 }

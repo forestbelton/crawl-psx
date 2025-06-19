@@ -18,8 +18,7 @@
 /* ***********************************************************************
  * called from: ouch - religion
  * *********************************************************************** */
-void simple_god_message( const char *event, int which_deity = GOD_NO_GOD );
-
+void simple_god_message(const char *event, GODS which_deity = GOD_NO_GOD);
 
 // last updated 11jan2001 {mv}
 /* ***********************************************************************
@@ -53,7 +52,7 @@ void done_good(char thing_done, int pgain);
 /* ***********************************************************************
  * called from: ability - religion
  * *********************************************************************** */
-void excommunication(void);
+void excommunication();
 
 
 // last updated 24may2000 {dlb}
@@ -62,13 +61,12 @@ void excommunication(void);
  * *********************************************************************** */
 void gain_piety(char pgn);
 
-
-// last updated 24may2000 {dlb}
-/* ***********************************************************************
- * called from: spell - religion
- * *********************************************************************** */
-void god_speaks( int god, const char *mesg );
-
+/**
+ * @brief Display a message from a god
+ * @param god God who is speaking
+ * @param mesg Message to display
+ */
+void god_speaks(GODS god, const char *mesg);
 
 // last updated 24may2000 {dlb}
 /* ***********************************************************************
@@ -96,21 +94,22 @@ void offer_corpse(int corpse);
 /* ***********************************************************************
  * called from: acr
  * *********************************************************************** */
-void pray(void);
+void pray();
 
 
 // last updated 24may2000 {dlb}
 /* ***********************************************************************
  * called from: items
  * *********************************************************************** */
-void handle_god_time(void);
+void handle_god_time();
 
-// created 5jan2001 {mv}
-/* ***********************************************************************
- * called from: message, describe
- * *********************************************************************** */
-char god_colour(char god);
+/**
+ * @brief Get the colour for a god
+ * @param god God to get colour of
+ * @return The god's colour
+ */
+int god_colour(GODS god);
 
-void god_pitch(unsigned char which_god);
+void god_pitch(GODS which_god);
 
 #endif

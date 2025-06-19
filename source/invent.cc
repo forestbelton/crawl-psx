@@ -26,50 +26,65 @@
 #include "stuff.h"
 #include "view.h"
 
-const char *command_string( int i );
-const char *wizard_string( int i );
+const char *command_string(int i);
 
-unsigned char get_invent( int invent_type )
-{
-    unsigned char nothing = invent( invent_type, false );
+const char *wizard_string(int i);
+
+unsigned char get_invent(const int invent_type) {
+    const unsigned char nothing = invent(invent_type, false);
 
     redraw_screen();
 
-    return (nothing);
-}                               // end get_invent()
+    return nothing;
+}
 
-unsigned char invent( int item_class_inv, bool show_price )
-{
-    char st_pass[ ITEMNAME_SIZE ] = "";
+
+
+constexpr const char *ITEM_SECTION_DESCRIPTIONS[] = {
+    " Hand Weapons",
+    " Missiles",
+    " Armour",
+    " Magical Devices",
+    " Comestibles",
+    " Books",
+    " Scrolls",
+    " Jewellery",
+    " Potions",
+    " Gems",
+    " Books",
+    " Magical Staves and Rods",
+    " Orbs of Power",
+    " Miscellaneous",
+    " Carrion",
+};
+
+unsigned char invent(const int item_class_inv, const bool show_price) {
+    char st_pass[ITEMNAME_SIZE] = "";
 
     int i, j;
     char lines = 0;
     unsigned char anything = 0;
-    char tmp_quant[20] = "";
     char temp_id[4][50];
 
     const int num_lines = get_number_of_lines();
 
-    FixedVector< int, NUM_OBJECT_CLASSES >  inv_class2;
+    FixedVector<int, NUM_OBJECT_CLASSES> inv_class2;
     int inv_count = 0;
     int inv_cursor = 0;
     int item_line = 0;
     unsigned char ki = 0;
-    item_def *selected_item = nullptr;
+    const item_def *selected_item = nullptr;
 
 show_inv:
     lines = 0;
     anything = 0;
-    tmp_quant[0] = 0;
     inv_count = 0;
     item_line = 0;
     ki = 0;
     st_pass[0] = 0;
 
-    for (i = 0; i < 4; i++)
-    {
-        for (j = 0; j < 50; j++)
-        {
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 50; j++) {
             temp_id[i][j] = 1;
         }
     }
@@ -79,17 +94,14 @@ show_inv:
     for (i = 0; i < NUM_OBJECT_CLASSES; i++)
         inv_class2[i] = 0;
 
-    for (i = 0; i < ENDOFPACK; i++)
-    {
-        if (you.inv[i].quantity)
-        {
-            inv_class2[ you.inv[i].base_type ]++;
+    for (i = 0; i < ENDOFPACK; i++) {
+        if (you.inv[i].quantity) {
+            inv_class2[you.inv[i].base_type]++;
             inv_count++;
         }
     }
 
-    if (!inv_count)
-    {
+    if (!inv_count) {
         cprintf("You aren't carrying anything.");
 
         if (getch() == 0)
@@ -98,16 +110,13 @@ show_inv:
         goto putty;
     }
 
-    if (item_class_inv != -1)
-    {
-        for (i = 0; i < NUM_OBJECT_CLASSES; i++)
-        {
+    if (item_class_inv != -1) {
+        for (i = 0; i < NUM_OBJECT_CLASSES; i++) {
             if (item_class_inv == OBJ_MISSILES && i == OBJ_WEAPONS)
                 i++;
 
             if (item_class_inv == OBJ_WEAPONS
-                && (i == OBJ_STAVES || i == OBJ_MISCELLANY))
-            {
+                && (i == OBJ_STAVES || i == OBJ_MISCELLANY)) {
                 i++;
             }
 
@@ -124,14 +133,13 @@ show_inv:
         || (item_class_inv == OBJ_MISSILES && inv_class2[OBJ_WEAPONS] > 0)
         || (item_class_inv == OBJ_WEAPONS
             && (inv_class2[OBJ_STAVES] > 0 || inv_class2[OBJ_MISCELLANY] > 0))
-        || (item_class_inv == OBJ_SCROLLS && inv_class2[OBJ_BOOKS] > 0))
-    {
-        char yps = 0;
+        || (item_class_inv == OBJ_SCROLLS && inv_class2[OBJ_BOOKS] > 0)) {
+        int yps = 0;
         const int cap = carrying_capacity();
 
-        cprintf( " Inventory: %d.%d aum (%d%% of %d.%d aum maximum)" EOL,
-                 you.burden / 10, you.burden % 10,
-                 (you.burden * 100) / cap, cap / 10, cap % 10 );
+        cprintf(" Inventory: %d.%d aum (%d%% of %d.%d aum maximum)" EOL,
+                you.burden / 10, you.burden % 10,
+                (you.burden * 100) / cap, cap / 10, cap % 10);
         lines += 2;
 
         for (i = 0; i < 15; i++) {
@@ -144,8 +152,7 @@ show_inv:
 
                     if (ki == ESCAPE) {
                         return ESCAPE;
-                    }
-                    else if (isalpha(ki) || ki == '?' || ki == '*') {
+                    } else if (isalpha(ki) || ki == '?' || ki == '*') {
                         return ki;
                     }
 
@@ -162,36 +169,15 @@ show_inv:
                     cputs(EOL " ");
 
                 textcolor(BLUE);
-
-                const char *section_desc;
-                switch (i) {
-                    case OBJ_WEAPONS:    section_desc = " Hand Weapons";    break;
-                    case OBJ_MISSILES:   section_desc = " Missiles";        break;
-                    case OBJ_ARMOUR:     section_desc = " Armour";          break;
-                    case OBJ_WANDS:      section_desc = " Magical Devices"; break;
-                    case OBJ_FOOD:       section_desc = " Comestibles";     break;
-                    case OBJ_UNKNOWN_I:  section_desc = " Books";           break;
-                    case OBJ_SCROLLS:    section_desc = " Scrolls";         break;
-                    case OBJ_JEWELLERY:  section_desc = " Jewellery";       break;
-                    case OBJ_POTIONS:    section_desc = " Potions";         break;
-                    case OBJ_UNKNOWN_II: section_desc = " Gems";            break;
-                    case OBJ_BOOKS:      section_desc = " Books";           break;
-                    case OBJ_STAVES:     section_desc = " Magical Staves and Rods";  break;
-                    case OBJ_ORBS:       section_desc = " Orbs of Power";   break;
-                    case OBJ_MISCELLANY: section_desc = " Miscellaneous";   break;
-                    case OBJ_CORPSES:    section_desc = " Carrion";         break;
-                    default:             section_desc = "";
-                //case OBJ_GEMSTONES: cprintf("Miscellaneous"); break;
+                if (i < array_size(ITEM_SECTION_DESCRIPTIONS)) {
+                    cputs(ITEM_SECTION_DESCRIPTIONS[i]);
                 }
 
-                cputs(section_desc);
                 textcolor(LIGHTGREY);
                 lines++;
 
-                for (j = 0; j < ENDOFPACK; j++)
-                {
-                    if (lines > num_lines - 2 && inv_count > 0)
-                    {
+                for (j = 0; j < ENDOFPACK; j++) {
+                    if (lines > num_lines - 2 && inv_count > 0) {
                         gotoxy(1, num_lines);
                         cputs("-more-");
                         ki = getch();
@@ -221,7 +207,7 @@ show_inv:
 
                         yps = wherey();
 
-                        in_name( j, DESC_INVENTORY_EQUIP, st_pass );
+                        in_name(j, DESC_INVENTORY_EQUIP, st_pass);
 
                         if (inv_cursor == item_line) {
                             selected_item = &you.inv[j];
@@ -230,35 +216,25 @@ show_inv:
                             cputs("  ");
                         }
 
-                        cprintf( st_pass );
+                        cprintf(st_pass);
 
                         inv_count--;
                         item_line++;
 
-                        if (show_price)
-                        {
-                            cprintf(" (");
-
-                            itoa( item_value( you.inv[j], temp_id, true ),
-                                  tmp_quant, 10 );
-
-                            cprintf( tmp_quant );
-                            cprintf( " gold)" );
+                        if (show_price) {
+                            cprintf(" (%d gold)", item_value(you.inv[j], temp_id, true));
                         }
 
                         if (wherey() != yps)
                             lines++;
                     }
-                }               // end of j loop
-            }                   // end of if inv_class2
-        }                       // end of i loop.
-    }
-    else
-    {
+                }
+            }
+        }
+    } else {
         if (item_class_inv == -1)
             cprintf("You aren't carrying anything.");
-        else
-        {
+        else {
             if (item_class_inv == OBJ_WEAPONS)
                 cprintf("You aren't carrying any weapons.");
             else if (item_class_inv == OBJ_MISSILES)
@@ -281,10 +257,7 @@ show_inv:
         if (ki == 0)
             ki = getch();
 #else
-        const auto btn = getpad();
-        set_input_cmd(CMD_NO_CMD);
-
-        switch (btn) {
+        switch (getpad()) {
             case PAD_UP:
                 inv_cursor = MAXIMUM(inv_cursor - 1, 0);
                 break;
@@ -297,7 +270,7 @@ show_inv:
                 goto putty;
 
             case PAD_CROSS:
-                describe_item(*selected_item);
+                describe_item(*selected_item, true);
                 break;
 
             default: ;
@@ -306,29 +279,26 @@ show_inv:
 #endif
     }
 
-  putty:
+putty:
     return ki;
-}                               // end invent()
+} // end invent()
 
 
 // Reads in digits for a count and apprends then to val, the
 // return value is the character that stopped the reading.
-static unsigned char get_invent_quant( unsigned char keyin, int &quant )
-{
+static unsigned char get_invent_quant(unsigned char keyin, int &quant) {
     quant = keyin - '0';
 
-    for(;;)
-    {
+    for (;;) {
         keyin = get_ch();
 
-        if (!isdigit( keyin ))
+        if (!isdigit(keyin))
             break;
 
         quant *= 10;
         quant += (keyin - '0');
 
-        if (quant > 9999999)
-        {
+        if (quant > 9999999) {
             quant = 9999999;
             keyin = '\0';
             break;
@@ -338,121 +308,104 @@ static unsigned char get_invent_quant( unsigned char keyin, int &quant )
     return (keyin);
 }
 
+/**
+ * @brief Prompt the user for an item, handling '?' and '*' listings
+ * @param prompt Prompt to display to the user
+ * @param type_expect Item class to show if '?' pressed
+ * @param must_exist If true, will be an assigned item with a positive quantity
+ * @param allow_auto_list Whether the inventory should be automatically displayed
+ * @param allow_easy_quit If true, will escape if ' ' pressed
+ * @param other_valid_char Special character
+ * @param count If not NULL, will prompt for the item count and store it here
+ * @return The inventory slot of the item, PROMPT_ABORT if player hits escape, or PROMPT_GOT_SPECIAL if `other_valid_char` pressed
+ */
+int prompt_invent_item(const char *prompt, const int type_expect,
+                       const bool must_exist, const bool allow_auto_list,
+                       const bool allow_easy_quit,
+                       const char other_valid_char,
+                       int *const count) {
+    unsigned char keyin = 0;
+    int ret = -1;
 
-// This function prompts the user for an item, handles the '?' and '*'
-// listings, and returns the inventory slot to the caller (which if
-// must_exist is true (the default) will be an assigned item, with
-// a positive quantity.
-//
-// It returns PROMPT_ABORT       if the player hits escape.
-// It returns PROMPT_GOT_SPECIAL if the player hits the "other_valid_char".
-//
-// Note: This function never checks if the item is appropriate.
-int prompt_invent_item( const char *prompt, int type_expect,
-                        bool must_exist, bool allow_auto_list,
-                        bool allow_easy_quit,
-                        const char other_valid_char,
-                        int *const count )
-{
-    unsigned char  keyin = 0;
-    int            ret = -1;
+    bool need_redraw = false;
+    bool need_prompt = true;
+    bool need_getch = true;
 
-    bool           need_redraw = false;
-    bool           need_prompt = true;
-    bool           need_getch  = true;
-
-    if (Options.auto_list && allow_auto_list)
-    {
+    if (Options.auto_list && allow_auto_list) {
         // pretend the player has hit '?' and setup state.
-        keyin = invent( type_expect, false );
+        keyin = invent(type_expect, false);
 
         need_getch = false;
 
         // Don't redraw if we're just going to display another listing
-        need_redraw = (keyin != '?' && keyin != '*');
+        need_redraw = keyin != '?' && keyin != '*';
 
         // A prompt is nice for when we're moving to "count" mode.
-        need_prompt = (count != NULL && isdigit( keyin ));
+        need_prompt = count != nullptr && isdigit(keyin);
     }
 
-    for (;;)
-    {
-        if (need_redraw)
-        {
+    while (ret == -1) {
+        if (need_redraw) {
             redraw_screen();
-            mesclr( true );
+            mesclr(true);
         }
 
         if (need_prompt)
-            mpr( prompt, MSGCH_PROMPT );
+            mpr(prompt, MSGCH_PROMPT);
 
         if (need_getch)
             keyin = get_ch();
 
         need_redraw = false;
         need_prompt = true;
-        need_getch  = true;
+        need_getch = true;
 
         // Note:  We handle any "special" character first, so that
         //        it can be used to override the others.
-        if (other_valid_char != '\0' && keyin == other_valid_char)
-        {
+        if (other_valid_char != '\0' && keyin == other_valid_char) {
             ret = PROMPT_GOT_SPECIAL;
-            break;
-        }
-        else if (keyin == '?' || keyin == '*')
-        {
+        } else if (keyin == '?' || keyin == '*') {
             // The "view inventory listing" mode.
             if (keyin == '*')
-                keyin = invent( -1, false );
+                keyin = invent(-1, false);
             else
-                keyin = invent( type_expect, false );
+                keyin = invent(type_expect, false);
 
-            need_getch  = false;
+            need_getch = false;
 
             // Don't redraw if we're just going to display another listing
             need_redraw = (keyin != '?' && keyin != '*');
 
             // A prompt is nice for when we're moving to "count" mode.
-            need_prompt = (count != NULL && isdigit( keyin ));
-        }
-        else if (count != NULL && isdigit( keyin ))
-        {
+            need_prompt = count != nullptr && isdigit(keyin);
+        } else if (count != nullptr && isdigit(keyin)) {
             // The "read in quantity" mode
-            keyin = get_invent_quant( keyin, *count );
+            keyin = get_invent_quant(keyin, *count);
 
             need_prompt = false;
-            need_getch  = false;
-        }
-        else if (keyin == ESCAPE
-                || (Options.easy_quit_item_prompts
-                    && allow_easy_quit
-                    && keyin == ' '))
-        {
+            need_getch = false;
+        } else if (keyin == ESCAPE
+                   || (Options.easy_quit_item_prompts
+                       && allow_easy_quit
+                       && keyin == ' ')) {
             ret = PROMPT_ABORT;
-            break;
-        }
-        else if (isalpha( keyin ))
-        {
-            ret = letter_to_index( keyin );
+        } else if (isalpha(keyin)) {
+            ret = letter_to_index(keyin);
 
-            if (must_exist && !you.inv[ret].valid())
-                mpr( "You do not have any such object." );
-            else
-                break;
-        }
-        else if (!isspace( keyin ))
-        {
+            if (must_exist && !you.inv[ret].valid()) {
+                mpr("You do not have any such object.");
+                ret = -1;
+            }
+        } else if (!isspace(keyin)) {
             // we've got a character we don't understand...
-            canned_msg( MSG_HUH );
+            canned_msg(MSG_HUH);
         }
     }
 
-    return (ret);
+    return ret;
 }
 
-void list_commands(bool wizard)
-{
+void list_commands(bool wizard) {
     const char *line;
     int j = 0;
 
@@ -461,18 +414,15 @@ void list_commands(bool wizard)
     // BCR - Set to screen length - 1 to display the "more" string
     int moreLength = (get_number_of_lines() - 1) * 2;
 
-    for (int i = 0; i < 500; i++)
-    {
+    for (int i = 0; i < 500; i++) {
         if (wizard)
-            line = wizard_string( i );
+            line = wizard_string(i);
         else
-            line = command_string( i );
+            line = command_string(i);
 
-        if (strlen( line ) != 0)
-        {
+        if (strlen(line) != 0) {
             // BCR - If we've reached the end of the screen, clear
-            if (j == moreLength)
-            {
+            if (j == moreLength) {
                 gotoxy(2, j / 2 + 1);
                 cprintf("More...");
                 getch();
@@ -480,19 +430,18 @@ void list_commands(bool wizard)
                 j = 0;
             }
 
-            gotoxy( ((j % 2) ? 40 : 2), ((j / 2) + 1) );
-            cprintf( line );
+            gotoxy(((j % 2) ? 40 : 2), ((j / 2) + 1));
+            cprintf(line);
 
             j++;
         }
     }
 
     getch();
-}                               // end list_commands()
+} // end list_commands()
 
-const char *wizard_string( int i )
-{
-    UNUSED( i );
+const char *wizard_string(int i) {
+    UNUSED(i);
 
 #ifdef WIZARD
     return((i ==  10) ? "a    : acquirement"                  :
@@ -535,10 +484,9 @@ const char *wizard_string( int i )
 #else
     return ("");
 #endif
-}                               // end wizard_string()
+} // end wizard_string()
 
-const char *command_string( int i )
-{
+const char *command_string(int i) {
     /*
      * BCR - Command printing, case statement
      * Note: The numbers in this case indicate the order in which the
@@ -549,71 +497,203 @@ const char *command_string( int i )
      *
      */
 
-    return((i ==  10) ? "a    : use special ability"              :
-           (i ==  20) ? "d(#) : drop (exact quantity of) items"   :
-           (i ==  30) ? "e    : eat food"                         :
-           (i ==  40) ? "f    : fire first available missile"     :
-           (i ==  50) ? "i    : inventory listing"                :
-           (i ==  55) ? "m    : check skills"                     :
-           (i ==  60) ? "o/c  : open / close a door"              :
-           (i ==  65) ? "p    : pray"                             :
-           (i ==  70) ? "q    : quaff a potion"                   :
-           (i ==  80) ? "r    : read a scroll or book"            :
-           (i ==  90) ? "s    : search adjacent tiles"            :
-           (i == 100) ? "t    : throw/shoot an item"              :
-           (i == 110) ? "v    : view item description"            :
-           (i == 120) ? "w    : wield an item"                    :
-           (i == 130) ? "x    : examine visible surroundings"     :
-           (i == 135) ? "z    : zap a wand"                       :
-           (i == 140) ? "A    : list abilities/mutations"         :
-           (i == 141) ? "C    : check experience"                 :
-           (i == 142) ? "D    : dissect a corpse"                 :
-           (i == 145) ? "E    : evoke power of wielded item"      :
-           (i == 150) ? "M    : memorise a spell"                 :
-           (i == 155) ? "O    : overview of the dungeon"          :
-           (i == 160) ? "P/R  : put on / remove jewellery"        :
-           (i == 165) ? "Q    : quit without saving"              :
-           (i == 168) ? "S    : save game and exit"               :
-           (i == 179) ? "V    : version information"              :
-           (i == 200) ? "W/T  : wear / take off armour"           :
-           (i == 210) ? "X    : examine level map"                :
-           (i == 220) ? "Z    : cast a spell"                     :
-           (i == 240) ? ",/g  : pick up items"                    :
-           (i == 242) ? "./del: rest one turn"                    :
-           (i == 250) ? "</>  : ascend / descend a staircase"     :
-           (i == 270) ? ";    : examine occupied tile"            :
-           (i == 280) ? "\\    : check item knowledge"            :
+    return ((i == 10)
+                ? "a    : use special ability"
+                : (i == 20)
+                      ? "d(#) : drop (exact quantity of) items"
+                      : (i == 30)
+                            ? "e    : eat food"
+                            : (i == 40)
+                                  ? "f    : fire first available missile"
+                                  : (i == 50)
+                                        ? "i    : inventory listing"
+                                        : (i == 55)
+                                              ? "m    : check skills"
+                                              : (i == 60)
+                                                    ? "o/c  : open / close a door"
+                                                    : (i == 65)
+                                                          ? "p    : pray"
+                                                          : (i == 70)
+                                                                ? "q    : quaff a potion"
+                                                                : (i == 80)
+                                                                      ? "r    : read a scroll or book"
+                                                                      : (i == 90)
+                                                                            ? "s    : search adjacent tiles"
+                                                                            : (i == 100)
+                                                                                  ? "t    : throw/shoot an item"
+                                                                                  : (i == 110)
+                                                                                      ? "v    : view item description"
+                                                                                      : (i == 120)
+                                                                                          ? "w    : wield an item"
+                                                                                          : (i == 130)
+                                                                                              ? "x    : examine visible surroundings"
+                                                                                              : (i == 135)
+                                                                                                  ? "z    : zap a wand"
+                                                                                                  : (
+                                                                                                      i
+                                                                                                      ==
+                                                                                                      140)
+                                                                                                      ? "A    : list abilities/mutations"
+                                                                                                      : (i ==
+                                                                                                          141)
+                                                                                                          ? "C    : check experience"
+                                                                                                          : (i ==
+                                                                                                              142)
+                                                                                                              ? "D    : dissect a corpse"
+                                                                                                              : (i ==
+                                                                                                                  145)
+                                                                                                                  ? "E    : evoke power of wielded item"
+                                                                                                                  : (
+                                                                                                                      i ==
+                                                                                                                      150)
+                                                                                                                      ? "M    : memorise a spell"
+                                                                                                                      : (
+                                                                                                                          i ==
+                                                                                                                          155)
+                                                                                                                          ? "O    : overview of the dungeon"
+                                                                                                                          : (
+                                                                                                                              i ==
+                                                                                                                              160)
+                                                                                                                              ? "P/R  : put on / remove jewellery"
+                                                                                                                              : (
+                                                                                                                                  i ==
+                                                                                                                                  165)
+                                                                                                                                  ? "Q    : quit without saving"
+                                                                                                                                  : (
+                                                                                                                                      i ==
+                                                                                                                                      168)
+                                                                                                                                      ? "S    : save game and exit"
+                                                                                                                                      : (
+                                                                                                                                          i ==
+                                                                                                                                          179)
+                                                                                                                                          ? "V    : version information"
+                                                                                                                                          : (
+                                                                                                                                              i ==
+                                                                                                                                              200)
+                                                                                                                                              ? "W/T  : wear / take off armour"
+                                                                                                                                              : (
+                                                                                                                                                  i ==
+                                                                                                                                                  210)
+                                                                                                                                                  ? "X    : examine level map"
+                                                                                                                                                  : (
+                                                                                                                                                      i ==
+                                                                                                                                                      220)
+                                                                                                                                                      ? "Z    : cast a spell"
+                                                                                                                                                      : (
+                                                                                                                                                          i ==
+                                                                                                                                                          240)
+                                                                                                                                                          ? ",/g  : pick up items"
+                                                                                                                                                          : (
+                                                                                                                                                              i ==
+                                                                                                                                                              242)
+                                                                                                                                                              ? "./del: rest one turn"
+                                                                                                                                                              : (
+                                                                                                                                                                  i ==
+                                                                                                                                                                  250)
+                                                                                                                                                                  ? "</>  : ascend / descend a staircase"
+                                                                                                                                                                  : (
+                                                                                                                                                                      i ==
+                                                                                                                                                                      270)
+                                                                                                                                                                      ? ";    : examine occupied tile"
+                                                                                                                                                                      : (
+                                                                                                                                                                          i ==
+                                                                                                                                                                          280)
+                                                                                                                                                                          ? "\\    : check item knowledge"
+                                                                                                                                                                          :
 #ifdef WIZARD
            (i == 290) ? "&    : invoke your Wizardly powers"      :
 #endif
-           (i == 300) ? "+/-  : scroll up/down [level map only]"  :
-           (i == 310) ? "!    : shout or command allies"          :
-           (i == 325) ? "^    : describe religion"                :
-           (i == 337) ? "@    : status"                           :
-           (i == 340) ? "#    : dump character to file"           :
-           (i == 350) ? "=    : reassign inventory/spell letters" :
-           (i == 360) ? "\'    : wield item a, or switch to b"    :
+                                                                                                                                                                          (
+                                                                                                                                                                              i
+                                                                                                                                                                              ==
+                                                                                                                                                                              300)
+                                                                                                                                                                              ? "+/-  : scroll up/down [level map only]"
+                                                                                                                                                                              : (
+                                                                                                                                                                                  i ==
+                                                                                                                                                                                  310)
+                                                                                                                                                                                  ? "!    : shout or command allies"
+                                                                                                                                                                                  : (
+                                                                                                                                                                                      i ==
+                                                                                                                                                                                      325)
+                                                                                                                                                                                      ? "^    : describe religion"
+                                                                                                                                                                                      : (
+                                                                                                                                                                                          i ==
+                                                                                                                                                                                          337)
+                                                                                                                                                                                          ? "@    : status"
+                                                                                                                                                                                          : (
+                                                                                                                                                                                              i ==
+                                                                                                                                                                                              340)
+                                                                                                                                                                                              ? "#    : dump character to file"
+                                                                                                                                                                                              : (
+                                                                                                                                                                                                  i ==
+                                                                                                                                                                                                  350)
+                                                                                                                                                                                                  ? "=    : reassign inventory/spell letters"
+                                                                                                                                                                                                  : (
+                                                                                                                                                                                                      i ==
+                                                                                                                                                                                                      360)
+                                                                                                                                                                                                      ? "\'    : wield item a, or switch to b"
+                                                                                                                                                                                                      :
 #ifdef USE_MACROS
            (i == 380) ? "`    : add macro"                        :
            (i == 390) ? "~    : save macros"                      :
 #endif
-           (i == 400) ? "]    : display worn armour"              :
-           (i == 410) ? "\"    : display worn jewellery"          :
-           (i == 420) ? "Ctrl-P : see old messages"               :
+                                                                                                                                                                                                      (
+                                                                                                                                                                                                          i
+                                                                                                                                                                                                          ==
+                                                                                                                                                                                                          400)
+                                                                                                                                                                                                          ? "]    : display worn armour"
+                                                                                                                                                                                                          : (
+                                                                                                                                                                                                              i ==
+                                                                                                                                                                                                              410)
+                                                                                                                                                                                                              ? "\"    : display worn jewellery"
+                                                                                                                                                                                                              : (
+                                                                                                                                                                                                                  i ==
+                                                                                                                                                                                                                  420)
+                                                                                                                                                                                                                  ? "Ctrl-P : see old messages"
+                                                                                                                                                                                                                  :
 #ifdef PLAIN_TERM
-           (i == 430) ? "Ctrl-R : Redraw screen"                  :
+                                                                                                                                                                                                                  (
+                                                                                                                                                                                                                      i
+                                                                                                                                                                                                                      ==
+                                                                                                                                                                                                                      430)
+                                                                                                                                                                                                                      ? "Ctrl-R : Redraw screen"
+                                                                                                                                                                                                                      :
 #endif
-           (i == 440) ? "Ctrl-A : toggle autopickup"              :
-           (i == 450) ? "Ctrl-X : Save game without query"        :
+                                                                                                                                                                                                                      (
+                                                                                                                                                                                                                          i
+                                                                                                                                                                                                                          ==
+                                                                                                                                                                                                                          440)
+                                                                                                                                                                                                                          ? "Ctrl-A : toggle autopickup"
+                                                                                                                                                                                                                          : (
+                                                                                                                                                                                                                              i ==
+                                                                                                                                                                                                                              450)
+                                                                                                                                                                                                                              ? "Ctrl-X : Save game without query"
+                                                                                                                                                                                                                              :
 
 #ifdef ALLOW_DESTROY_ITEM_COMMAND
            (i == 455) ? "Ctrl-D : Destroy inventory item"         :
 #endif
 
-           (i == 460) ? "Shift & DIR : long walk"                 :
-           (i == 465) ? "/ DIR : long walk"                       :
-           (i == 470) ? "Ctrl  & DIR : door; untrap; attack"      :
-           (i == 475) ? "* DIR : door; untrap; attack"            :
-           (i == 478) ? "Shift & 5 on keypad : rest 100 turns"
-                      : "");
-}                               // end command_string()
+                                                                                                                                                                                                                              (
+                                                                                                                                                                                                                                  i
+                                                                                                                                                                                                                                  ==
+                                                                                                                                                                                                                                  460)
+                                                                                                                                                                                                                                  ? "Shift & DIR : long walk"
+                                                                                                                                                                                                                                  : (
+                                                                                                                                                                                                                                      i ==
+                                                                                                                                                                                                                                      465)
+                                                                                                                                                                                                                                      ? "/ DIR : long walk"
+                                                                                                                                                                                                                                      : (
+                                                                                                                                                                                                                                          i ==
+                                                                                                                                                                                                                                          470)
+                                                                                                                                                                                                                                          ? "Ctrl  & DIR : door; untrap; attack"
+                                                                                                                                                                                                                                          : (
+                                                                                                                                                                                                                                              i ==
+                                                                                                                                                                                                                                              475)
+                                                                                                                                                                                                                                              ? "* DIR : door; untrap; attack"
+                                                                                                                                                                                                                                              : (
+                                                                                                                                                                                                                                                  i ==
+                                                                                                                                                                                                                                                  478)
+                                                                                                                                                                                                                                                  ? "Shift & 5 on keypad : rest 100 turns"
+                                                                                                                                                                                                                                                  : "");
+} // end command_string()

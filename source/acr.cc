@@ -1339,7 +1339,7 @@ static void input() {
         mpr("Move the cursor around to observe a square.", MSGCH_PROMPT);
         mpr("Press '?' for a monster description.", MSGCH_PROMPT);
 
-        struct dist lmove;
+        dist lmove;
         look_around( lmove, true );
         break;
 
@@ -2456,7 +2456,6 @@ static void input() {
         pandemonium_mons();
 
     // No monsters in the Labyrinth,  or Ecumenical Temple
-    return;
 }
 
 /*
