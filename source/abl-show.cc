@@ -21,6 +21,7 @@
 
 #include "AppHdr.h"
 #include "abl-show.h"
+#include "data/abilities.h"
 
 #include <ctype.h>
 #include <string.h>

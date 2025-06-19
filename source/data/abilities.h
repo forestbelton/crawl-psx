@@ -1,19 +1,8 @@
-// GENERATED, DO NOT EDIT! See scripts/gen-abilities.py
-#ifndef ABILITIES_H
-#define ABILITIES_H
+// GENERATED FILE, DO NOT EDIT! See scripts/gen-abilities.py
+#ifndef DATA_ABILITIES_H
+#define DATA_ABILITIES_H
 
 #include "enum.h"
-
-// Structure for representing an ability:
-struct ability_def {
-    int                 ability;
-    const char *        name;
-    unsigned int        mp_cost;        // magic cost of ability
-    unsigned int        hp_cost;        // hit point cost of ability
-    unsigned int        food_cost;      // + rand2avg( food_cost, 2 )
-    unsigned int        piety_cost;     // + random2( (piety_cost + 1) / 2 + 1 )
-    unsigned int        flags;          // used for additonal cost notices
-};
 
 constexpr ability_def Ability_List[] = {
     { ABIL_NON_ABILITY, "No ability", 0, 0, 0, 0, ABFLAG_NONE },

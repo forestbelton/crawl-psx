@@ -2,8 +2,18 @@
 #ifndef ABLSHOW_H
 #define ABLSHOW_H
 
-#include "abilities.h"
 #include "string-compat.h"
+
+// Structure for representing an ability:
+struct ability_def {
+    int          ability;
+    const char * name;
+    unsigned int mp_cost;    // magic cost of ability
+    unsigned int hp_cost;    // hit point cost of ability
+    unsigned int food_cost;  // + rand2avg( food_cost, 2 )
+    unsigned int piety_cost; // + random2( (piety_cost + 1) / 2 + 1 )
+    unsigned int flags;      // used for additonal cost notices
+};
 
 /**
  * @brief Retrieve the ability definition given its ID.
