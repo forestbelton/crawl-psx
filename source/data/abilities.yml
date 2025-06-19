@@ -1,0 +1,607 @@
+abilities:
+  # NON_ABILITY should always come first
+  - id: ABIL_NON_ABILITY
+    name: "No ability"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_SPIT_POISON
+    name: "Spit Poison"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 40
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_GLAMOUR
+    name: "Glamour"
+    mp_cost: 5
+    hp_cost: 0
+    food_cost: 40
+    piety_cost: 0
+    flag: ABFLAG_DELAY
+
+  - id: ABIL_MAPPING
+    name: "Sense Surroundings"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 30
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_TELEPORTATION
+    name: "Teleportation"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_BLINK
+    name: "Blink"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  - id: ABIL_BREATHE_FIRE
+    name: "Breathe Fire"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_BREATHE_FROST
+    name: "Breathe Frost"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_BREATHE_POISON
+    name: "Breathe Poison Gas"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_BREATHE_LIGHTNING
+    name: "Breathe Lightning"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_BREATHE_POWER
+    name: "Breathe Power"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_BREATHE_STICKY_FLAME
+    name: "Breathe Sticky Flame"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+  - id: ABIL_BREATHE_STEAM
+    name: "Breathe Steam"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 75
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+
+  # Handled with breath weapons, but doesn't cause a breathing delay
+  - id: ABIL_SPIT_ACID
+    name: "Spit Acid"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 125
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  - id: ABIL_FLY
+    name: "Fly"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_SUMMON_MINOR_DEMON
+    name: "Summon Minor Demon"
+    mp_cost: 3
+    hp_cost: 3
+    food_cost: 75
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_SUMMON_DEMON
+    name: "Summon Demon"
+    mp_cost: 5
+    hp_cost: 5
+    food_cost: 150
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_HELLFIRE
+    name: "Hellfire"
+    mp_cost: 8
+    hp_cost: 8
+    food_cost: 200
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_TORMENT
+    name: "Torment"
+    mp_cost: 9
+    hp_cost: 0
+    food_cost: 250
+    piety_cost: 0
+    flag: ABFLAG_PAIN
+  - id: ABIL_RAISE_DEAD
+    name: "Raise Dead"
+    mp_cost: 5
+    hp_cost: 5
+    food_cost: 150
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_CONTROL_DEMON
+    name: "Control Demon"
+    mp_cost: 4
+    hp_cost: 4
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_TO_PANDEMONIUM
+    name: "Gate Yourself to Pandemonium"
+    mp_cost: 7
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_CHANNELING
+    name: "Channeling"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 30
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_THROW_FLAME
+    name: "Throw Flame"
+    mp_cost: 1
+    hp_cost: 1
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_THROW_FROST
+    name: "Throw Frost"
+    mp_cost: 1
+    hp_cost: 1
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_BOLT_OF_DRAINING
+    name: "Bolt of Draining"
+    mp_cost: 4
+    hp_cost: 4
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  # FLY_II used to have ABFLAG_EXHAUSTION, but that's somewhat meaningless
+  # as exhaustion's only (and designed) effect is preventing Berserk. -- bwr
+  - id: ABIL_FLY_II
+    name: "Fly"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 25
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_DELAYED_FIREBALL
+    name: "Release Delayed Fireball"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_INSTANT
+  - id: ABIL_MUMMY_RESTORATION
+    name: "Restoration"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_PERMANENT_MP
+
+  # EVOKE abilities use Evocations and come from items:
+  # Mapping, Teleportation, and Blink can also come from mutations
+  # so we have to distinguish them (see above).  The off items
+  # below are labeled EVOKE because they only work now if the
+  # player has an item with the evocable power (not just because
+  # you used a wand, potion, or miscast effect).  I didn't see
+  # any reason to label them as "Evoke" in the text, they don't
+  # use or train Evocations (the others do).  -- bwr
+  - id: ABIL_EVOKE_MAPPING
+    name: "Evoke Sense Surroundings"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 30
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_EVOKE_TELEPORTATION
+    name: "Evoke Teleportation"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_EVOKE_BLINK
+    name: "Evoke Blink"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  - id: ABIL_EVOKE_BERSERK
+    name: "Evoke Berserk Rage"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  - id: ABIL_EVOKE_TURN_INVISIBLE
+    name: "Evoke Invisibility"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 250
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_EVOKE_TURN_VISIBLE
+    name: "Turn Visible"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_EVOKE_LEVITATE
+    name: "Evoke Levitation"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_EVOKE_STOP_LEVITATING
+    name: "Stop Levitating"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  - id: ABIL_END_TRANSFORMATION
+    name: "End Transformation"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  # INVOCATIONS:
+  # Zin
+  - id: ABIL_ZIN_REPEL_UNDEAD
+    name: "Repel Undead"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_ZIN_HEALING
+    name: "Minor Healing"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_ZIN_PESTILENCE
+    name: "Pestilence"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_ZIN_HOLY_WORD
+    name: "Holy Word"
+    mp_cost: 6
+    hp_cost: 0
+    food_cost: 150
+    piety_cost: 3
+    flag: ABFLAG_NONE
+  - id: ABIL_ZIN_SUMMON_GUARDIAN
+    name: "Summon Guardian"
+    mp_cost: 7
+    hp_cost: 0
+    food_cost: 150
+    piety_cost: 4
+    flag: ABFLAG_NONE
+
+  # The Shining One
+  - id: ABIL_TSO_REPEL_UNDEAD
+    name: "Repel Undead"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_TSO_SMITING
+    name: "Smiting"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_TSO_ANNIHILATE_UNDEAD
+    name: "Annihilate Undead"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_TSO_THUNDERBOLT
+    name: "Thunderbolt"
+    mp_cost: 5
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_TSO_SUMMON_DAEVA
+    name: "Summon Daeva"
+    mp_cost: 8
+    hp_cost: 0
+    food_cost: 150
+    piety_cost: 4
+    flag: ABFLAG_NONE
+
+  # Kikubaaqudgha
+  - id: ABIL_KIKU_RECALL_UNDEAD_SLAVES
+    name: "Recall Undead Slaves"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_KIKU_ENSLAVE_UNDEAD
+    name: "Enslave Undead"
+    mp_cost: 4
+    hp_cost: 0
+    food_cost: 150
+    piety_cost: 3
+    flag: ABFLAG_NONE
+  - id: ABIL_KIKU_INVOKE_DEATH
+    name: "Invoke Death"
+    mp_cost: 4
+    hp_cost: 0
+    food_cost: 250
+    piety_cost: 3
+    flag: ABFLAG_NONE
+
+  # Yredelemnul
+  - id: ABIL_YRED_ANIMATE_CORPSE
+    name: "Animate Corpse"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_YRED_RECALL_UNDEAD
+    name: "Recall Undead Slaves"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_YRED_ANIMATE_DEAD
+    name: "Animate Dead"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_YRED_DRAIN_LIFE
+    name: "Drain Life"
+    mp_cost: 6
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_YRED_CONTROL_UNDEAD
+    name: "Control Undead"
+    mp_cost: 5
+    hp_cost: 0
+    food_cost: 150
+    piety_cost: 2
+    flag: ABFLAG_NONE
+
+  # Vehumet
+  - id: ABIL_VEHUMET_CHANNEL_ENERGY
+    name: "Channel Energy"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 0
+    flag: ABFLAG_NONE
+
+  # Okawaru
+  - id: ABIL_OKAWARU_MIGHT
+    name: "Might"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_OKAWARU_HEALING
+    name: "Healing"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 75
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_OKAWARU_HASTE
+    name: "Haste"
+    mp_cost: 5
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 3
+    flag: ABFLAG_NONE
+
+  # Makhleb
+  - id: ABIL_MAKHLEB_MINOR_DESTRUCTION
+    name: "Minor Destruction"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 20
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_MAKHLEB_LESSER_SERVANT_OF_MAKHLEB
+    name: "Lesser Servant of Makhleb"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 50
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_MAKHLEB_MAJOR_DESTRUCTION
+    name: "Major Destruction"
+    mp_cost: 4
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_MAKHLEB_GREATER_SERVANT_OF_MAKHLEB
+    name: "Greater Servant of Makhleb"
+    mp_cost: 6
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 3
+    flag: ABFLAG_NONE
+
+  # Sif Muna
+  - id: ABIL_SIF_MUNA_FORGET_SPELL
+    name: "Forget Spell"
+    mp_cost: 5
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 8
+    flag: ABFLAG_NONE
+
+  # Trog
+  - id: ABIL_TROG_BERSERK
+    name: "Berserk"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_TROG_MIGHT
+    name: "Might"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_TROG_HASTE_SELF
+    name: "Haste Self"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 250
+    piety_cost: 3
+    flag: ABFLAG_NONE
+
+  # Elyvilon
+  - id: ABIL_ELYVILON_LESSER_HEALING
+    name: "Lesser Healing"
+    mp_cost: 1
+    hp_cost: 0
+    food_cost: 100
+    piety_cost: 0
+    flag: ABFLAG_NONE
+  - id: ABIL_ELYVILON_PURIFICATION
+    name: "Purification"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 150
+    piety_cost: 1
+    flag: ABFLAG_NONE
+  - id: ABIL_ELYVILON_HEALING
+    name: "Healing"
+    mp_cost: 2
+    hp_cost: 0
+    food_cost: 250
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_ELYVILON_RESTORATION
+    name: "Restoration"
+    mp_cost: 3
+    hp_cost: 0
+    food_cost: 400
+    piety_cost: 3
+    flag: ABFLAG_NONE
+  - id: ABIL_ELYVILON_GREATER_HEALING
+    name: "Greater Healing"
+    mp_cost: 6
+    hp_cost: 0
+    food_cost: 600
+    piety_cost: 4
+    flag: ABFLAG_NONE
+
+  # These six are unused "evil" god abilities:
+  - id: ABIL_CHARM_SNAKE
+    name: "Charm Snake"
+    mp_cost: 6
+    hp_cost: 0
+    food_cost: 200
+    piety_cost: 5
+    flag: ABFLAG_NONE
+  - id: ABIL_TRAN_SERPENT_OF_HELL
+    name: "Turn into Demonic Serpent"
+    mp_cost: 16
+    hp_cost: 0
+    food_cost: 600
+    piety_cost: 8
+    flag: ABFLAG_NONE
+  - id: ABIL_BREATHE_HELLFIRE
+    name: "Breathe Hellfire"
+    mp_cost: 0
+    hp_cost: 8
+    food_cost: 200
+    piety_cost: 0
+    flag: ABFLAG_BREATH
+
+  - id: ABIL_ROTTING
+    name: "Rotting"
+    mp_cost: 4
+    hp_cost: 4
+    food_cost: 0
+    piety_cost: 2
+    flag: ABFLAG_NONE
+  - id: ABIL_TORMENT_II
+    name: "Call Torment"
+    mp_cost: 9
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 3
+    flag: ABFLAG_PAIN
+  - id: ABIL_SHUGGOTH_SEED
+    name: "Sow Shuggoth Seed"
+    mp_cost: 12
+    hp_cost: 8
+    food_cost: 0
+    piety_cost: 6
+    flag: ABFLAG_NONE
+
+  - id: ABIL_RENOUNCE_RELIGION
+    name: "Renounce Religion"
+    mp_cost: 0
+    hp_cost: 0
+    food_cost: 0
+    piety_cost: 0
+    flag: ABFLAG_NONE
