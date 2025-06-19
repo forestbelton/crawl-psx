@@ -34,11 +34,11 @@ def parse_abilities(file: TextIO) -> list[Ability]:
     return [Ability(**raw_ability) for raw_ability in raw_abilities["abilities"]]
 
 
-def generate_abilities_entry(ability: Ability) -> str:
+def render_abilities_entry(ability: Ability) -> str:
     return f"    {{ {ability.id}, \"{ability.name}\", {ability.mp_cost}, {ability.hp_cost}, {ability.food_cost}, {ability.piety_cost}, {ability.flag.value} }},"
 
 
-def generate_abilities_header(abilities: list[Ability]) -> str:
+def render_abilities_header(abilities: list[Ability]) -> str:
     return f"""
 // GENERATED FILE, DO NOT EDIT! See scripts/gen-abilities.py
 #ifndef DATA_ABILITIES_H
@@ -47,19 +47,19 @@ def generate_abilities_header(abilities: list[Ability]) -> str:
 #include "enum.h"
 
 constexpr ability_def Ability_List[] = {{
-{"\n".join(generate_abilities_entry(ability) for ability in abilities)}
+{"\n".join(render_abilities_entry(ability) for ability in abilities)}
 }};
 
 #endif
 """.lstrip()
 
 
-def main() -> None:
+def generate_abilities() -> None:
     with open(ABILITIES_YAML_PATH, "r") as f:
         abilities = parse_abilities(f)
     with open(ABILITIES_HEADER_PATH, "w") as f:
-        f.write(generate_abilities_header(abilities))
+        f.write(render_abilities_header(abilities))
 
 
 if __name__ == "__main__":
-    main()
+    generate_abilities()
